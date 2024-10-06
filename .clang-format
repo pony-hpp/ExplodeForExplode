@@ -1,0 +1,40 @@
+---
+AlignAfterOpenBracket: BlockIndent
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossComments: false
+  AcrossEmptyLines: false
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossComments: false
+  AcrossEmptyLines: false
+AlignEscapedNewlines: DontAlign
+AlignTrailingComments:
+  Kind: Never
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: Empty
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: Yes
+BracedInitializerIndentWidth: 2
+BreakAfterAttributes: Always
+BreakBeforeBraces: Attach
+ColumnLimit: 80
+ConstructorInitializerIndentWidth: 2
+ContinuationIndentWidth: 2
+EmptyLineBeforeAccessModifier: Always
+FixNamespaceComments: false
+IncludeBlocks: Regroup
+IndentExternBlock: NoIndent
+InsertBraces: true
+InsertNewlineAtEOF: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+LambdaBodyIndentation: OuterScope
+RemoveSemicolon: true
+SeparateDefinitionBlocks: Always
+SortIncludes: CaseSensitive
+SortUsingDeclarations: Lexicographic
+SpaceBeforeCpp11BracedList: true
