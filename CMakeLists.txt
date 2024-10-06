@@ -15,6 +15,13 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(OPENGL REQUIRED glfw3 glew)
 
 file(GLOB_RECURSE SRC src/*.cpp)
-add_executable(${PROJECT_NAME} ${SRC})
-target_include_directories(${PROJECT_NAME} PRIVATE src)
-target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
+list(REMOVE_ITEM SRC ${CMAKE_SOURCE_DIR}/src/main.cpp)
+set(EFE_COMMON ${PROJECT_NAME}Common)
+add_library(${EFE_COMMON} OBJECT ${SRC})
+target_include_directories(${EFE_COMMON} PUBLIC src)
+target_link_libraries(${EFE_COMMON} ${OPENGL_LIBRARIES})
+
+add_executable(${PROJECT_NAME} src/main.cpp)
+target_link_libraries(${PROJECT_NAME} ${EFE_COMMON})
+
+add_subdirectory(tests)
