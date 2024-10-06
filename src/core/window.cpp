@@ -1,6 +1,8 @@
 #include "core/window.hpp"
 #include "opengl/ctx.hpp"
 
+static std::function<void(unsigned short, unsigned short)> _resizeCallback;
+
 namespace core {
 Window::Window(unsigned short w, unsigned short h, const char *title) noexcept {
   glfwInit();
@@ -40,5 +42,21 @@ void Window::set_bg(
   unsigned char r, unsigned char g, unsigned char b
 ) noexcept {
   glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
+}
+
+void Window::draw(const IDrawable &drawable) noexcept {
+  drawable.draw();
+}
+
+void Window::on_resize(
+  const std::function<void(unsigned short, unsigned short)> &callback
+) noexcept {
+  if (!_resizeCallback) {
+    glfwSetWindowSizeCallback(_glHandle, [](GLFWwindow *, int w, int h) {
+      glViewport(0, 0, w, h);
+      _resizeCallback(w, h);
+    });
+  }
+  _resizeCallback = callback;
 }
 }
