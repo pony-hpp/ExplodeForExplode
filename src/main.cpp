@@ -6,7 +6,7 @@
 #include <memory>
 
 int main() {
-  core::Window win(1024, 768, "Explode for explode");
+  core::Window win(1024, 768, "Explode for Explode");
 
   gl::VertexShader vs;
   vs.load("../assets/shaders/shader.vs");
