@@ -1,7 +1,11 @@
 #version 330 core
 
+in vec2 vTexPos;
+
 out vec4 fColor;
 
+uniform sampler2D uTex;
+
 void main() {
-  fColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+  fColor = texture(uTex, vTexPos);
 }
