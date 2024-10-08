@@ -18,10 +18,10 @@ World::~World() noexcept {
   delete[] _data;
 }
 
-void World::draw() const noexcept {
+void World::draw(unsigned short winW, unsigned short winH) const noexcept {
   for (unsigned i = 0; i < _kH; i++) {
     for (unsigned j = 0; j < _kW; j++) {
-      _data[i][j]->draw();
+      _data[i][j]->draw(winW, winH);
     }
   }
 }

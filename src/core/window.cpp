@@ -22,6 +22,18 @@ Window::~Window() noexcept {
   glfwTerminate();
 }
 
+unsigned short Window::w() const noexcept {
+  int w;
+  glfwGetWindowSize(_glHandle, &w, nullptr);
+  return w;
+}
+
+unsigned short Window::h() const noexcept {
+  int h;
+  glfwGetWindowSize(_glHandle, nullptr, &h);
+  return h;
+}
+
 bool Window::closed() const noexcept {
   return glfwWindowShouldClose(_glHandle);
 }
@@ -45,7 +57,7 @@ void Window::set_bg(
 }
 
 void Window::draw(const IDrawable &drawable) noexcept {
-  drawable.draw();
+  drawable.draw(w(), h());
 }
 
 void Window::on_resize(

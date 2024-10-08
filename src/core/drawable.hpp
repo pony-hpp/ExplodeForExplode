@@ -4,7 +4,8 @@
 namespace core {
 class IDrawable {
 public:
-  virtual void draw() const noexcept = 0;
+  virtual void
+  draw(unsigned short winW, unsigned short winH) const noexcept = 0;
 };
 }
 

@@ -40,10 +40,12 @@ Block::~Block() noexcept {
   glDeleteVertexArrays(1, &_vao);
 }
 
-void Block::draw() const noexcept {
-  glBindTexture(GL_TEXTURE_2D, _tex);
-  glBindVertexArray(_vao);
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+void Block::draw(unsigned short winW, unsigned short winH) const noexcept {
+  if (_x >= 0 && _x <= winW / SIZE && _y >= 0 && _y <= winH / SIZE) {
+    glBindTexture(GL_TEXTURE_2D, _tex);
+    glBindVertexArray(_vao);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+  }
 }
 
 std::unique_ptr<Block> Block::from_id(blocks::BlockId id) noexcept {
@@ -69,6 +71,9 @@ std::unique_ptr<Block> Block::from_data(const BlockData &data) noexcept {
 }
 
 void Block::set_pos(int x, int y) noexcept {
+  _x = x;
+  _y = y;
+
   const int kXCoord = x * SIZE, kYCoord = y * SIZE;
   const int kCoords[] = {
     // clang-format off

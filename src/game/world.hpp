@@ -11,7 +11,7 @@ public:
   World(const WorldData &data) noexcept;
   ~World() noexcept;
 
-  void draw() const noexcept override;
+  void draw(unsigned short winW, unsigned short winH) const noexcept override;
 
 private:
   std::unique_ptr<Block> **_data;

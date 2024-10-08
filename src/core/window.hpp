@@ -14,6 +14,8 @@ public:
   ) noexcept;
   ~Window() noexcept;
 
+  unsigned short w() const noexcept;
+  unsigned short h() const noexcept;
   bool closed() const noexcept;
   void poll_events() const noexcept;
   void clear() noexcept;
