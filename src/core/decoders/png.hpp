@@ -5,7 +5,7 @@
 
 namespace core {
 struct Png {
-  const std::unique_ptr<unsigned char> data;
+  const std::unique_ptr<unsigned char[]> data;
   const unsigned short w, h;
 };
 

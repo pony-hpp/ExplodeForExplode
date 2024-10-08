@@ -22,7 +22,7 @@ static void _assert_png(
   ASSERT_EQ(png.h, expectedH);
   ASSERT_NE(png.data.get(), nullptr);
   for (unsigned i = 0; i < png.w * png.h * 4; i++) {
-    ASSERT_EQ(png.data.get()[i], expectedData[i]);
+    ASSERT_EQ(png.data[i], expectedData[i]);
   }
 }
 

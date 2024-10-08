@@ -16,15 +16,16 @@ core::Png core::decode_png(const char *filename) noexcept {
     libpng, info, &w, &h, nullptr, nullptr, nullptr, nullptr, nullptr
   );
   unsigned char **data = png_get_rows(libpng, info);
-  std::unique_ptr<unsigned char> res(new unsigned char[w * h * 4]);
+  std::unique_ptr<unsigned char[]> res(new unsigned char[w * h * 4]);
 
   for (unsigned i = 0; i < h; i++) {
     for (unsigned j = 0; j < w; j++) {
-      const unsigned kIter     = i * w + j;
-      res.get()[kIter * 4]     = data[i][j * 3];
-      res.get()[kIter * 4 + 1] = data[i][j * 3 + 1];
-      res.get()[kIter * 4 + 2] = data[i][j * 3 + 2];
-      res.get()[kIter * 4 + 3] = 255;
+      const unsigned kIter = i * w + j;
+
+      res[kIter * 4]     = data[i][j * 3];
+      res[kIter * 4 + 1] = data[i][j * 3 + 1];
+      res[kIter * 4 + 2] = data[i][j * 3 + 2];
+      res[kIter * 4 + 3] = 255;
     }
   }
 
