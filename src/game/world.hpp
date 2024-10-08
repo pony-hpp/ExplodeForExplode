@@ -2,6 +2,7 @@
 #define _WORLD_HPP_
 
 #include "blocks/block.hpp"
+#include "core/decoders/png.hpp"
 #include "core/drawable.hpp"
 #include "game/world_generators/world_data.hpp"
 
@@ -12,6 +13,8 @@ public:
   ~World() noexcept;
 
   void draw(unsigned short winW, unsigned short winH) const noexcept override;
+
+  void load_textures(core::PngDecoder &pngDecoder) noexcept;
 
 private:
   std::unique_ptr<Block> **_data;

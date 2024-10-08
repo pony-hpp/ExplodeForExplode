@@ -66,7 +66,6 @@ std::unique_ptr<Block> Block::from_id(blocks::BlockId id) noexcept {
 std::unique_ptr<Block> Block::from_data(const BlockData &data) noexcept {
   std::unique_ptr<Block> res = from_id(data.id);
   res->set_pos(data.x, data.y);
-  res->load_texture();
   return res;
 }
 
@@ -89,7 +88,7 @@ void Block::set_pos(int x, int y) noexcept {
   glVertexAttribPointer(0, 2, GL_INT, false, 0, nullptr);
 }
 
-void Block::load_texture() noexcept {
+void Block::load_texture(core::PngDecoder &pngDecoder) noexcept {
   glBindBuffer(GL_ARRAY_BUFFER, _texCoordsVbo);
   glBufferData(
     GL_ARRAY_BUFFER, sizeof(_TEX_COORDS), _TEX_COORDS, GL_STATIC_DRAW
@@ -99,7 +98,7 @@ void Block::load_texture() noexcept {
 
   glBindTexture(GL_TEXTURE_2D, _tex);
   if (strcmp(texture(), "") != 0) {
-    core::Png tex = core::decode_png(texture());
+    core::Png &tex = pngDecoder(texture());
     glTexImage2D(
       GL_TEXTURE_2D, 0, GL_RGBA, tex.w, tex.h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
       tex.data.get()

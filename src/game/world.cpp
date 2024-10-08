@@ -19,9 +19,17 @@ World::~World() noexcept {
 }
 
 void World::draw(unsigned short winW, unsigned short winH) const noexcept {
-  for (unsigned i = 0; i < _kH; i++) {
+  for (unsigned short i = 0; i < _kH; i++) {
     for (unsigned j = 0; j < _kW; j++) {
       _data[i][j]->draw(winW, winH);
+    }
+  }
+}
+
+void World::load_textures(core::PngDecoder &pngDecoder) noexcept {
+  for (unsigned short i = 0; i < _kH; i++) {
+    for (unsigned j = 0; j < _kW; j++) {
+      _data[i][j]->load_texture(pngDecoder);
     }
   }
 }

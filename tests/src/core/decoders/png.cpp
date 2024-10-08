@@ -26,6 +26,8 @@ static void _assert_png(
   }
 }
 
+static core::PngDecoder decode;
+
 TEST(PngDecoder, DecodeRgb_4x4_Test) {
   constexpr const unsigned char EXPECTED_DATA[] = {
     // clang-format off
@@ -35,9 +37,7 @@ TEST(PngDecoder, DecodeRgb_4x4_Test) {
     RED,    MAGENTA, CYAN,  YELLOW
     // clang-format on
   };
-  _assert_png(
-    core::decode_png("../tests/assets/rgb_4x4.png"), 4, 4, EXPECTED_DATA
-  );
+  _assert_png(decode("../tests/assets/rgb_4x4.png"), 4, 4, EXPECTED_DATA);
 }
 
 TEST(PngDecoder, DecodeRgb_7x3_Test) {
@@ -46,9 +46,7 @@ TEST(PngDecoder, DecodeRgb_7x3_Test) {
     BLACK, BLACK, BLACK, BLACK,   BLACK,  BLACK, GRAY,
     WHITE, WHITE, WHITE, WHITE,   WHITE,  WHITE, BLACK
   };
-  _assert_png(
-    core::decode_png("../tests/assets/rgb_7x3.png"), 7, 3, EXPECTED_DATA
-  );
+  _assert_png(decode("../tests/assets/rgb_7x3.png"), 7, 3, EXPECTED_DATA);
 }
 
 TEST(PngDecoder, DecodeRgb_3x7_Test) {
@@ -63,7 +61,5 @@ TEST(PngDecoder, DecodeRgb_3x7_Test) {
     RED,     WHITE,   BLACK
     // clang-format on
   };
-  _assert_png(
-    core::decode_png("../tests/assets/rgb_3x7.png"), 3, 7, EXPECTED_DATA
-  );
+  _assert_png(decode("../tests/assets/rgb_3x7.png"), 3, 7, EXPECTED_DATA);
 }

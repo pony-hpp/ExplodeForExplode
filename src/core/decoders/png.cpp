@@ -3,7 +3,23 @@
 #include <cstdio>
 #include <png.h>
 
-core::Png core::decode_png(const char *filename) noexcept {
+namespace core {
+Png::Png(
+  unsigned short w, unsigned short h, std::unique_ptr<unsigned char[]> data
+) noexcept
+  : data(std::move(data)), w(w), h(h) {
+}
+
+Png::Png(const Png &rhs) noexcept
+  : data(std::move(rhs.data)), w(rhs.w), h(rhs.h) {
+}
+
+Png &PngDecoder::operator()(const char *filename) noexcept {
+  const auto &kCachedPng = _cachedPngs.find(filename);
+  if (kCachedPng != _cachedPngs.end()) {
+    return kCachedPng->second;
+  }
+
   FILE *fp = fopen(filename, "rb");
   png_struct *libpng =
     png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -29,8 +45,12 @@ core::Png core::decode_png(const char *filename) noexcept {
     }
   }
 
+  Png png((unsigned short)w, (unsigned short)h, std::move(res));
+  _cachedPngs.insert({filename, png});
+
   png_destroy_info_struct(libpng, &info);
   png_destroy_read_struct(&libpng, nullptr, nullptr);
   fclose(fp);
-  return {std::move(res), (unsigned short)w, (unsigned short)h};
+  return _cachedPngs.find(filename)->second;
+}
 }

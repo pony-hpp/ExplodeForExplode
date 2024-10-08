@@ -1,6 +1,7 @@
 #ifndef _BLOCK_HPP_
 #define _BLOCK_HPP_
 
+#include "core/decoders/png.hpp"
 #include "core/drawable.hpp"
 #include "game/blocks/block_data.hpp"
 #include "game/blocks/block_id.hpp"
@@ -23,7 +24,7 @@ public:
   virtual const char *texture() const noexcept = 0;
 
   void set_pos(int x, int y) noexcept;
-  void load_texture() noexcept;
+  void load_texture(core::PngDecoder &pngDecoder) noexcept;
 
 private:
   int _x, _y;

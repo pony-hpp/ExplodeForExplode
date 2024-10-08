@@ -24,12 +24,15 @@ int main() {
   });
 
   game::PlainWorldGeneratorSettings worldSettings;
-  worldSettings.w = 100;
+  worldSettings.w = 144;
   worldSettings.layers.push_back({game::blocks::GRASS_BLOCK, 1});
-  worldSettings.layers.push_back({game::blocks::EARTH_BLOCK, 64});
-  worldSettings.layers.push_back({game::blocks::DEFAULT_BLOCK, 10});
+  worldSettings.layers.push_back({game::blocks::EARTH_BLOCK, 199});
+  worldSettings.layers.push_back({game::blocks::DEFAULT_BLOCK, 32});
   game::PlainWorldGenerator worldGen(std::move(worldSettings));
+
+  core::PngDecoder pngDecoder;
   game::World world = worldGen();
+  world.load_textures(pngDecoder);
 
   win.set_bg(165, 190, 251);
   while (!win.closed()) {
