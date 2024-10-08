@@ -1,9 +1,8 @@
 #include "core/window.hpp"
-#include "game/blocks/blocks.hpp"
+#include "game/world.hpp"
+#include "game/world_generators/plain_world_generator.hpp"
 #include "opengl/math/matrix.hpp"
 #include "opengl/shading/shader_program.hpp"
-
-#include <memory>
 
 int main() {
   core::Window win(1024, 768, "Explode for Explode");
@@ -24,35 +23,19 @@ int main() {
     shaderProgram.projection(gl::math::projection_matrix(w, h));
   });
 
-  std::unique_ptr<game::Block> blocks[21];
-  for (unsigned char i = 0; i < 21; i++) {
-    if (i % 3 == 0) {
-      blocks[i] = std::make_unique<game::blocks::GrassBlock>();
-    } else if (i % 2 == 0) {
-      blocks[i] = std::make_unique<game::blocks::EarthBlock>();
-    } else {
-      blocks[i] = std::make_unique<game::blocks::DefaultBlock>();
-    }
-  }
-
-  for (unsigned char i = 0; i < 10; i++) {
-    blocks[i]->set_pos(5 + i, 5 + i / 2);
-    blocks[i]->load_texture();
-  }
-  for (unsigned char i = 10; i < 21; i++) {
-    blocks[i]->set_pos(5 + i, 5 + i / 2 - i + 10);
-    blocks[i]->load_texture();
-  }
+  game::PlainWorldGeneratorSettings worldSettings;
+  worldSettings.w = 16;
+  worldSettings.layers.push_back({game::blocks::GRASS_BLOCK, 1});
+  worldSettings.layers.push_back({game::blocks::EARTH_BLOCK, 14});
+  worldSettings.layers.push_back({game::blocks::DEFAULT_BLOCK, 1});
+  game::PlainWorldGenerator worldGen(std::move(worldSettings));
+  game::World world = worldGen();
 
   win.set_bg(165, 190, 251);
   while (!win.closed()) {
     win.poll_events();
     win.clear();
-
-    for (const auto &block : blocks) {
-      win.draw(*block);
-    }
-
+    win.draw(world);
     win.update();
   }
 

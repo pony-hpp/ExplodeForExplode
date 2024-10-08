@@ -2,6 +2,10 @@
 #define _BLOCK_HPP_
 
 #include "core/drawable.hpp"
+#include "game/blocks/block_data.hpp"
+#include "game/blocks/block_id.hpp"
+
+#include <memory>
 
 namespace game {
 class Block : public core::IDrawable {
@@ -12,6 +16,9 @@ public:
   static constexpr unsigned char SIZE = 24;
 
   void draw() const noexcept override;
+
+  static std::unique_ptr<Block> from_id(blocks::BlockId id) noexcept;
+  static std::unique_ptr<Block> from_data(const BlockData &data) noexcept;
 
   virtual const char *texture() const noexcept = 0;
 

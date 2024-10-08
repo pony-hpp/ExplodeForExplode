@@ -1,5 +1,6 @@
 #include "core/decoders/png.hpp"
 #include "game/blocks/block.hpp"
+#include "game/blocks/blocks.hpp"
 #include "opengl/opengl.hpp"
 
 #include <cstring>
@@ -43,6 +44,28 @@ void Block::draw() const noexcept {
   glBindTexture(GL_TEXTURE_2D, _tex);
   glBindVertexArray(_vao);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
+std::unique_ptr<Block> Block::from_id(blocks::BlockId id) noexcept {
+  switch (id) {
+  case blocks::DEFAULT_BLOCK:
+    return std::make_unique<blocks::DefaultBlock>();
+    break;
+  case blocks::GRASS_BLOCK:
+    return std::make_unique<blocks::GrassBlock>();
+    break;
+  case blocks::EARTH_BLOCK:
+    return std::make_unique<blocks::EarthBlock>();
+    break;
+  default: return nullptr;
+  }
+}
+
+std::unique_ptr<Block> Block::from_data(const BlockData &data) noexcept {
+  std::unique_ptr<Block> res = from_id(data.id);
+  res->set_pos(data.x, data.y);
+  res->load_texture();
+  return res;
 }
 
 void Block::set_pos(int x, int y) noexcept {
