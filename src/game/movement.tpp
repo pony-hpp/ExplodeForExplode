@@ -1,15 +1,20 @@
+#ifndef _MOVEMENT_TPP_
+#define _MOVEMENT_TPP_
+
 #include "game/movement.hpp"
 #include "opengl/math/math.hpp"
 
 namespace game {
-Movement::Movement(
-  const core::ISizeable<unsigned short> &viewport, float sensitivity
+template <typename ViewportSizeT>
+Movement<ViewportSizeT>::Movement(
+  const core::ISizeable<ViewportSizeT> &viewport, float sensitivity
 ) noexcept
   : _kViewport(viewport), _kSensitivity(sensitivity) {
 }
 
+template <typename T>
 const gl::math::ViewMatrix &
-Movement::operator()(long long x, long long y) noexcept {
+Movement<T>::operator()(long long x, long long y) noexcept {
   if (!_prevPosesInitialized) {
     _prevX                = x;
     _prevY                = y;
@@ -30,7 +35,10 @@ Movement::operator()(long long x, long long y) noexcept {
   return _view;
 }
 
-void Movement::set_next_origin() noexcept {
+template <typename T>
+void Movement<T>::set_next_origin() noexcept {
   _prevPosesInitialized = false;
 }
 }
+
+#endif
