@@ -1,23 +1,43 @@
 #ifndef _MATRIX_HPP_
 #define _MATRIX_HPP_
 
-#include <array>
+#include <initializer_list>
 
 namespace gl::math {
-using Matrix = std::array<float, 16>;
+class Matrix {
+private:
+  class _MatrixRow final {
+  public:
+    float &operator[](unsigned char x) noexcept;
+    float operator[](unsigned char x) const noexcept;
 
-const Matrix DEFAULT_MATRIX = {
-  // clang-format off
-  1.0f, 0.0f, 0.0f, 0.0f,
-  0.0f, 1.0f, 0.0f, 0.0f,
-  0.0f, 0.0f, 1.0f, 0.0f,
-  0.0f, 0.0f, 0.0f, 1.0f
-  // clang-format on
+  private:
+    float _data[4];
+  };
+
+public:
+  Matrix() noexcept;
+  Matrix(std::initializer_list<float> v) noexcept;
+
+  _MatrixRow &operator[](unsigned char y) noexcept;
+  const _MatrixRow &operator[](unsigned char y) const noexcept;
+  operator const float *() const noexcept;
+
+protected:
+  _MatrixRow _data[4];
 };
 
-Matrix projection_matrix(unsigned short maxX, unsigned short maxY) noexcept;
+class ProjectionMatrix : public Matrix {
+public:
+  ProjectionMatrix(unsigned short maxX, unsigned short maxY) noexcept;
+};
 
-void translate(Matrix &mat, float x, float y) noexcept;
+class ViewMatrix final : public Matrix {
+public:
+  void translate(float x, float y) noexcept;
+  float get_offset_x() const noexcept;
+  float get_offset_y() const noexcept;
+};
 }
 
 #endif

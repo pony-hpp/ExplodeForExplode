@@ -15,8 +15,8 @@ public:
   void add(const Shader &shader) noexcept;
   void link() noexcept;
   void use() noexcept;
-  void view(const math::Matrix &mat) noexcept;
-  void projection(const math::Matrix &mat) noexcept;
+  void view(const math::ViewMatrix &mat) noexcept;
+  void projection(const math::ProjectionMatrix &mat) noexcept;
 
 private:
   unsigned _glHandle;

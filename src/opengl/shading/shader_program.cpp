@@ -22,12 +22,12 @@ void ShaderProgram::use() noexcept {
   glUseProgram(_glHandle);
 }
 
-void ShaderProgram::view(const math::Matrix &mat) noexcept {
-  glUniformMatrix4fv(_get_uniform(_U_VIEW_NAME), 1, true, mat.data());
+void ShaderProgram::view(const math::ViewMatrix &mat) noexcept {
+  glUniformMatrix4fv(_get_uniform(_U_VIEW_NAME), 1, true, mat);
 }
 
-void ShaderProgram::projection(const math::Matrix &mat) noexcept {
-  glUniformMatrix4fv(_get_uniform(_U_PROJECTION_NAME), 1, true, mat.data());
+void ShaderProgram::projection(const math::ProjectionMatrix &mat) noexcept {
+  glUniformMatrix4fv(_get_uniform(_U_PROJECTION_NAME), 1, true, mat);
 }
 
 int ShaderProgram::_get_uniform(const char *name) noexcept {

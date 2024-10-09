@@ -30,7 +30,7 @@ public:
   void set_bg(unsigned char r, unsigned char g, unsigned char b) noexcept;
   void draw(const IDrawable &drawable) noexcept;
   void toggle_cursor_visibility() noexcept;
-  void set_view_pos(float x, float y) noexcept;
+  void set_view_offsets(float x, float y) noexcept;
 
   void on_resize(const ResizeCallback &callback) noexcept;
   void on_cursor_move(const CursorMoveCallback &callback) noexcept;

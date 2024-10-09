@@ -11,13 +11,13 @@ public:
     const core::ISizeable<unsigned short> &viewport, float sensitivity
   ) noexcept;
 
-  const gl::math::Matrix &operator()(long long x, long long y) noexcept;
+  const gl::math::ViewMatrix &operator()(long long x, long long y) noexcept;
   void set_next_origin() noexcept;
 
 private:
   const core::ISizeable<unsigned short> &_kViewport;
   const float _kSensitivity;
-  gl::math::Matrix _view;
+  gl::math::ViewMatrix _view;
   long long _prevX, _prevY;
   bool _prevPosesInitialized = false;
 };

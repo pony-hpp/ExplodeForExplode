@@ -5,11 +5,10 @@ namespace game {
 Movement::Movement(
   const core::ISizeable<unsigned short> &viewport, float sensitivity
 ) noexcept
-  : _kViewport(viewport), _kSensitivity(sensitivity),
-    _view(gl::math::DEFAULT_MATRIX) {
+  : _kViewport(viewport), _kSensitivity(sensitivity) {
 }
 
-const gl::math::Matrix &
+const gl::math::ViewMatrix &
 Movement::operator()(long long x, long long y) noexcept {
   if (!_prevPosesInitialized) {
     _prevX                = x;
@@ -20,8 +19,8 @@ Movement::operator()(long long x, long long y) noexcept {
   const float kXDiff = (x - _prevX) * _kSensitivity,
               kYDiff = -(y - _prevY) * _kSensitivity;
 
-  gl::math::translate(
-    _view, gl::math::normalize(kXDiff, _kViewport.w()),
+  _view.translate(
+    gl::math::normalize(kXDiff, _kViewport.w()),
     gl::math::normalize(kYDiff, _kViewport.h())
   );
 

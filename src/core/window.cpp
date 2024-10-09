@@ -70,7 +70,7 @@ void Window::toggle_cursor_visibility() noexcept {
   }
 }
 
-void Window::set_view_pos(float x, float y) noexcept {
+void Window::set_view_offsets(float x, float y) noexcept {
   _viewPosX = x;
   _viewPosY = y;
 }

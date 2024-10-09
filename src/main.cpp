@@ -20,10 +20,10 @@ int main() {
   shaderProgram.link();
   shaderProgram.use();
 
-  shaderProgram.view(gl::math::DEFAULT_MATRIX);
+  shaderProgram.view(gl::math::ViewMatrix());
 
   win.on_resize([&shaderProgram](unsigned short w, unsigned short h) {
-    shaderProgram.projection(gl::math::projection_matrix(w, h));
+    shaderProgram.projection(gl::math::ProjectionMatrix(w, h));
   });
 
   game::Movement mv(win, 600.0f);
@@ -43,9 +43,9 @@ int main() {
   win.on_cursor_move([&win, &shaderProgram, &mv,
                       &rightBtnHeld](long long x, long long y) {
     if (rightBtnHeld) {
-      const gl::math::Matrix &kMat = mv(x, y);
+      const gl::math::ViewMatrix &kMat = mv(x, y);
       shaderProgram.view(kMat);
-      win.set_view_pos(kMat[3], kMat[7]);
+      win.set_view_offsets(kMat.get_offset_x(), kMat.get_offset_y());
     } else {
       mv.set_next_origin();
     }
