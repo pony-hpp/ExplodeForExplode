@@ -12,7 +12,9 @@ public:
   World(const WorldData &data) noexcept;
   ~World() noexcept;
 
-  void draw(unsigned short winW, unsigned short winH) const noexcept override;
+  void draw(
+    unsigned short winW, unsigned short winH, float viewPosX, float viewPosY
+  ) const noexcept override;
 
   void load_textures(core::PngDecoder &pngDecoder) noexcept;
 

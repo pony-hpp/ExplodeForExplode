@@ -47,3 +47,59 @@ TEST(GlMath, ProjectionMatrixTest) {
     }
   );
 }
+
+TEST(GlMath, TranslateMatrixTest) {
+  Matrix mat = DEFAULT_MATRIX;
+
+  translate(mat, 0.5f, 0.5f);
+  _assert_matrices(
+    mat,
+    {
+      // clang-format off
+      1.0f, 0.0f, 0.0f, 0.5f,
+      0.0f, 1.0f, 0.0f, 0.5f,
+      0.0f, 0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f
+      // clang-format on
+    }
+  );
+
+  translate(mat, -0.5f, 0.5f);
+  _assert_matrices(
+    mat,
+    {
+      // clang-format off
+      1.0f, 0.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f, 1.0f,
+      0.0f, 0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f
+      // clang-format on
+    }
+  );
+
+  translate(mat, 0.0f, -1.0f);
+  _assert_matrices(
+    mat,
+    {
+      // clang-format off
+      1.0f, 0.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f, 0.0f,
+      0.0f, 0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f
+      // clang-format on
+    }
+  );
+
+  translate(mat, 0.0f, 0.0f);
+  _assert_matrices(
+    mat,
+    {
+      // clang-format off
+      1.0f, 0.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f, 0.0f,
+      0.0f, 0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f
+      // clang-format on
+    }
+  );
+}

@@ -22,6 +22,10 @@ void ShaderProgram::use() noexcept {
   glUseProgram(_glHandle);
 }
 
+void ShaderProgram::view(const math::Matrix &mat) noexcept {
+  glUniformMatrix4fv(_get_uniform(_U_VIEW_NAME), 1, true, mat.data());
+}
+
 void ShaderProgram::projection(const math::Matrix &mat) noexcept {
   glUniformMatrix4fv(_get_uniform(_U_PROJECTION_NAME), 1, true, mat.data());
 }

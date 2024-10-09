@@ -16,7 +16,9 @@ public:
 
   static constexpr unsigned char SIZE = 24;
 
-  void draw(unsigned short winW, unsigned short winH) const noexcept override;
+  void draw(
+    unsigned short winW, unsigned short winH, float viewPosX, float viewPosY
+  ) const noexcept override;
 
   static std::unique_ptr<Block> from_id(blocks::BlockId id) noexcept;
   static std::unique_ptr<Block> from_data(const BlockData &data) noexcept;

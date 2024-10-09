@@ -1,10 +1,8 @@
 #ifndef _MATH_HPP_
 #define _MATH_HPP_
 
-#include <array>
-
 namespace gl::math {
-using Matrix = std::array<float, 16>;
+extern float normalize(float v, float max) noexcept;
 }
 
 #endif

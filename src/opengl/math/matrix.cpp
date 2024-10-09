@@ -11,3 +11,8 @@ gl::math::projection_matrix(unsigned short maxX, unsigned short maxY) noexcept {
     // clang-format on
   };
 }
+
+void gl::math::translate(Matrix &mat, float x, float y) noexcept {
+  mat[3] += x;
+  mat[7] += y;
+}

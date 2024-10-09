@@ -1,7 +1,9 @@
 #include "core/window.hpp"
 #include "opengl/ctx.hpp"
 
-static std::function<void(unsigned short, unsigned short)> _resizeCallback;
+static core::Window::ResizeCallback _resizeCallback;
+static core::Window::CursorMoveCallback _cursorMoveCallback;
+static core::Window::MouseClickCallback _mouseClickCallback;
 
 namespace core {
 Window::Window(unsigned short w, unsigned short h, const char *title) noexcept {
@@ -57,12 +59,23 @@ void Window::set_bg(
 }
 
 void Window::draw(const IDrawable &drawable) noexcept {
-  drawable.draw(w(), h());
+  drawable.draw(w(), h(), _viewPosX, _viewPosY);
 }
 
-void Window::on_resize(
-  const std::function<void(unsigned short, unsigned short)> &callback
-) noexcept {
+void Window::toggle_cursor_visibility() noexcept {
+  if (glfwGetInputMode(_glHandle, GLFW_CURSOR) == GLFW_CURSOR_NORMAL) {
+    glfwSetInputMode(_glHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  } else {
+    glfwSetInputMode(_glHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+  }
+}
+
+void Window::set_view_pos(float x, float y) noexcept {
+  _viewPosX = x;
+  _viewPosY = y;
+}
+
+void Window::on_resize(const ResizeCallback &callback) noexcept {
   if (!_resizeCallback) {
     glfwSetWindowSizeCallback(_glHandle, [](GLFWwindow *, int w, int h) {
       glViewport(0, 0, w, h);
@@ -70,5 +83,26 @@ void Window::on_resize(
     });
   }
   _resizeCallback = callback;
+}
+
+void Window::on_cursor_move(const CursorMoveCallback &callback) noexcept {
+  if (!_cursorMoveCallback) {
+    glfwSetCursorPosCallback(_glHandle, [](GLFWwindow *, double x, double y) {
+      _cursorMoveCallback(x, y);
+    });
+  }
+  _cursorMoveCallback = callback;
+}
+
+void Window::on_mouse_click(const MouseClickCallback &callback) noexcept {
+  if (!_mouseClickCallback) {
+    glfwSetMouseButtonCallback(
+      _glHandle,
+      [](GLFWwindow *, int btn, int action, int) {
+      _mouseClickCallback((mouse::Button)btn, (mouse::Action)action);
+    }
+    );
+  }
+  _mouseClickCallback = callback;
 }
 }

@@ -40,8 +40,11 @@ Block::~Block() noexcept {
   glDeleteVertexArrays(1, &_vao);
 }
 
-void Block::draw(unsigned short winW, unsigned short winH) const noexcept {
-  if (_x >= 0 && _x <= winW / SIZE && _y >= 0 && _y <= winH / SIZE) {
+void Block::draw(
+  unsigned short winW, unsigned short winH, float viewPosX, float viewPosY
+) const noexcept {
+  if (_x * SIZE + viewPosX >= -SIZE && _x * SIZE + viewPosX <= winW &&
+      _y * SIZE + viewPosY >= -SIZE && _y * SIZE + viewPosY <= winH) {
     glBindTexture(GL_TEXTURE_2D, _tex);
     glBindVertexArray(_vao);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
