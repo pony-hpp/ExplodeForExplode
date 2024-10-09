@@ -45,8 +45,9 @@ Png &PngDecoder::operator()(const char *filename) noexcept {
     }
   }
 
-  Png png((unsigned short)w, (unsigned short)h, std::move(res));
-  _cachedPngs.insert({filename, png});
+  _cachedPngs.insert(
+    {filename, Png((unsigned short)w, (unsigned short)h, std::move(res))}
+  );
 
   png_destroy_info_struct(libpng, &info);
   png_destroy_read_struct(&libpng, nullptr, nullptr);
