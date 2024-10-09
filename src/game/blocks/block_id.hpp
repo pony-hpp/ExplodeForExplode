@@ -5,7 +5,8 @@ namespace game::blocks {
 enum BlockId : unsigned char {
   DEFAULT_BLOCK,
   GRASS_BLOCK,
-  EARTH_BLOCK
+  EARTH_BLOCK,
+  STONE_BLOCK
 };
 }
 

@@ -13,6 +13,7 @@ namespace game::blocks {
 BLOCK(DefaultBlock)
 BLOCK(GrassBlock)
 BLOCK(EarthBlock)
+BLOCK(StoneBlock)
 }
 
 #endif

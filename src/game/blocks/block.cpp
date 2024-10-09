@@ -62,6 +62,9 @@ std::unique_ptr<Block> Block::from_id(blocks::BlockId id) noexcept {
   case blocks::EARTH_BLOCK:
     return std::make_unique<blocks::EarthBlock>();
     break;
+  case blocks::STONE_BLOCK:
+    return std::make_unique<blocks::StoneBlock>();
+    break;
   default: return nullptr;
   }
 }

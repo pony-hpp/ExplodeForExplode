@@ -52,10 +52,10 @@ int main() {
   });
 
   game::PlainWorldGeneratorSettings worldSettings;
-  worldSettings.w = 144;
+  worldSettings.w = 200;
   worldSettings.layers.push_back({game::blocks::GRASS_BLOCK, 1});
-  worldSettings.layers.push_back({game::blocks::EARTH_BLOCK, 199});
-  worldSettings.layers.push_back({game::blocks::DEFAULT_BLOCK, 32});
+  worldSettings.layers.push_back({game::blocks::EARTH_BLOCK, 34});
+  worldSettings.layers.push_back({game::blocks::STONE_BLOCK, 65});
   game::PlainWorldGenerator worldGen(std::move(worldSettings));
 
   core::PngDecoder pngDecoder;
