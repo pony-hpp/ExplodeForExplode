@@ -3,13 +3,12 @@
 
 #include "core/drawable.hpp"
 #include "core/input/mouse.hpp"
-#include "core/sizeable.hpp"
 #include "opengl/opengl.hpp" // IWYU pragma: keep
 
 #include <functional>
 
 namespace core {
-class Window final : public ISizeable<unsigned short> {
+class Window final {
 public:
   using ResizeCallback = std::function<void(unsigned short, unsigned short)>;
   using CursorMoveCallback = std::function<void(long long, long long)>;
@@ -20,9 +19,8 @@ public:
   ) noexcept;
   ~Window() noexcept;
 
-  unsigned short w() const noexcept override;
-  unsigned short h() const noexcept override;
-
+  unsigned short w() const noexcept;
+  unsigned short h() const noexcept;
   bool closed() const noexcept;
   void poll_events() const noexcept;
   void clear() noexcept;
