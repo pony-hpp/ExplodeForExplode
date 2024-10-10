@@ -2,11 +2,11 @@
 #define _DRAWABLE_HPP_
 
 namespace core {
+class Renderer;
+
 class IDrawable {
 public:
-  virtual void draw(
-    unsigned short winW, unsigned short winH, float viewPosX, float viewPosY
-  ) const noexcept = 0;
+  virtual void draw(const Renderer &renderer) const noexcept = 0;
 };
 }
 

@@ -3,6 +3,7 @@
 
 #include "core/decoders/png.hpp"
 #include "core/drawable.hpp"
+#include "core/renderer.hpp"
 #include "game/blocks/block_data.hpp"
 #include "game/blocks/block_id.hpp"
 
@@ -16,9 +17,7 @@ public:
 
   static constexpr unsigned char SIZE = 24;
 
-  void draw(
-    unsigned short winW, unsigned short winH, float viewPosX, float viewPosY
-  ) const noexcept override;
+  void draw(const core::Renderer &renderer) const noexcept override;
 
   static std::unique_ptr<Block> from_id(blocks::BlockId id) noexcept;
   static std::unique_ptr<Block> from_data(const BlockData &data) noexcept;

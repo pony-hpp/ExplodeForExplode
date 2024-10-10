@@ -24,18 +24,6 @@ Window::~Window() noexcept {
   glfwTerminate();
 }
 
-unsigned short Window::w() const noexcept {
-  int w;
-  glfwGetWindowSize(_glHandle, &w, nullptr);
-  return w;
-}
-
-unsigned short Window::h() const noexcept {
-  int h;
-  glfwGetWindowSize(_glHandle, nullptr, &h);
-  return h;
-}
-
 bool Window::closed() const noexcept {
   return glfwWindowShouldClose(_glHandle);
 }
@@ -58,21 +46,12 @@ void Window::set_bg(
   glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
 }
 
-void Window::draw(const IDrawable &drawable) noexcept {
-  drawable.draw(w(), h(), _viewPosX, _viewPosY);
-}
-
 void Window::toggle_cursor_visibility() noexcept {
   if (glfwGetInputMode(_glHandle, GLFW_CURSOR) == GLFW_CURSOR_NORMAL) {
     glfwSetInputMode(_glHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   } else {
     glfwSetInputMode(_glHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
   }
-}
-
-void Window::set_view_offsets(float x, float y) noexcept {
-  _viewPosX = x;
-  _viewPosY = y;
 }
 
 void Window::on_resize(const ResizeCallback &callback) noexcept {

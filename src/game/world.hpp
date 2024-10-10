@@ -4,6 +4,7 @@
 #include "blocks/block.hpp"
 #include "core/decoders/png.hpp"
 #include "core/drawable.hpp"
+#include "core/renderer.hpp"
 #include "game/world_generators/world_data.hpp"
 
 namespace game {
@@ -12,9 +13,7 @@ public:
   World(const WorldData &data) noexcept;
   ~World() noexcept;
 
-  void draw(
-    unsigned short winW, unsigned short winH, float viewPosX, float viewPosY
-  ) const noexcept override;
+  void draw(const core::Renderer &renderer) const noexcept override;
 
   void load_textures(core::PngDecoder &pngDecoder) noexcept;
 

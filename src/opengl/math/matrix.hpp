@@ -29,12 +29,13 @@ protected:
 
 class ProjectionMatrix : public Matrix {
 public:
+  ProjectionMatrix() = default;
   ProjectionMatrix(unsigned short maxX, unsigned short maxY) noexcept;
 };
 
 class ViewMatrix final : public Matrix {
 public:
-  void translate(float x, float y) noexcept;
+  void set_offset(float x, float y) noexcept;
   float get_offset_x() const noexcept;
   float get_offset_y() const noexcept;
 };

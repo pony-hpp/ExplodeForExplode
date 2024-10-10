@@ -1,3 +1,4 @@
+#include "core/renderer.hpp"
 #include "core/window.hpp"
 #include "game/movement.hpp"
 #include "game/world.hpp"
@@ -20,11 +21,7 @@ int main() {
   shaderProgram.link();
   shaderProgram.use();
 
-  shaderProgram.view(gl::math::ViewMatrix());
-
-  win.on_resize([&shaderProgram](unsigned short w, unsigned short h) {
-    shaderProgram.projection(gl::math::ProjectionMatrix(w, h));
-  });
+  core::Renderer renderer(win, shaderProgram);
 
   game::Movement mv(1.5f);
   bool rightBtnHeld = false;
@@ -40,12 +37,12 @@ int main() {
     }
   }
   );
-  win.on_cursor_move([&win, &shaderProgram, &mv,
+  win.on_cursor_move([&renderer, &shaderProgram, &mv,
                       &rightBtnHeld](long long x, long long y) {
     if (rightBtnHeld) {
-      const gl::math::ViewMatrix &kMat = mv(x, y);
-      shaderProgram.view(kMat);
-      win.set_view_offsets(kMat.get_offset_x(), kMat.get_offset_y());
+      const game::MovementOffset &kOffset = mv(x, y);
+      renderer.view.set_offset(kOffset.x, kOffset.y);
+      shaderProgram.view(renderer.view);
     } else {
       mv.set_next_origin();
     }
@@ -66,7 +63,7 @@ int main() {
   while (!win.closed()) {
     win.poll_events();
     win.clear();
-    win.draw(world);
+    renderer.draw(world);
     win.update();
   }
 
