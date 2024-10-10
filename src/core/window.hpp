@@ -1,7 +1,6 @@
 #ifndef _WINDOW_HPP_
 #define _WINDOW_HPP_
 
-#include "core/drawable.hpp"
 #include "core/input/mouse.hpp"
 #include "opengl/opengl.hpp" // IWYU pragma: keep
 
@@ -19,16 +18,12 @@ public:
   ) noexcept;
   ~Window() noexcept;
 
-  unsigned short w() const noexcept;
-  unsigned short h() const noexcept;
   bool closed() const noexcept;
   void poll_events() const noexcept;
   void clear() noexcept;
   void update() noexcept;
   void set_bg(unsigned char r, unsigned char g, unsigned char b) noexcept;
-  void draw(const IDrawable &drawable) noexcept;
   void toggle_cursor_visibility() noexcept;
-  void set_view_offsets(float x, float y) noexcept;
 
   void on_resize(const ResizeCallback &callback) noexcept;
   void on_cursor_move(const CursorMoveCallback &callback) noexcept;
@@ -36,7 +31,6 @@ public:
 
 private:
   GLFWwindow *_glHandle;
-  float _viewPosX = 0.0f, _viewPosY = 0.0f;
 };
 }
 

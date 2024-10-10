@@ -56,9 +56,9 @@ ProjectionMatrix::ProjectionMatrix(
     }) {
 }
 
-void ViewMatrix::translate(float x, float y) noexcept {
-  _data[0][3] += x;
-  _data[1][3] += y;
+void ViewMatrix::set_offset(float x, float y) noexcept {
+  _data[0][3] = x;
+  _data[1][3] = y;
 }
 
 float ViewMatrix::get_offset_x() const noexcept {

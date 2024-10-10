@@ -1,26 +1,24 @@
 #include "game/movement.hpp"
 
 namespace game {
-Movement::Movement(float sensitivity) noexcept : _kSensitivity(sensitivity) {
+Movement::Movement(float sensitivity) noexcept
+  : _kSensitivity(sensitivity), _offset() {
 }
 
-const gl::math::ViewMatrix &
-Movement::operator()(long long x, long long y) noexcept {
+const MovementOffset &Movement::operator()(long long x, long long y) noexcept {
   if (!_prevPosesInitialized) {
     _prevX                = x;
     _prevY                = y;
     _prevPosesInitialized = true;
   }
 
-  const float kXDiff = (x - _prevX) * _kSensitivity,
-              kYDiff = -(y - _prevY) * _kSensitivity;
-
-  _view.translate(kXDiff, kYDiff);
+  _offset.x += (x - _prevX) * _kSensitivity;
+  _offset.y += -(y - _prevY) * _kSensitivity;
 
   _prevX = x;
   _prevY = y;
 
-  return _view;
+  return _offset;
 }
 
 void Movement::set_next_origin() noexcept {

@@ -50,10 +50,10 @@ TEST(GlMath, ProjectionMatrixTest) {
   );
 }
 
-TEST(GlMath, ViewMatrixTranslateTest) {
+TEST(GlMath, ViewMatrixOffsetTest) {
   ViewMatrix mat;
 
-  mat.translate(0.5f, 0.5f);
+  mat.set_offset(0.5f, 0.5f);
   _assert_matrices(
     mat,
     {
@@ -68,48 +68,48 @@ TEST(GlMath, ViewMatrixTranslateTest) {
   ASSERT_EQ(mat.get_offset_x(), 0.5f);
   ASSERT_EQ(mat.get_offset_y(), 0.5f);
 
-  mat.translate(-0.5f, 0.5f);
+  mat.set_offset(-0.33f, 0.33f);
   _assert_matrices(
     mat,
     {
       // clang-format off
-      1.0f, 0.0f, 0.0f, 0.0f,
-      0.0f, 1.0f, 0.0f, 1.0f,
-      0.0f, 0.0f, 1.0f, 0.0f,
-      0.0f, 0.0f, 0.0f, 1.0f
+      1.0f, 0.0f, 0.0f, -0.33f,
+      0.0f, 1.0f, 0.0f,  0.33f,
+      0.0f, 0.0f, 1.0f,  0.0f,
+      0.0f, 0.0f, 0.0f,  1.0f
       // clang-format on
     }
   );
-  ASSERT_EQ(mat.get_offset_x(), 0.0f);
-  ASSERT_EQ(mat.get_offset_y(), 1.0f);
+  ASSERT_EQ(mat.get_offset_x(), -0.33f);
+  ASSERT_EQ(mat.get_offset_y(), 0.33f);
 
-  mat.translate(0.0f, -1.0f);
+  mat.set_offset(0.0f, -0.125f);
   _assert_matrices(
     mat,
     {
       // clang-format off
-      1.0f, 0.0f, 0.0f, 0.0f,
-      0.0f, 1.0f, 0.0f, 0.0f,
-      0.0f, 0.0f, 1.0f, 0.0f,
-      0.0f, 0.0f, 0.0f, 1.0f
+      1.0f, 0.0f, 0.0f,  0.0f,
+      0.0f, 1.0f, 0.0f, -0.125f,
+      0.0f, 0.0f, 1.0f,  0.0f,
+      0.0f, 0.0f, 0.0f,  1.0f
       // clang-format on
     }
   );
   ASSERT_EQ(mat.get_offset_x(), 0.0f);
-  ASSERT_EQ(mat.get_offset_y(), 0.0f);
+  ASSERT_EQ(mat.get_offset_y(), -0.125f);
 
-  mat.translate(0.0f, 0.0f);
+  mat.set_offset(-1.0f, -0.404f);
   _assert_matrices(
     mat,
     {
       // clang-format off
-      1.0f, 0.0f, 0.0f, 0.0f,
-      0.0f, 1.0f, 0.0f, 0.0f,
-      0.0f, 0.0f, 1.0f, 0.0f,
-      0.0f, 0.0f, 0.0f, 1.0f
+      1.0f, 0.0f, 0.0f, -1.0f,
+      0.0f, 1.0f, 0.0f, -0.404f,
+      0.0f, 0.0f, 1.0f,  0.0f,
+      0.0f, 0.0f, 0.0f,  1.0f
       // clang-format on
     }
   );
-  ASSERT_EQ(mat.get_offset_x(), 0.0f);
-  ASSERT_EQ(mat.get_offset_y(), 0.0f);
+  ASSERT_EQ(mat.get_offset_x(), -1.0f);
+  ASSERT_EQ(mat.get_offset_y(), -0.404f);
 }

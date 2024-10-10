@@ -18,12 +18,10 @@ World::~World() noexcept {
   delete[] _data;
 }
 
-void World::draw(
-  unsigned short winW, unsigned short winH, float viewPosX, float viewPosY
-) const noexcept {
+void World::draw(const core::Renderer &renderer) const noexcept {
   for (unsigned short i = 0; i < _kH; i++) {
     for (unsigned j = 0; j < _kW; j++) {
-      _data[i][j]->draw(winW, winH, viewPosX, viewPosY);
+      _data[i][j]->draw(renderer);
     }
   }
 }
