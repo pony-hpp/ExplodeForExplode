@@ -26,7 +26,7 @@ int main() {
     shaderProgram.projection(gl::math::ProjectionMatrix(w, h));
   });
 
-  game::Movement mv(win, 600.0f);
+  game::Movement mv(1.5f);
   bool rightBtnHeld = false;
   win.on_mouse_click(
     [&win, &rightBtnHeld](core::mouse::Button btn, core::mouse::Action action) {
