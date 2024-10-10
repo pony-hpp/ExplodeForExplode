@@ -30,8 +30,8 @@ const Matrix::_MatrixRow &Matrix::operator[](unsigned char y) const noexcept {
 }
 
 Matrix::operator const float *() const noexcept {
-  // We can safely cast _data (aka _MatrixRow[4]) because _MatrixHow takes 16
-  // bytes, which is 4 floats.
+  // We can safely cast _data (aka _MatrixRow[4]) to the float pointer because
+  // _MatrixHow takes 16 bytes, which is 4 floats.
   return (const float *)_data;
 }
 
