@@ -3,7 +3,7 @@
 #include "game/movement.hpp"
 #include "game/world.hpp"
 #include "game/world_generators/plain_world_generator.hpp"
-#include "opengl/math/matrix.hpp"
+#include "game/zooming.hpp"
 #include "opengl/shading/shader_program.hpp"
 
 int main() {
@@ -24,6 +24,9 @@ int main() {
   core::Renderer renderer(win, shaderProgram);
 
   game::Movement mv(1.5f);
+  game::Zooming zoom(0.15f, 0.5f, 5.5f);
+  game::MovementOffset mvOffset = {}, zoomOffset = {};
+
   bool rightBtnHeld = false;
   win.on_mouse_click(
     [&win, &rightBtnHeld](core::mouse::Button btn, core::mouse::Action action) {
@@ -37,15 +40,34 @@ int main() {
     }
   }
   );
-  win.on_cursor_move([&renderer, &shaderProgram, &mv,
+  win.on_cursor_move([&renderer, &shaderProgram, &mv, &mvOffset, &zoomOffset,
                       &rightBtnHeld](long long x, long long y) {
     if (rightBtnHeld) {
       const game::MovementOffset &kOffset = mv(x, y);
-      renderer.view.set_offset(kOffset.x, kOffset.y);
+
+      mvOffset = kOffset;
+      renderer.view.set_offset(
+        zoomOffset.x + kOffset.x, zoomOffset.y + kOffset.y
+      );
+
       shaderProgram.view(renderer.view);
     } else {
       mv.set_next_origin();
     }
+  });
+
+  win.on_scroll([&win, &renderer, &shaderProgram, &zoom, &zoomOffset,
+                 &mvOffset](bool up) {
+    const game::Zoom &kZoom =
+      zoom(-mvOffset.x + win.cursor_x(), -mvOffset.y + win.cursor_y(), up);
+
+    zoomOffset = {kZoom.offsetX, kZoom.offsetY};
+    renderer.view.set_scale(kZoom.scale);
+    renderer.view.set_offset(
+      mvOffset.x + kZoom.offsetX, mvOffset.y + kZoom.offsetY
+    );
+
+    shaderProgram.view(renderer.view);
   });
 
   game::PlainWorldGeneratorSettings worldSettings;
@@ -53,7 +75,7 @@ int main() {
   worldSettings.layers.push_back({game::blocks::GRASS_BLOCK, 1});
   worldSettings.layers.push_back({game::blocks::EARTH_BLOCK, 34});
   worldSettings.layers.push_back({game::blocks::STONE_BLOCK, 65});
-  game::PlainWorldGenerator worldGen(std::move(worldSettings));
+  game::PlainWorldGenerator worldGen(worldSettings);
 
   core::PngDecoder pngDecoder;
   game::World world = worldGen();

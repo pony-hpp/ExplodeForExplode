@@ -12,39 +12,40 @@ static void _assert_matrices(const Matrix &mat1, const Matrix &mat2) noexcept {
   }
 }
 
+static void _assert_projection(
+  float maxX, float maxY, float expectedScaleX, float expectedScaleY
+) noexcept {
+  _assert_matrices(
+    ProjectionMatrix(maxX, maxY),
+    {
+      // clang-format off
+      expectedScaleX, 0.0f,           0.0f, -1.0f,
+      0.0f,           expectedScaleY, 0.0f, -1.0f,
+      0.0f,           0.0f,           1.0f,  0.0f,
+      0.0f,           0.0f,           0.0f,  1.0f
+      // clang-format on
+    }
+  );
+}
+
 TEST(GlMath, ProjectionMatrixTest) {
-  _assert_matrices(
-    ProjectionMatrix(40, 40),
-    {
-      // clang-format off
-      0.05f, 0.0f,  0.0f, -1.0f,
-      0.0f,  0.05f, 0.0f, -1.0f,
-      0.0f,  0.0f,  1.0f,  0.0f,
-      0.0f,  0.0f,  0.0f,  1.0f
-      // clang-format on
-    }
-  );
+  _assert_projection(40, 40, 0.05f, 0.05f);
+  _assert_projection(800, 600, 0.0025f, 0.0033f);
+  _assert_projection(750, 1334, 0.0026f, 0.0014f);
+}
 
+static void _assert_offset(ViewMatrix &mat, float x, float y) noexcept {
+  mat.set_offset(x, y);
+  ASSERT_EQ(mat.get_offset_x(), x);
+  ASSERT_EQ(mat.get_offset_y(), y);
   _assert_matrices(
-    ProjectionMatrix(800, 600),
+    mat,
     {
       // clang-format off
-      0.0025f, 0.0f,   0.0f, -1.0f,
-      0.0f,   0.0033f, 0.0f, -1.0f,
-      0.0f,   0.0f,    1.0f,  0.0f,
-      0.0f,   0.0f,    0.0f,  1.0f
-      // clang-format on
-    }
-  );
-
-  _assert_matrices(
-    ProjectionMatrix(750, 1334),
-    {
-      // clang-format off
-      0.0026f, 0.0f,  0.0f, -1.0f,
-      0.0f,  0.0014f, 0.0f, -1.0f,
-      0.0f,  0.0f,  1.0f,  0.0f,
-      0.0f,  0.0f,  0.0f,  1.0f
+      1.0f, 0.0f, 0.0f, x,
+      0.0f, 1.0f, 0.0f, y,
+      0.0f, 0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f
       // clang-format on
     }
   );
@@ -52,64 +53,39 @@ TEST(GlMath, ProjectionMatrixTest) {
 
 TEST(GlMath, ViewMatrixOffsetTest) {
   ViewMatrix mat;
+  _assert_offset(mat, 0.5f, 0.5f);
+  _assert_offset(mat, -0.5f, 0.5f);
+  _assert_offset(mat, 0.5f, -0.5f);
+  _assert_offset(mat, -0.5f, -0.5f);
+  _assert_offset(mat, 0.0f, 0.0f);
+  _assert_offset(mat, 1.0f, 0.0f);
+  _assert_offset(mat, .0f, 1.0f);
+  _assert_offset(mat, 1.0f, 1.0f);
+}
 
-  mat.set_offset(0.5f, 0.5f);
+static void _assert_scale(ViewMatrix &mat, float scale) noexcept {
+  mat.set_scale(scale);
+  ASSERT_EQ(mat.get_scale(), scale);
   _assert_matrices(
     mat,
     {
       // clang-format off
-      1.0f, 0.0f, 0.0f, 0.5f,
-      0.0f, 1.0f, 0.0f, 0.5f,
-      0.0f, 0.0f, 1.0f, 0.0f,
-      0.0f, 0.0f, 0.0f, 1.0f
+      scale, 0.0f,  0.0f, 0.0f,
+      0.0f,  scale, 0.0f, 0.0f,
+      0.0f,  0.0f,  1.0f, 0.0f,
+      0.0f,  0.0f,  0.0f, 1.0f
       // clang-format on
     }
   );
-  ASSERT_EQ(mat.get_offset_x(), 0.5f);
-  ASSERT_EQ(mat.get_offset_y(), 0.5f);
+}
 
-  mat.set_offset(-0.33f, 0.33f);
-  _assert_matrices(
-    mat,
-    {
-      // clang-format off
-      1.0f, 0.0f, 0.0f, -0.33f,
-      0.0f, 1.0f, 0.0f,  0.33f,
-      0.0f, 0.0f, 1.0f,  0.0f,
-      0.0f, 0.0f, 0.0f,  1.0f
-      // clang-format on
-    }
-  );
-  ASSERT_EQ(mat.get_offset_x(), -0.33f);
-  ASSERT_EQ(mat.get_offset_y(), 0.33f);
-
-  mat.set_offset(0.0f, -0.125f);
-  _assert_matrices(
-    mat,
-    {
-      // clang-format off
-      1.0f, 0.0f, 0.0f,  0.0f,
-      0.0f, 1.0f, 0.0f, -0.125f,
-      0.0f, 0.0f, 1.0f,  0.0f,
-      0.0f, 0.0f, 0.0f,  1.0f
-      // clang-format on
-    }
-  );
-  ASSERT_EQ(mat.get_offset_x(), 0.0f);
-  ASSERT_EQ(mat.get_offset_y(), -0.125f);
-
-  mat.set_offset(-1.0f, -0.404f);
-  _assert_matrices(
-    mat,
-    {
-      // clang-format off
-      1.0f, 0.0f, 0.0f, -1.0f,
-      0.0f, 1.0f, 0.0f, -0.404f,
-      0.0f, 0.0f, 1.0f,  0.0f,
-      0.0f, 0.0f, 0.0f,  1.0f
-      // clang-format on
-    }
-  );
-  ASSERT_EQ(mat.get_offset_x(), -1.0f);
-  ASSERT_EQ(mat.get_offset_y(), -0.404f);
+TEST(GlMath, ViewMatrixScaleTest) {
+  ViewMatrix mat;
+  _assert_scale(mat, 0.5f);
+  _assert_scale(mat, 0.0f);
+  _assert_scale(mat, -0.5f);
+  _assert_scale(mat, 1.0f);
+  _assert_scale(mat, -1.0f);
+  _assert_scale(mat, 0.25f);
+  _assert_scale(mat, -0.25f);
 }
