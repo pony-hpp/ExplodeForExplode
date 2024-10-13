@@ -60,7 +60,7 @@ TEST(PlainWorldGenerator, Generate_100x100_WorldTest) {
   }
 }
 
-TEST(PlainWorldGenerator, BlocksLayersWorldTest) {
+TEST(PlainWorldGenerator, BlockLayersTest) {
   game::PlainWorldGeneratorSettings settings;
   settings.w = 1;
   settings.layers.push_back({game::blocks::EARTH_BLOCK, 0});
