@@ -35,9 +35,12 @@ public:
 
 class ViewMatrix final : public Matrix {
 public:
-  void set_offset(float x, float y) noexcept;
   float get_offset_x() const noexcept;
   float get_offset_y() const noexcept;
+  void set_offset(float x, float y) noexcept;
+
+  float get_scale() const noexcept;
+  void set_scale(float v) noexcept;
 };
 }
 

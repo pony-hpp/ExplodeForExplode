@@ -12,6 +12,7 @@ public:
   using ResizeCallback = std::function<void(unsigned short, unsigned short)>;
   using CursorMoveCallback = std::function<void(long long, long long)>;
   using MouseClickCallback = std::function<void(mouse::Button, mouse::Action)>;
+  using ScrollCallback     = std::function<void(bool)>;
 
   explicit Window(
     unsigned short w, unsigned short h, const char *title
@@ -23,11 +24,14 @@ public:
   void clear() noexcept;
   void update() noexcept;
   void set_bg(unsigned char r, unsigned char g, unsigned char b) noexcept;
+  unsigned short cursor_x() const noexcept;
+  unsigned short cursor_y() const noexcept;
   void toggle_cursor_visibility() noexcept;
 
   void on_resize(const ResizeCallback &callback) noexcept;
   void on_cursor_move(const CursorMoveCallback &callback) noexcept;
   void on_mouse_click(const MouseClickCallback &callback) noexcept;
+  void on_scroll(const ScrollCallback &callback) noexcept;
 
 private:
   GLFWwindow *_glHandle;

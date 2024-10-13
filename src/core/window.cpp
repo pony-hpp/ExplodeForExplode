@@ -1,11 +1,14 @@
 #include "core/window.hpp"
 #include "opengl/ctx.hpp"
 
-static core::Window::ResizeCallback _resizeCallback;
-static core::Window::CursorMoveCallback _cursorMoveCallback;
-static core::Window::MouseClickCallback _mouseClickCallback;
+#include <cmath>
 
 namespace core {
+static Window::ResizeCallback _resizeCallback;
+static Window::CursorMoveCallback _cursorMoveCallback;
+static Window::MouseClickCallback _mouseClickCallback;
+static Window::ScrollCallback _scrollCallback;
+
 Window::Window(unsigned short w, unsigned short h, const char *title) noexcept {
   glfwInit();
 
@@ -46,6 +49,20 @@ void Window::set_bg(
   glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
 }
 
+unsigned short Window::cursor_x() const noexcept {
+  double x;
+  glfwGetCursorPos(_glHandle, &x, nullptr);
+  return fmax(0, x); // Convert negative values to 0.
+}
+
+unsigned short Window::cursor_y() const noexcept {
+  int h;
+  glfwGetWindowSize(_glHandle, nullptr, &h);
+  double y;
+  glfwGetCursorPos(_glHandle, nullptr, &y);
+  return fmax(0, h - y);
+}
+
 void Window::toggle_cursor_visibility() noexcept {
   if (glfwGetInputMode(_glHandle, GLFW_CURSOR) == GLFW_CURSOR_NORMAL) {
     glfwSetInputMode(_glHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -83,5 +100,17 @@ void Window::on_mouse_click(const MouseClickCallback &callback) noexcept {
     );
   }
   _mouseClickCallback = callback;
+}
+
+void Window::on_scroll(const ScrollCallback &callback) noexcept {
+  if (!_scrollCallback) {
+    glfwSetScrollCallback(_glHandle, [](GLFWwindow *, double, double y) {
+      if ((char)y == 0) {
+        return;
+      }
+      _scrollCallback(y > 0.0f);
+    });
+  }
+  _scrollCallback = callback;
 }
 }

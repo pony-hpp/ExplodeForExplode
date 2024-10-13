@@ -41,10 +41,14 @@ Block::~Block() noexcept {
 }
 
 void Block::draw(const core::Renderer &renderer) const noexcept {
-  if (_x * SIZE + renderer.view.get_offset_x() >= -SIZE &&
-      _x * SIZE + renderer.view.get_offset_x() <= renderer.viewportW() &&
-      _y * SIZE + renderer.view.get_offset_y() >= -SIZE &&
-      _y * SIZE + renderer.view.get_offset_y() <= renderer.viewportH()) {
+  const float kViewXBlockCoord = _x * renderer.view.get_scale() * SIZE +
+                                 renderer.view.get_offset_x(),
+              kViewYBlockCoord = _y * renderer.view.get_scale() * SIZE +
+                                 renderer.view.get_offset_y();
+  if (kViewXBlockCoord >= -SIZE * renderer.view.get_scale() &&
+      kViewXBlockCoord <= renderer.viewportW() &&
+      kViewYBlockCoord >= -SIZE * renderer.view.get_scale() &&
+      kViewYBlockCoord <= renderer.viewportH()) {
     glBindTexture(GL_TEXTURE_2D, _tex);
     glBindVertexArray(_vao);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
