@@ -23,7 +23,7 @@ WorldData &PlainWorldGenerator::operator()() noexcept {
     if (nextLayerRemained == 0) {
       curLayer--;
       nextLayerRemained = _kSettings.layers[curLayer].h;
-      if (_kSettings.layers[curLayer].h == 0) { // Ignore layers with 0 height
+      if (_kSettings.layers[curLayer].h == 0) { // Ignore layers with 0 height.
         i--;
         continue;
       }
