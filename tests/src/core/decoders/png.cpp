@@ -1,4 +1,5 @@
 #include "core/decoders/png.hpp"
+#include "core/exception.hpp"
 
 #include <gtest/gtest.h>
 
@@ -62,4 +63,14 @@ TEST(PngDecoder, DecodeRgb_3x7_Test) {
     // clang-format on
   };
   _assert_png(decode("../tests/assets/rgb_3x7.png"), 3, 7, EXPECTED_DATA);
+}
+
+TEST(PngDecoder, FopenCheckTest) {
+  ASSERT_THROW(decode("../tests/assets/nonexistent.png"), core::FopenException);
+}
+
+TEST(PngDecoder, CorruptedPngCheckTest) {
+  ASSERT_THROW(
+    decode("../tests/assets/corrupted.png"), core::CorruptedPngException
+  );
 }

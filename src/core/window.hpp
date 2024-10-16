@@ -2,11 +2,17 @@
 #define _WINDOW_HPP_
 
 #include "core/input/mouse.hpp"
+#include "core/logger.hpp"
 #include "opengl/opengl.hpp" // IWYU pragma: keep
 
 #include <functional>
+#include <string>
 
 namespace core {
+struct WindowCreationException {
+  const std::string msg;
+};
+
 class Window final {
 public:
   using ResizeCallback = std::function<void(unsigned short, unsigned short)>;
@@ -19,6 +25,7 @@ public:
   ) noexcept;
   ~Window() noexcept;
 
+  void create();
   bool closed() const noexcept;
   void poll_events() const noexcept;
   void clear() noexcept;
@@ -34,7 +41,13 @@ public:
   void on_scroll(const ScrollCallback &callback) noexcept;
 
 private:
-  GLFWwindow *_glHandle;
+  const unsigned short _kInitW, _kInitH;
+  const char *_kInitTitle;
+  GLFWwindow *_glHandle = nullptr;
+  Logger _logger;
+  bool _glfwInitialized = false;
+
+  const char *_glfw_err() const noexcept;
 };
 }
 

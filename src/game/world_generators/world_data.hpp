@@ -12,7 +12,8 @@ public:
   const unsigned w;
   const unsigned short h;
 
-  BlockData *operator[](unsigned short y) const noexcept;
+  BlockData *operator[](unsigned short y) noexcept;
+  const BlockData *operator[](unsigned short y) const noexcept;
 
 private:
   BlockData **_data;

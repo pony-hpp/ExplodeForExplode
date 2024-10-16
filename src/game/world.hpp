@@ -4,8 +4,11 @@
 #include "blocks/block.hpp"
 #include "core/decoders/png.hpp"
 #include "core/drawable.hpp"
+#include "core/logger.hpp"
 #include "core/renderer.hpp"
 #include "game/world_generators/world_data.hpp"
+
+#include <memory>
 
 namespace game {
 class World final : public core::IDrawable {
@@ -18,9 +21,10 @@ public:
   void load_textures(core::PngDecoder &pngDecoder) noexcept;
 
 private:
-  std::unique_ptr<Block> **_data;
   const unsigned _kW;
   const unsigned short _kH;
+  std::unique_ptr<Block> **_data;
+  core::Logger _logger;
 };
 }
 

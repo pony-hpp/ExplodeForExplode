@@ -15,7 +15,11 @@ WorldData::~WorldData() noexcept {
   delete[] _data;
 }
 
-BlockData *WorldData::operator[](unsigned short y) const noexcept {
+BlockData *WorldData::operator[](unsigned short y) noexcept {
+  return _data[y];
+}
+
+const BlockData *WorldData::operator[](unsigned short y) const noexcept {
   return _data[y];
 }
 }

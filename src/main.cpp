@@ -1,3 +1,4 @@
+#include "core/logger.hpp"
 #include "core/renderer.hpp"
 #include "core/window.hpp"
 #include "game/movement.hpp"
@@ -7,18 +8,32 @@
 #include "opengl/shading/shader_program.hpp"
 
 int main() {
+  core::Logger logger("Game");
+  logger.info_fmt("Welcome to Explode for Explode %s!", EFE_VERSION);
+
   core::Window win(1024, 768, "Explode for Explode");
+  try {
+    win.create();
+  } catch (const core::WindowCreationException &e) {
+    logger.critical_fmt("The window couldn't be created: %s.", e.msg.c_str());
+    return 1;
+  };
 
   gl::VertexShader vs;
-  vs.load("../assets/shaders/shader.vs");
-  vs.compile();
   gl::FragmentShader fs;
-  fs.load("../assets/shaders/shader.fs");
-  fs.compile();
   gl::ShaderProgram shaderProgram;
-  shaderProgram.add(vs);
-  shaderProgram.add(fs);
-  shaderProgram.link();
+  try {
+    vs.load("../assets/shaders/shader.vs");
+    vs.compile();
+    fs.load("../assets/shaders/shader.fs");
+    fs.compile();
+    shaderProgram.add(vs);
+    shaderProgram.add(fs);
+    shaderProgram.link();
+  } catch (...) {
+    logger.critical("The shaders couldn't be compiled.");
+    return 1;
+  }
   shaderProgram.use();
 
   core::Renderer renderer(win, shaderProgram);
@@ -74,6 +89,7 @@ int main() {
   worldSettings.w = 200;
   worldSettings.layers.push_back({game::blocks::GRASS_BLOCK, 1});
   worldSettings.layers.push_back({game::blocks::EARTH_BLOCK, 34});
+  worldSettings.layers.push_back({game::blocks::DEFAULT_BLOCK, 1});
   worldSettings.layers.push_back({game::blocks::STONE_BLOCK, 65});
   game::PlainWorldGenerator worldGen(worldSettings);
 
@@ -89,5 +105,6 @@ int main() {
     win.update();
   }
 
+  logger.info("Goodbye!");
   return 0;
 }

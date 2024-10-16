@@ -8,6 +8,7 @@ project(
 )
 
 add_compile_options(-Wextra -Wpedantic -Werror)
+add_compile_definitions(EFE_VERSION="${PROJECT_VERSION}")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 

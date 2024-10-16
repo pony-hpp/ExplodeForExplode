@@ -9,22 +9,74 @@ static Window::CursorMoveCallback _cursorMoveCallback;
 static Window::MouseClickCallback _mouseClickCallback;
 static Window::ScrollCallback _scrollCallback;
 
-Window::Window(unsigned short w, unsigned short h, const char *title) noexcept {
-  glfwInit();
-
-  _glHandle = glfwCreateWindow(w, h, title, nullptr, nullptr);
-  for (const std::pair<int, int> &hint : gl::CTX) {
-    glfwWindowHint(hint.first, hint.second);
-  }
-  glfwMakeContextCurrent(_glHandle);
-
-  glewExperimental = true;
-  glewInit();
+Window::Window(unsigned short w, unsigned short h, const char *title) noexcept
+  : _kInitW(w), _kInitH(h), _kInitTitle(title), _logger("Window") {
 }
 
 Window::~Window() noexcept {
-  glfwDestroyWindow(_glHandle);
-  glfwTerminate();
+  if (!_glHandle && !_glfwInitialized) {
+    return;
+  }
+
+  if (_glHandle) {
+    glfwDestroyWindow(_glHandle);
+  }
+  if (_glfwInitialized) {
+    glfwTerminate();
+  }
+}
+
+void Window::create() {
+  _logger.set_section("Create");
+
+  _logger.info_fmt(
+    "Creating %ux%u window with title \"%s\"", _kInitW, _kInitH, _kInitTitle
+  );
+
+  if (glfwInit() != 1) {
+    const char *kErr = _glfw_err();
+    _logger.error_fmt("Failed to initialize GLFW! %s.", kErr);
+    throw WindowCreationException {kErr};
+  } else {
+    _glfwInitialized = true;
+  }
+
+  _logger.info("Window successfully created; initializing graphics");
+  _glHandle = glfwCreateWindow(_kInitW, _kInitH, _kInitTitle, nullptr, nullptr);
+  if (!_glHandle) {
+    const char *kErr = _glfw_err();
+    _logger.error_fmt("Failed to create window! %s.", kErr);
+    throw WindowCreationException {kErr};
+  }
+
+  _logger.debug("Received these OpenGL initialization parameters:");
+  for (const std::pair<int, int> &param : gl::CTX) {
+    if (param.first == GLFW_OPENGL_PROFILE) {
+      _logger.debug_fmt(
+        "    %s: %s", gl::glfw_const_to_str(param.second),
+        gl::glfw_const_to_str(param.first)
+      );
+    } else {
+      _logger.debug_fmt(
+        "    %s: %i", gl::glfw_const_to_str(param.first), param.second
+      );
+    }
+    glfwWindowHint(param.first, param.second);
+  }
+  glfwMakeContextCurrent(_glHandle);
+
+  _logger.debug("Initializing GLEW");
+  glewExperimental       = true;
+  const int kGlewInitErr = glewInit();
+  if (kGlewInitErr != 0) {
+    const unsigned char *msg = glewGetErrorString(kGlewInitErr);
+    _logger.error_fmt(
+      "Failed to initialize GLEW! %s (code: %i).", msg, kGlewInitErr
+    );
+    throw WindowCreationException {"Failed to initialize OpenGL (GLEW)"};
+  }
+  _logger.info_fmt("OpenGL version: %s.", glGetString(GL_VERSION));
+  _logger.info("Graphics successfully initialized; the window is created.");
 }
 
 bool Window::closed() const noexcept {
@@ -46,6 +98,10 @@ void Window::update() noexcept {
 void Window::set_bg(
   unsigned char r, unsigned char g, unsigned char b
 ) noexcept {
+  _logger.set_section("");
+  _logger.info_fmt(
+    "Setting window background color, where R=%u, G=%u, B=%u", r, g, b
+  );
   glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
 }
 
@@ -72,6 +128,8 @@ void Window::toggle_cursor_visibility() noexcept {
 }
 
 void Window::on_resize(const ResizeCallback &callback) noexcept {
+  _logger.set_section("");
+  _logger.debug("Setting resize callback");
   if (!_resizeCallback) {
     glfwSetWindowSizeCallback(_glHandle, [](GLFWwindow *, int w, int h) {
       glViewport(0, 0, w, h);
@@ -82,6 +140,8 @@ void Window::on_resize(const ResizeCallback &callback) noexcept {
 }
 
 void Window::on_cursor_move(const CursorMoveCallback &callback) noexcept {
+  _logger.set_section("");
+  _logger.debug("Setting cursor movement callback");
   if (!_cursorMoveCallback) {
     glfwSetCursorPosCallback(_glHandle, [](GLFWwindow *, double x, double y) {
       _cursorMoveCallback(x, y);
@@ -91,6 +151,8 @@ void Window::on_cursor_move(const CursorMoveCallback &callback) noexcept {
 }
 
 void Window::on_mouse_click(const MouseClickCallback &callback) noexcept {
+  _logger.set_section("");
+  _logger.debug("Setting mouse click callback");
   if (!_mouseClickCallback) {
     glfwSetMouseButtonCallback(
       _glHandle,
@@ -103,6 +165,8 @@ void Window::on_mouse_click(const MouseClickCallback &callback) noexcept {
 }
 
 void Window::on_scroll(const ScrollCallback &callback) noexcept {
+  _logger.set_section("");
+  _logger.debug("Setting mouse scroll callback");
   if (!_scrollCallback) {
     glfwSetScrollCallback(_glHandle, [](GLFWwindow *, double, double y) {
       if ((char)y == 0) {
@@ -112,5 +176,11 @@ void Window::on_scroll(const ScrollCallback &callback) noexcept {
     });
   }
   _scrollCallback = callback;
+}
+
+const char *Window::_glfw_err() const noexcept {
+  const char *res;
+  glfwGetError(&res);
+  return res;
 }
 }
