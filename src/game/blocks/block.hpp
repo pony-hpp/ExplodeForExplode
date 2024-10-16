@@ -25,7 +25,7 @@ public:
   virtual const char *texture() const noexcept = 0;
 
   void set_pos(int x, int y) noexcept;
-  void load_texture(core::PngDecoder &pngDecoder) noexcept;
+  void load_texture(core::PngDecoder &pngDecoder);
 
 private:
   int _x, _y;
@@ -34,6 +34,8 @@ private:
   unsigned _tex;
   unsigned _texCoordsVbo;
   unsigned _vao;
+
+  void _load_default_tex() noexcept;
 };
 }
 

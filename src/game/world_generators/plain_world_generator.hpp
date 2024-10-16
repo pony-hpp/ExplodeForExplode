@@ -1,21 +1,17 @@
 #ifndef _PLAIN_WORLD_GENERATOR_HPP_
 #define _PLAIN_WORLD_GENERATOR_HPP_
 
+#include "core/logger.hpp"
 #include "game/blocks/block_id.hpp"
 #include "game/world_generators/world_data.hpp"
 
 #include <vector>
 
 namespace game {
-struct BlocksLayer {
-  blocks::BlockId block;
-  unsigned short h;
-};
-
 class PlainWorldGeneratorSettings final {
 public:
   unsigned w;
-  std::vector<BlocksLayer> layers;
+  std::vector<std::pair<blocks::BlockId, unsigned short>> layers;
 
   unsigned short h() const noexcept;
 
@@ -33,6 +29,7 @@ public:
 private:
   const PlainWorldGeneratorSettings &_kSettings;
   WorldData _world;
+  core::Logger _logger;
 };
 }
 

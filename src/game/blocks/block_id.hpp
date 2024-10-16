@@ -8,6 +8,8 @@ enum BlockId : unsigned char {
   EARTH_BLOCK,
   STONE_BLOCK
 };
+
+extern const char *id_to_str(BlockId id) noexcept;
 }
 
 #endif

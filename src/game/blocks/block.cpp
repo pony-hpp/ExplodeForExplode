@@ -98,7 +98,7 @@ void Block::set_pos(int x, int y) noexcept {
   glVertexAttribPointer(0, 2, GL_INT, false, 0, nullptr);
 }
 
-void Block::load_texture(core::PngDecoder &pngDecoder) noexcept {
+void Block::load_texture(core::PngDecoder &pngDecoder) {
   glBindBuffer(GL_ARRAY_BUFFER, _texCoordsVbo);
   glBufferData(
     GL_ARRAY_BUFFER, sizeof(_TEX_COORDS), _TEX_COORDS, GL_STATIC_DRAW
@@ -108,19 +108,26 @@ void Block::load_texture(core::PngDecoder &pngDecoder) noexcept {
 
   glBindTexture(GL_TEXTURE_2D, _tex);
   if (strcmp(texture(), "") != 0) {
-    core::Png &tex = pngDecoder(texture());
-    glTexImage2D(
-      GL_TEXTURE_2D, 0, GL_RGBA, tex.w, tex.h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-      tex.data.get()
-    );
+    try {
+      core::Png &tex = pngDecoder(texture());
+      glTexImage2D(
+        GL_TEXTURE_2D, 0, GL_RGBA, tex.w, tex.h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+        tex.data.get()
+      );
+    } catch (...) {
+      _load_default_tex();
+    }
   } else {
-    glTexImage2D(
-      GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-      _FALLBACK_TEX
-    );
+    _load_default_tex();
   }
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+void Block::_load_default_tex() noexcept {
+  glTexImage2D(
+    GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, _FALLBACK_TEX
+  );
 }
 }
