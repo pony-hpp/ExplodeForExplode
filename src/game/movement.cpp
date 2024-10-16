@@ -5,7 +5,7 @@ Movement::Movement(float sensitivity) noexcept
   : _kSensitivity(sensitivity), _offset() {
 }
 
-const MovementOffset &Movement::operator()(long long x, long long y) noexcept {
+void Movement::operator()(long long x, long long y) noexcept {
   if (!_prevPosesInitialized) {
     _prevX                = x;
     _prevY                = y;
@@ -17,7 +17,9 @@ const MovementOffset &Movement::operator()(long long x, long long y) noexcept {
 
   _prevX = x;
   _prevY = y;
+}
 
+const MovementOffset &Movement::get() const noexcept {
   return _offset;
 }
 

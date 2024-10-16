@@ -58,11 +58,11 @@ int main() {
   win.on_cursor_move([&renderer, &shaderProgram, &mv, &mvOffset, &zoomOffset,
                       &rightBtnHeld](long long x, long long y) {
     if (rightBtnHeld) {
-      const game::MovementOffset &kOffset = mv(x, y);
+      mv(x, y);
 
-      mvOffset = kOffset;
+      mvOffset = mv.get();
       renderer.view.set_offset(
-        zoomOffset.x + kOffset.x, zoomOffset.y + kOffset.y
+        zoomOffset.x + mv.get().x, zoomOffset.y + mv.get().y
       );
 
       shaderProgram.view(renderer.view);
@@ -73,13 +73,12 @@ int main() {
 
   win.on_scroll([&win, &renderer, &shaderProgram, &zoom, &zoomOffset,
                  &mvOffset](bool up) {
-    const game::Zoom &kZoom =
-      zoom(-mvOffset.x + win.cursor_x(), -mvOffset.y + win.cursor_y(), up);
+    zoom(-mvOffset.x + win.cursor_x(), -mvOffset.y + win.cursor_y(), up);
 
-    zoomOffset = {kZoom.offsetX, kZoom.offsetY};
-    renderer.view.set_scale(kZoom.scale);
+    zoomOffset = {zoom.get().offsetX, zoom.get().offsetY};
+    renderer.view.set_scale(zoom.get().scale);
     renderer.view.set_offset(
-      mvOffset.x + kZoom.offsetX, mvOffset.y + kZoom.offsetY
+      mvOffset.x + zoom.get().offsetX, mvOffset.y + zoom.get().offsetY
     );
 
     shaderProgram.view(renderer.view);

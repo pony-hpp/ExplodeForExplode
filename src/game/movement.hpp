@@ -10,7 +10,8 @@ class Movement final {
 public:
   explicit Movement(float sensitivity) noexcept;
 
-  const MovementOffset &operator()(long long x, long long y) noexcept;
+  void operator()(long long x, long long y) noexcept;
+  const MovementOffset &get() const noexcept;
   void set_next_origin() noexcept;
 
 private:
