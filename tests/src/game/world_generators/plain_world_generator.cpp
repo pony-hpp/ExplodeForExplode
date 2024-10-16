@@ -18,7 +18,7 @@ TEST(PlainWorldGenerator, Generate_1x100_WorldTest) {
   settings.layers.push_back({game::blocks::DEFAULT_BLOCK, 1});
 
   game::PlainWorldGenerator worldGen(settings);
-  game::WorldData &world = worldGen();
+  const game::WorldData &world = worldGen();
 
   for (unsigned char i = 0; i < 100; i++) {
     ASSERT_EQ(world[0][i].x, i);
@@ -34,7 +34,7 @@ TEST(PlainWorldGenerator, Generate_100x1_WorldTest) {
   settings.layers.push_back({game::blocks::DEFAULT_BLOCK, 25});
 
   game::PlainWorldGenerator worldGen(settings);
-  game::WorldData &world = worldGen();
+  const game::WorldData &world = worldGen();
 
   for (unsigned char i = 0; i < 100; i++) {
     ASSERT_EQ(world[i][0].x, 0);
@@ -50,7 +50,7 @@ TEST(PlainWorldGenerator, Generate_100x100_WorldTest) {
   settings.layers.push_back({game::blocks::GRASS_BLOCK, 30});
 
   game::PlainWorldGenerator worldGen(settings);
-  game::WorldData &world = worldGen();
+  const game::WorldData &world = worldGen();
 
   for (unsigned char i = 0; i < 100; i++) {
     for (unsigned char j = 0; j < 100; j++) {
@@ -76,7 +76,7 @@ TEST(PlainWorldGenerator, BlockLayersTest) {
   settings.layers.push_back({game::blocks::DEFAULT_BLOCK, 10});
 
   game::PlainWorldGenerator worldGen(settings);
-  game::WorldData &world = worldGen();
+  const game::WorldData &world = worldGen();
 
   constexpr game::blocks::BlockId EXPECTED_BLOCKS[] = {
     // clang-format off
