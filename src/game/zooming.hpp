@@ -11,7 +11,8 @@ class Zooming final {
 public:
   Zooming(float sensitivity, float min, float max) noexcept;
 
-  Zoom &operator()(int pointX, int pointY, bool scale) noexcept;
+  void operator()(int pointX, int pointY, bool scale) noexcept;
+  const Zoom &get() const noexcept;
 
 private:
   const float _kSensitivity, _kMin, _kMax;
