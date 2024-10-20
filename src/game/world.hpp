@@ -13,8 +13,7 @@
 namespace game {
 class World final : public core::IDrawable {
 public:
-  World(const WorldData &data) noexcept;
-  ~World() noexcept;
+  World(const WorldData &worldData) noexcept;
 
   void draw(const core::Renderer &renderer) const noexcept override;
 
@@ -23,7 +22,8 @@ public:
 private:
   const unsigned _kW;
   const unsigned short _kH;
-  std::unique_ptr<Block> **_data;
+  const unsigned long long _kBlockCount;
+  std::unique_ptr<std::unique_ptr<Block>[]> _data;
   core::Logger _logger;
 };
 }

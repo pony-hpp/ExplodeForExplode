@@ -7,6 +7,7 @@ namespace game {
 struct BlockData {
   blocks::BlockId id;
   int x, y;
+  bool enabled = false;
 };
 }
 

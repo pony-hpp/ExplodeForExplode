@@ -19,6 +19,7 @@ public:
   void error_fmt(const char *msg, ...) noexcept;
   void critical(const char *msg) noexcept;
   void critical_fmt(const char *msg, ...) noexcept;
+  void progress(const char *msg) noexcept;
   void progress_fmt(const char *msg, ...) noexcept;
 
 private:
