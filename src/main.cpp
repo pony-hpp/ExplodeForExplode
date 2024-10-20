@@ -7,6 +7,8 @@
 #include "game/zooming.hpp"
 #include "opengl/shading/shader_program.hpp"
 
+#include <random>
+
 int main() {
   core::Logger logger("Game");
   logger.info_fmt("Welcome to Explode for Explode %s!", EFE_VERSION);
@@ -40,7 +42,6 @@ int main() {
 
   game::Movement mv(1.5f);
   game::Zooming zoom(0.15f, 0.5f, 5.5f);
-  game::MovementOffset mvOffset = {}, zoomOffset = {};
 
   bool rightBtnHeld = false;
   win.on_mouse_click(
@@ -55,14 +56,13 @@ int main() {
     }
   }
   );
-  win.on_cursor_move([&renderer, &shaderProgram, &mv, &mvOffset, &zoomOffset,
+  win.on_cursor_move([&renderer, &shaderProgram, &mv, &zoom,
                       &rightBtnHeld](long long x, long long y) {
     if (rightBtnHeld) {
       mv(x, y);
 
-      mvOffset = mv.get();
       renderer.view.set_offset(
-        zoomOffset.x + mv.get().x, zoomOffset.y + mv.get().y
+        zoom.get().offsetX + mv.get().x, zoom.get().offsetY + mv.get().y
       );
 
       shaderProgram.view(renderer.view);
@@ -71,14 +71,12 @@ int main() {
     }
   });
 
-  win.on_scroll([&win, &renderer, &shaderProgram, &zoom, &zoomOffset,
-                 &mvOffset](bool up) {
-    zoom(-mvOffset.x + win.cursor_x(), -mvOffset.y + win.cursor_y(), up);
+  win.on_scroll([&win, &renderer, &shaderProgram, &zoom, &mv](bool up) {
+    zoom(-mv.get().x + win.cursor_x(), -mv.get().y + win.cursor_y(), up);
 
-    zoomOffset = {zoom.get().offsetX, zoom.get().offsetY};
     renderer.view.set_scale(zoom.get().scale);
     renderer.view.set_offset(
-      mvOffset.x + zoom.get().offsetX, mvOffset.y + zoom.get().offsetY
+      mv.get().x + zoom.get().offsetX, mv.get().y + zoom.get().offsetY
     );
 
     shaderProgram.view(renderer.view);
@@ -90,6 +88,19 @@ int main() {
   worldSettings.layers.push_back({game::blocks::EARTH_BLOCK, 34});
   worldSettings.layers.push_back({game::blocks::DEFAULT_BLOCK, 1});
   worldSettings.layers.push_back({game::blocks::STONE_BLOCK, 65});
+
+  std::random_device rdev;
+  std::mt19937_64 seed(rdev());
+  logger.debug_fmt("Spawning trees with seed %li", seed());
+
+  for (unsigned i = 0; i < 200; i++) {
+    if (std::uniform_int_distribution<unsigned char>(0, 15)(seed) == 0) {
+      worldSettings.structures.push_back(
+        {game::structures::TREE, i, worldSettings.h()}
+      );
+    }
+  }
+
   game::PlainWorldGenerator worldGen(worldSettings);
 
   core::PngDecoder pngDecoder;

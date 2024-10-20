@@ -61,6 +61,10 @@ void Logger::critical_fmt(const char *msg, ...) noexcept {
   _log_fmt(_format_msg(msg, _RED, true).c_str(), list);
 }
 
+void Logger::progress(const char *msg) noexcept {
+  std::cerr << _format_msg(msg, _GREEN, false).c_str();
+}
+
 void Logger::progress_fmt(const char *msg, ...) noexcept {
   va_list list;
   va_start(list, msg);
