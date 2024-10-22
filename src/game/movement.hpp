@@ -11,8 +11,8 @@ public:
   explicit Movement(float sensitivity) noexcept;
 
   void operator()(long long x, long long y) noexcept;
-  const MovementOffset &get() const noexcept;
   void set_next_origin() noexcept;
+  const MovementOffset &get() const noexcept;
 
 private:
   const float _kSensitivity;

@@ -4,8 +4,7 @@
 #include "core/decoders/png.hpp"
 #include "core/drawable.hpp"
 #include "core/renderer.hpp"
-#include "game/blocks/block_data.hpp"
-#include "game/blocks/block_id.hpp"
+#include "game/world/blocks/block_data.hpp"
 
 #include <memory>
 
@@ -19,13 +18,12 @@ public:
 
   void draw(const core::Renderer &renderer) const noexcept override;
 
-  static std::unique_ptr<Block> from_id(blocks::BlockId id) noexcept;
+  virtual const char *texture_path() const noexcept = 0;
+
   static std::unique_ptr<Block> from_data(const BlockData &data) noexcept;
 
-  virtual const char *texture() const noexcept = 0;
-
   void set_pos(int x, int y) noexcept;
-  void load_texture(core::PngDecoder &pngDecoder);
+  void load_texture(core::PngDecoder &pngDecoder) noexcept;
 
 private:
   int _x, _y;

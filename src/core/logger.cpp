@@ -72,13 +72,14 @@ void Logger::progress_fmt(const char *msg, ...) noexcept {
 }
 
 std::string Logger::_format_msg_base(const char *msg) const noexcept {
-  const Clock::time_point kTime = Clock::now();
-  const time_t kRawCTime        = Clock::to_time_t(kTime);
-  const tm *kCTime              = localtime(&kRawCTime);
+  const auto kTime       = Clock::now();
+  const time_t kRawCTime = Clock::to_time_t(kTime);
+  const tm *kCTime       = localtime(&kRawCTime);
+
   char time[13];
   strftime(time, sizeof(time), "%T.", kCTime);
-  snprintf(
-    &time[9], 4, "%.3li",
+  sprintf(
+    &time[9], "%.3li",
     chrono::duration_cast<chrono::milliseconds>(kTime.time_since_epoch())
         .count() %
       1000

@@ -6,8 +6,6 @@
 #include <string>
 
 namespace gl {
-struct ShaderCompilationException {};
-
 class Shader {
 public:
   virtual ~Shader() noexcept;
@@ -15,7 +13,7 @@ public:
   virtual int gl_type() const noexcept                    = 0;
   virtual const char *src_file_extension() const noexcept = 0;
 
-  void load(const char *filename);
+  void load(const char *shaderPath);
   void compile();
   unsigned gl_handle() const noexcept;
 
@@ -39,6 +37,8 @@ private:
 
 SHADER(VertexShader)
 SHADER(FragmentShader)
+
+struct ShaderCompilationException {};
 }
 
 #endif

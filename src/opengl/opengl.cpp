@@ -10,7 +10,7 @@ const char *gl::glfw_const_to_str(int glfwConst) noexcept {
     REGISTER_CONST(GLFW_OPENGL_PROFILE)
     REGISTER_CONST(GLFW_OPENGL_CORE_PROFILE)
     REGISTER_CONST(GLFW_OPENGL_FORWARD_COMPAT)
-  default: return ""; break;
+  default: return "";
   }
 }
 
@@ -18,6 +18,6 @@ const char *gl::gl_const_to_str(int glConst) noexcept {
   switch (glConst) {
     REGISTER_CONST(GL_VERTEX_SHADER)
     REGISTER_CONST(GL_FRAGMENT_SHADER)
-  default: return ""; break;
+  default: return "";
   }
 }

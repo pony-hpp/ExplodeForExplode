@@ -1,8 +1,8 @@
-#include "game/blocks/blocks.hpp"
+#include "game/world/blocks/blocks.hpp"
 
 namespace game::blocks {
 #define TEXTURE(className, v) \
-  const char *className::texture() const noexcept { \
+  const char *className::texture_path() const noexcept { \
     return v; \
   }
 

@@ -5,31 +5,29 @@
 
 namespace gl::math {
 class Matrix {
-private:
-  class _MatrixRow final {
+public:
+  class Row final {
   public:
-    float &operator[](unsigned char x) noexcept;
-    float operator[](unsigned char x) const noexcept;
+    float operator[](char x) const noexcept;
+    float &operator[](char x) noexcept;
 
   private:
     float _data[4];
   };
 
-public:
   Matrix() noexcept;
   Matrix(std::initializer_list<float> v) noexcept;
 
-  _MatrixRow &operator[](unsigned char y) noexcept;
-  const _MatrixRow &operator[](unsigned char y) const noexcept;
   operator const float *() const noexcept;
+  const Row &operator[](char y) const noexcept;
+  Row &operator[](char y) noexcept;
 
 protected:
-  _MatrixRow _data[4];
+  Row _data[4];
 };
 
 class ProjectionMatrix : public Matrix {
 public:
-  ProjectionMatrix() = default;
   ProjectionMatrix(unsigned short maxX, unsigned short maxY) noexcept;
 };
 

@@ -15,12 +15,12 @@ Shader::~Shader() noexcept {
   }
 }
 
-void Shader::load(const char *filename) {
+void Shader::load(const char *shaderPath) {
   _logger.set_section("Load");
 
   _logger.debug("Checking for correct shader source file extension");
   try {
-    core::check_file_extension(filename, src_file_extension());
+    core::check_file_extension(shaderPath, src_file_extension());
   } catch (const core::InvalidFileExtensionException &e) {
     _logger.error_fmt(
       "Invalid file extension: %s required, but %s provided.",
@@ -31,14 +31,16 @@ void Shader::load(const char *filename) {
 
   _glHandle = glCreateShader(gl_type());
 
-  std::ifstream f(filename);
+  std::ifstream f(shaderPath);
   if (!f) {
-    _logger.error_fmt("Failed to open \"%s\": %s.", filename, strerror(errno));
+    _logger.error_fmt(
+      "Failed to open \"%s\": %s.", shaderPath, strerror(errno)
+    );
     f.close();
     throw core::FopenException();
   }
 
-  _logger.info_fmt("Loading shader source from \"%s\"", filename);
+  _logger.info_fmt("Loading shader source from \"%s\"", shaderPath);
 
   char c;
   while ((c = f.get()) != EOF) {
@@ -58,15 +60,15 @@ void Shader::compile() {
   _logger.info("Compiling");
 
   glCompileShader(_glHandle);
+
   int compileStatusStrLen;
   glGetShaderiv(_glHandle, GL_INFO_LOG_LENGTH, &compileStatusStrLen);
   if (compileStatusStrLen) {
-    std::unique_ptr<char[]> compileStatus =
-      std::make_unique<char[]>(compileStatusStrLen);
+    auto compileStatus = std::make_unique<char[]>(compileStatusStrLen);
     glGetShaderInfoLog(
       _glHandle, compileStatusStrLen, nullptr, compileStatus.get()
     );
-    _logger.error_fmt("Error compiling shader:\n\n%s\n", compileStatus.get());
+    _logger.error_fmt("Error compiling shader:\n\n%s", compileStatus.get());
     throw ShaderCompilationException();
   }
 
@@ -88,7 +90,7 @@ int VertexShader::gl_type() const noexcept {
 }
 
 const char *VertexShader::src_file_extension() const noexcept {
-  return "vs";
+  return "vert";
 }
 
 FragmentShader::FragmentShader() noexcept : Shader("Shader/Fragment") {
@@ -99,6 +101,6 @@ int FragmentShader::gl_type() const noexcept {
 }
 
 const char *FragmentShader::src_file_extension() const noexcept {
-  return "fs";
+  return "frag";
 }
 }

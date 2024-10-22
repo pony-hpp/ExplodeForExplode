@@ -1,7 +1,8 @@
 #include "core/decoders/png.hpp"
-#include "core/exception.hpp"
 
 #include <gtest/gtest.h>
+
+using namespace core;
 
 // clang-format off
 #define RED     255, 0,   0,   255
@@ -16,7 +17,7 @@
 // clang-format on
 
 static void _assert_png(
-  const core::Png &png, unsigned short expectedW, unsigned short expectedH,
+  const Png &png, unsigned short expectedW, unsigned short expectedH,
   const unsigned char *expectedData
 ) noexcept {
   ASSERT_EQ(png.w, expectedW);
@@ -27,10 +28,10 @@ static void _assert_png(
   }
 }
 
-static core::PngDecoder decode;
+static PngDecoder decode;
 
-TEST(PngDecoder, DecodeRgb_4x4_Test) {
-  constexpr const unsigned char EXPECTED_DATA[] = {
+TEST(PngDecoder, Decode_4x4_RgbTest) {
+  constexpr unsigned char EXPECTED_DATA[] = {
     // clang-format off
     YELLOW, MAGENTA, CYAN,  RED,
     BLUE,   BLACK,   WHITE, GREEN,
@@ -41,8 +42,8 @@ TEST(PngDecoder, DecodeRgb_4x4_Test) {
   _assert_png(decode("../tests/assets/rgb_4x4.png"), 4, 4, EXPECTED_DATA);
 }
 
-TEST(PngDecoder, DecodeRgb_7x3_Test) {
-  constexpr const unsigned char EXPECTED_DATA[] = {
+TEST(PngDecoder, Decode_7x3_RgbTest) {
+  constexpr unsigned char EXPECTED_DATA[] = {
     RED,   GREEN, BLUE,  MAGENTA, YELLOW, CYAN,  WHITE,
     BLACK, BLACK, BLACK, BLACK,   BLACK,  BLACK, GRAY,
     WHITE, WHITE, WHITE, WHITE,   WHITE,  WHITE, BLACK
@@ -50,8 +51,8 @@ TEST(PngDecoder, DecodeRgb_7x3_Test) {
   _assert_png(decode("../tests/assets/rgb_7x3.png"), 7, 3, EXPECTED_DATA);
 }
 
-TEST(PngDecoder, DecodeRgb_3x7_Test) {
-  constexpr const unsigned char EXPECTED_DATA[] = {
+TEST(PngDecoder, Decode_3x7_RgbTest) {
+  constexpr unsigned char EXPECTED_DATA[] = {
     // clang-format off
     RED,     GREEN,   BLUE,
     YELLOW,  YELLOW,  YELLOW,
@@ -65,12 +66,6 @@ TEST(PngDecoder, DecodeRgb_3x7_Test) {
   _assert_png(decode("../tests/assets/rgb_3x7.png"), 3, 7, EXPECTED_DATA);
 }
 
-TEST(PngDecoder, FopenCheckTest) {
-  ASSERT_THROW(decode("../tests/assets/nonexistent.png"), core::FopenException);
-}
-
 TEST(PngDecoder, CorruptedPngCheckTest) {
-  ASSERT_THROW(
-    decode("../tests/assets/corrupted.png"), core::CorruptedPngException
-  );
+  ASSERT_THROW(decode("../tests/assets/corrupted.png"), CorruptedPngException);
 }

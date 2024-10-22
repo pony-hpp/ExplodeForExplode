@@ -1,6 +1,6 @@
-#include "game/world_generators/structures/structure.hpp"
-#include "game/world_generators/structures/structure_id.hpp"
-#include "game/world_generators/structures/structures.hpp"
+#include "game/world/structures/structure.hpp"
+#include "game/world/structures/structure_id.hpp"
+#include "game/world/structures/structures.hpp"
 
 namespace game {
 std::unique_ptr<Structure> Structure::from_id(unsigned char id) noexcept {

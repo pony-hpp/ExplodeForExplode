@@ -14,10 +14,6 @@ Window::Window(unsigned short w, unsigned short h, const char *title) noexcept
 }
 
 Window::~Window() noexcept {
-  if (!_glHandle && !_glfwInitialized) {
-    return;
-  }
-
   if (_glHandle) {
     glfwDestroyWindow(_glHandle);
   }
@@ -33,12 +29,12 @@ void Window::create() {
     "Creating %ux%u window with title \"%s\"", _kInitW, _kInitH, _kInitTitle
   );
 
-  if (glfwInit() != 1) {
+  if (glfwInit() == 1) {
+    _glfwInitialized = true;
+  } else {
     const char *kErr = _glfw_err();
     _logger.error_fmt("Failed to initialize GLFW! %s.", kErr);
     throw WindowCreationException {kErr};
-  } else {
-    _glfwInitialized = true;
   }
 
   _logger.info("Window successfully created; initializing graphics");
@@ -50,11 +46,11 @@ void Window::create() {
   }
 
   _logger.debug("Received these OpenGL initialization parameters:");
-  for (const std::pair<int, int> &param : gl::CTX) {
+  for (const auto &param : gl::CTX) {
     if (param.first == GLFW_OPENGL_PROFILE) {
       _logger.debug_fmt(
-        "    %s: %s", gl::glfw_const_to_str(param.second),
-        gl::glfw_const_to_str(param.first)
+        "    %s: %s", gl::glfw_const_to_str(param.first),
+        gl::glfw_const_to_str(param.second)
       );
     } else {
       _logger.debug_fmt(
@@ -69,12 +65,13 @@ void Window::create() {
   glewExperimental       = true;
   const int kGlewInitErr = glewInit();
   if (kGlewInitErr != 0) {
-    const unsigned char *msg = glewGetErrorString(kGlewInitErr);
+    const unsigned char *kErr = glewGetErrorString(kGlewInitErr);
     _logger.error_fmt(
-      "Failed to initialize GLEW! %s (code: %i).", msg, kGlewInitErr
+      "Failed to initialize GLEW! %s (code: %i).", kErr, kGlewInitErr
     );
     throw WindowCreationException {"Failed to initialize OpenGL (GLEW)"};
   }
+
   _logger.info_fmt("OpenGL version: %s.", glGetString(GL_VERSION));
   _logger.info("Graphics successfully initialized; the window is created.");
 }
@@ -130,52 +127,44 @@ void Window::toggle_cursor_visibility() noexcept {
 void Window::on_resize(const ResizeCallback &callback) noexcept {
   _logger.set_section("");
   _logger.debug("Setting resize callback");
-  if (!_resizeCallback) {
-    glfwSetWindowSizeCallback(_glHandle, [](GLFWwindow *, int w, int h) {
-      glViewport(0, 0, w, h);
-      _resizeCallback(w, h);
-    });
-  }
   _resizeCallback = callback;
+  glfwSetWindowSizeCallback(_glHandle, [](GLFWwindow *, int w, int h) {
+    glViewport(0, 0, w, h);
+    _resizeCallback(w, h);
+  });
 }
 
 void Window::on_cursor_move(const CursorMoveCallback &callback) noexcept {
   _logger.set_section("");
   _logger.debug("Setting cursor movement callback");
-  if (!_cursorMoveCallback) {
-    glfwSetCursorPosCallback(_glHandle, [](GLFWwindow *, double x, double y) {
-      _cursorMoveCallback(x, y);
-    });
-  }
   _cursorMoveCallback = callback;
+  glfwSetCursorPosCallback(_glHandle, [](GLFWwindow *, double x, double y) {
+    _cursorMoveCallback(x, y);
+  });
 }
 
 void Window::on_mouse_click(const MouseClickCallback &callback) noexcept {
   _logger.set_section("");
   _logger.debug("Setting mouse click callback");
-  if (!_mouseClickCallback) {
-    glfwSetMouseButtonCallback(
-      _glHandle,
-      [](GLFWwindow *, int btn, int action, int) {
-      _mouseClickCallback((mouse::Button)btn, (mouse::Action)action);
-    }
-    );
-  }
   _mouseClickCallback = callback;
+  glfwSetMouseButtonCallback(
+    _glHandle,
+    [](GLFWwindow *, int btn, int action, int) {
+    _mouseClickCallback((mouse::Button)btn, (mouse::Action)action);
+  }
+  );
 }
 
 void Window::on_scroll(const ScrollCallback &callback) noexcept {
   _logger.set_section("");
   _logger.debug("Setting mouse scroll callback");
-  if (!_scrollCallback) {
-    glfwSetScrollCallback(_glHandle, [](GLFWwindow *, double, double y) {
-      if ((char)y == 0) {
-        return;
-      }
-      _scrollCallback(y > 0.0f);
-    });
-  }
   _scrollCallback = callback;
+  glfwSetScrollCallback(_glHandle, [](GLFWwindow *, double, double y) {
+    if ((char)y == 0) {
+      return;
+    }
+    _scrollCallback(y > 0.0f);
+  });
 }
 
 const char *Window::_glfw_err() const noexcept {

@@ -1,7 +1,7 @@
 #ifndef _STRUCTURES_HPP_
 #define _STRUCTURES_HPP_
 
-#include "game/world_generators/structures/structure.hpp"
+#include "game/world/structures/structure.hpp"
 
 namespace game::structures {
 #define STRUCTURE(className) \

@@ -1,4 +1,4 @@
-#include "game/world.hpp"
+#include "game/world/world.hpp"
 
 namespace game {
 World::World(const WorldData &worldData) noexcept
@@ -14,7 +14,7 @@ World::World(const WorldData &worldData) noexcept
   );
 
   _data = std::make_unique<std::unique_ptr<Block>[]>(worldData.kBlockCount);
-  for (unsigned i = 0; i < worldData.kBlockCount; i++) {
+  for (unsigned long long i = 0; i < worldData.kBlockCount; i++) {
     _data[i] = Block::from_data(worldData[i]);
   }
 
@@ -22,7 +22,7 @@ World::World(const WorldData &worldData) noexcept
 }
 
 void World::draw(const core::Renderer &renderer) const noexcept {
-  for (unsigned short i = 0; i < _kBlockCount; i++) {
+  for (unsigned long long i = 0; i < _kBlockCount; i++) {
     _data[i]->draw(renderer);
   }
 }
@@ -31,14 +31,14 @@ void World::load_textures(core::PngDecoder &pngDecoder) noexcept {
   _logger.set_section("LoadTextures");
 
   _logger.info("Loading textures for world blocks");
-  for (unsigned short i = 0; i < _kH; i++) {
+  for (unsigned short y = 0; y < _kH; y++) {
     _logger.progress_fmt(
-      "Loading textures for row %u/%u (%.1f%%)", i + 1, _kH,
-      (i + 1) / (float)_kH * 100
+      "Loading textures for row %u/%u (%.1f%%)", y + 1, _kH,
+      (y + 1) / (float)_kH * 100
     );
 
-    for (unsigned j = 0; j < _kW; j++) {
-      _data[i * _kW + j]->load_texture(pngDecoder);
+    for (unsigned x = 0; x < _kW; x++) {
+      _data[y * _kW + x]->load_texture(pngDecoder);
     }
   }
 

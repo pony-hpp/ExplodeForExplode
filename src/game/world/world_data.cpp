@@ -1,4 +1,4 @@
-#include "game/world_generators/world_data.hpp"
+#include "game/world/world_data.hpp"
 
 namespace game {
 WorldData::WorldData(

@@ -3,19 +3,19 @@
 namespace core {
 Renderer::Renderer(Window &win, gl::ShaderProgram &shaderProgram) noexcept
   : _win(win), _shaderProgram(shaderProgram) {
-  _shaderProgram.view(view);
+  _shaderProgram.view_matrix(view);
   win.on_resize([this](unsigned short w, unsigned short h) {
+    _shaderProgram.projection_matrix(gl::math::ProjectionMatrix(w, h));
     _viewportW = w;
     _viewportH = h;
-    _shaderProgram.projection(gl::math::ProjectionMatrix(w, h));
   });
 }
 
-unsigned short Renderer::viewportW() const noexcept {
+unsigned short Renderer::viewport_w() const noexcept {
   return _viewportW;
 }
 
-unsigned short Renderer::viewportH() const noexcept {
+unsigned short Renderer::viewport_h() const noexcept {
   return _viewportH;
 }
 
