@@ -7,7 +7,7 @@ namespace core {
 struct FopenException {};
 
 struct InvalidFileExtensionException {
-  std::string provided;
+  const std::string provided;
 };
 }
 

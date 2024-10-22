@@ -26,7 +26,7 @@ private:
   const std::string _kModule;
   std::string _section;
 
-  enum _LogColor : unsigned char {
+  enum _LogColor : char {
     _RED    = 31,
     _GREEN  = 32,
     _YELLOW = 33,

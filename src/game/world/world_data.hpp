@@ -1,7 +1,7 @@
 #ifndef _WORLD_DATA_HPP_
 #define _WORLD_DATA_HPP_
 
-#include "game/blocks/block_data.hpp"
+#include "game/world/blocks/block_data.hpp"
 
 #include <memory>
 

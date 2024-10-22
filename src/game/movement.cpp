@@ -12,18 +12,18 @@ void Movement::operator()(long long x, long long y) noexcept {
     _prevPosesInitialized = true;
   }
 
-  _offset.x += (x - _prevX) * _kSensitivity;
-  _offset.y += -(y - _prevY) * _kSensitivity;
+  _offset.x += (x - _prevX) * -_kSensitivity;
+  _offset.y += (y - _prevY) * _kSensitivity;
 
   _prevX = x;
   _prevY = y;
 }
 
-const MovementOffset &Movement::get() const noexcept {
-  return _offset;
-}
-
 void Movement::set_next_origin() noexcept {
   _prevPosesInitialized = false;
+}
+
+const MovementOffset &Movement::get() const noexcept {
+  return _offset;
 }
 }

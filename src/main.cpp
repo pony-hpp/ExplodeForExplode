@@ -2,7 +2,7 @@
 #include "core/renderer.hpp"
 #include "core/window.hpp"
 #include "game/movement.hpp"
-#include "game/world.hpp"
+#include "game/world/world.hpp"
 #include "game/world_generators/plain_world_generator.hpp"
 #include "game/zooming.hpp"
 #include "opengl/shading/shader_program.hpp"
@@ -25,9 +25,9 @@ int main() {
   gl::FragmentShader fs;
   gl::ShaderProgram shaderProgram;
   try {
-    vs.load("../assets/shaders/shader.vs");
+    vs.load("../assets/shaders/shader.vert");
     vs.compile();
-    fs.load("../assets/shaders/shader.fs");
+    fs.load("../assets/shaders/shader.frag");
     fs.compile();
     shaderProgram.add(vs);
     shaderProgram.add(fs);
@@ -44,18 +44,20 @@ int main() {
   game::Zooming zoom(0.15f, 0.5f, 5.5f);
 
   bool rightBtnHeld = false;
-  win.on_mouse_click(
-    [&win, &rightBtnHeld](core::mouse::Button btn, core::mouse::Action action) {
+  win.on_mouse_click([&win, &rightBtnHeld, &mv](
+                       core::mouse::Button btn, core::mouse::Action action
+                     ) {
     if (btn == core::mouse::BUTTON_RIGHT) {
       win.toggle_cursor_visibility();
       if (action == core::mouse::ACTION_PRESS) {
         rightBtnHeld = true;
       } else {
         rightBtnHeld = false;
+        mv.set_next_origin();
       }
     }
-  }
-  );
+  });
+
   win.on_cursor_move([&renderer, &shaderProgram, &mv, &zoom,
                       &rightBtnHeld](long long x, long long y) {
     if (rightBtnHeld) {
@@ -65,21 +67,19 @@ int main() {
         zoom.get().offsetX + mv.get().x, zoom.get().offsetY + mv.get().y
       );
 
-      shaderProgram.view(renderer.view);
-    } else {
-      mv.set_next_origin();
+      shaderProgram.view_matrix(renderer.view);
     }
   });
 
   win.on_scroll([&win, &renderer, &shaderProgram, &zoom, &mv](bool up) {
-    zoom(-mv.get().x + win.cursor_x(), -mv.get().y + win.cursor_y(), up);
+    zoom(up, mv.get().x + win.cursor_x(), mv.get().y + win.cursor_y());
 
     renderer.view.set_scale(zoom.get().scale);
     renderer.view.set_offset(
       mv.get().x + zoom.get().offsetX, mv.get().y + zoom.get().offsetY
     );
 
-    shaderProgram.view(renderer.view);
+    shaderProgram.view_matrix(renderer.view);
   });
 
   game::PlainWorldGeneratorSettings worldSettings;
@@ -93,8 +93,8 @@ int main() {
   std::mt19937_64 seed(rdev());
   logger.debug_fmt("Spawning trees with seed %li", seed());
 
-  for (unsigned i = 0; i < 200; i++) {
-    if (std::uniform_int_distribution<unsigned char>(0, 15)(seed) == 0) {
+  for (unsigned i = 0; i < worldSettings.w; i++) {
+    if (std::uniform_int_distribution<char>(0, 15)(seed) == 0) {
       worldSettings.structures.push_back(
         {game::structures::TREE, i, worldSettings.h()}
       );

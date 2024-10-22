@@ -13,8 +13,8 @@ public:
 
   gl::math::ViewMatrix view;
 
-  unsigned short viewportW() const noexcept;
-  unsigned short viewportH() const noexcept;
+  unsigned short viewport_w() const noexcept;
+  unsigned short viewport_h() const noexcept;
   void draw(const IDrawable &drawable) noexcept;
 
 private:

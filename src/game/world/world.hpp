@@ -1,12 +1,12 @@
 #ifndef _WORLD_HPP_
 #define _WORLD_HPP_
 
-#include "blocks/block.hpp"
 #include "core/decoders/png.hpp"
 #include "core/drawable.hpp"
 #include "core/logger.hpp"
 #include "core/renderer.hpp"
-#include "game/world_generators/world_data.hpp"
+#include "game/world/blocks/block.hpp"
+#include "game/world/world_data.hpp"
 
 #include <memory>
 

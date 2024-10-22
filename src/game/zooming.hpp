@@ -9,9 +9,9 @@ struct Zoom {
 
 class Zooming final {
 public:
-  Zooming(float sensitivity, float min, float max) noexcept;
+  explicit Zooming(float sensitivity, float min, float max) noexcept;
 
-  void operator()(int pointX, int pointY, bool scale) noexcept;
+  void operator()(bool scale, int pointX, int pointY) noexcept;
   const Zoom &get() const noexcept;
 
 private:

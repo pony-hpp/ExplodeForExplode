@@ -1,4 +1,4 @@
-#include "game/world_generators/structures/structure_id.hpp"
+#include "game/world/structures/structure_id.hpp"
 
 using namespace game::structures;
 

@@ -1,5 +1,5 @@
-#include "game/blocks/block_id.hpp"
-#include "game/world_generators/structures/structures.hpp"
+#include "game/world/blocks/block_id.hpp"
+#include "game/world/structures/structures.hpp"
 
 namespace game::structures {
 unsigned short Tree::w() const noexcept {
@@ -11,7 +11,7 @@ unsigned short Tree::h() const noexcept {
 }
 
 std::unique_ptr<BlockData[]> Tree::data() const noexcept {
-  std::unique_ptr<BlockData[]> data = std::make_unique<BlockData[]>(w() * h());
+  auto data = std::make_unique<BlockData[]>(w() * h());
 
   // clang-format off
   _push_block(data, {blocks::DEFAULT_BLOCK,  0, 0});

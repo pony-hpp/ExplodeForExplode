@@ -2,11 +2,12 @@
 #define _PLAIN_WORLD_GENERATOR_HPP_
 
 #include "core/logger.hpp"
-#include "game/blocks/block_id.hpp"
-#include "game/world_generators/structures/structure.hpp"
-#include "game/world_generators/structures/structure_id.hpp"
-#include "game/world_generators/world_data.hpp"
+#include "game/world/blocks/block_id.hpp"
+#include "game/world/structures/structure.hpp"
+#include "game/world/structures/structure_id.hpp"
+#include "game/world/world_data.hpp"
 
+#include <utility>
 #include <vector>
 
 namespace game {
@@ -44,8 +45,8 @@ private:
   const PlainWorldGeneratorSettings &_kSettings;
   WorldData _world;
   unsigned long long _blocksGenerated = 0;
+  std::vector<std::pair<int, int>> _generatedStructureBlocks;
   core::Logger _logger;
-  std::vector<std::pair<int, int>> _drawn;
 
   void _generate_structure(const WorldStructure &worldStructure) noexcept;
 };

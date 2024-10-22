@@ -9,10 +9,6 @@
 #include <string>
 
 namespace core {
-struct WindowCreationException {
-  const std::string msg;
-};
-
 class Window final {
 public:
   using ResizeCallback = std::function<void(unsigned short, unsigned short)>;
@@ -44,10 +40,14 @@ private:
   const unsigned short _kInitW, _kInitH;
   const char *_kInitTitle;
   GLFWwindow *_glHandle = nullptr;
-  Logger _logger;
   bool _glfwInitialized = false;
+  Logger _logger;
 
   const char *_glfw_err() const noexcept;
+};
+
+struct WindowCreationException {
+  const std::string msg;
 };
 }
 

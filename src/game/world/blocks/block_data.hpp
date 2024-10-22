@@ -1,7 +1,7 @@
 #ifndef _BLOCK_DATA_HPP_
 #define _BLOCK_DATA_HPP_
 
-#include "game/blocks/block_id.hpp"
+#include "game/world/blocks/block_id.hpp"
 
 namespace game {
 struct BlockData {

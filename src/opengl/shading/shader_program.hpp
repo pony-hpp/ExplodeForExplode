@@ -18,18 +18,18 @@ public:
   void add(const Shader &shader) noexcept;
   void link();
   void use() noexcept;
-  void view(const math::ViewMatrix &mat) noexcept;
-  void projection(const math::ProjectionMatrix &mat) noexcept;
+  void view_matrix(const math::ViewMatrix &mat) noexcept;
+  void projection_matrix(const math::ProjectionMatrix &mat) noexcept;
 
 private:
   unsigned _glHandle;
-  std::unordered_map<const char *, int> _cachedUniformLocs;
-  core::Logger _logger;
+  mutable std::unordered_map<const char *, int> _cachedUniformLocs;
+  mutable core::Logger _logger;
 
   static constexpr const char *_U_VIEW_NAME       = "uView";
   static constexpr const char *_U_PROJECTION_NAME = "uProjection";
 
-  int _get_uniform(const char *name) noexcept;
+  int _get_uniform(const char *name) const noexcept;
 };
 }
 
