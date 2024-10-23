@@ -7,6 +7,7 @@
 #include "game/world/structures/structure_id.hpp"
 #include "game/world/world_data.hpp"
 
+#include <map>
 #include <utility>
 #include <vector>
 
@@ -45,7 +46,7 @@ private:
   const PlainWorldGeneratorSettings &_kSettings;
   WorldData _world;
   unsigned long long _blocksGenerated = 0;
-  std::vector<std::pair<int, int>> _generatedStructureBlocks;
+  std::map<std::pair<int, int>, unsigned long long> _generatedStructureBlocks;
   core::Logger _logger;
 
   void _generate_structure(const WorldStructure &worldStructure) noexcept;

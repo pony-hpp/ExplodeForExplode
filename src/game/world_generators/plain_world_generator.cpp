@@ -1,8 +1,6 @@
 #include "game/world/structures/structure.hpp"
 #include "game/world_generators/plain_world_generator.hpp"
 
-#include <algorithm>
-
 namespace game {
 PlainWorldGenerator::PlainWorldGenerator(
   const PlainWorldGeneratorSettings &settings
@@ -87,22 +85,25 @@ void PlainWorldGenerator::_generate_structure(
   for (unsigned short y = 0; y < kStructure->h(); y++) {
     for (unsigned short x = 0; x < kStructure->w(); x++) {
       const BlockData &kBlock = kStructureData[y * kStructure->w() + x];
-      const int kX            = std::get<1>(worldStructure) + kBlock.x,
-                kY            = std::get<2>(worldStructure) + kBlock.y;
-
-      if (!kBlock.enabled ||
-          std::find(
-            _generatedStructureBlocks.cbegin(),
-            _generatedStructureBlocks.cend(), std::pair<int, int>(kX, kY)
-          ) != _generatedStructureBlocks.cend()) {
+      if (!kBlock.enabled) {
         continue;
       }
 
-      const unsigned long long kIdx = kY * _kSettings.w + kX;
-      _generatedStructureBlocks.push_back({kX, kY});
-      if (kIdx < _world.w * _world.h) {
+      const int kX = std::get<1>(worldStructure) + kBlock.x,
+                kY = std::get<2>(worldStructure) + kBlock.y;
+
+      const auto kGeneratedBlock = _generatedStructureBlocks.find({kX, kY});
+      if (kGeneratedBlock != _generatedStructureBlocks.cend()) {
+        _world[kGeneratedBlock->second] = {kBlock.id, kX, kY};
+        continue;
+      }
+
+      if (kX >= 0 && kX < (int)_kSettings.w && kY >= 0 && kY < _kSettings.h()) {
+        const unsigned long long kIdx = kY * _kSettings.w + kX;
+        _generatedStructureBlocks.insert({{kX, kY}, kIdx});
         _world[kIdx] = {kBlock.id, kX, kY};
       } else {
+        _generatedStructureBlocks.insert({{kX, kY}, _blocksGenerated});
         _world[_blocksGenerated++] = {kBlock.id, kX, kY};
       }
     }

@@ -72,6 +72,9 @@ void Window::create() {
     throw WindowCreationException {"Failed to initialize OpenGL (GLEW)"};
   }
 
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
+
   _logger.info_fmt("OpenGL version: %s.", glGetString(GL_VERSION));
   _logger.info("Graphics successfully initialized; the window is created.");
 }

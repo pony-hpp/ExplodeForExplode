@@ -11,6 +11,8 @@ const char *game::blocks::id_to_str(BlockId id) noexcept {
     REGISTER_BLOCK_ID(GRASS_BLOCK)
     REGISTER_BLOCK_ID(EARTH_BLOCK)
     REGISTER_BLOCK_ID(STONE_BLOCK)
+    REGISTER_BLOCK_ID(OAK_BLOCK)
+    REGISTER_BLOCK_ID(OAK_LEAVES)
   default: return "";
   }
 }

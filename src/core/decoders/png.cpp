@@ -110,10 +110,13 @@ Png &PngDecoder::operator()(const char *pngPath) {
   png_read_png(libpng, info, PNG_TRANSFORM_IDENTITY, nullptr);
 
   unsigned w, h;
+  int pixFmt;
   png_get_IHDR(
-    libpng, info, &w, &h, nullptr, nullptr, nullptr, nullptr, nullptr
+    libpng, info, &w, &h, nullptr, &pixFmt, nullptr, nullptr, nullptr
   );
-  _logger.debug_fmt("Image size is %ux%u.", w, h);
+  const char kChannels = pixFmt == PNG_COLOR_TYPE_RGB ? 3 : 4;
+  _logger.debug_fmt("Image size: %ux%u.", w, h);
+  _logger.debug_fmt("Image pixel format: %s.", kChannels == 3 ? "RGB" : "RGBA");
 
   unsigned char **data = png_get_rows(libpng, info);
   unsigned char *res   = new unsigned char[w * h * 4];
@@ -122,10 +125,14 @@ Png &PngDecoder::operator()(const char *pngPath) {
     for (unsigned short x = 0; x < w; x++) {
       const unsigned kIter = y * w + x;
 
-      res[kIter * 4]     = data[y][x * 3];
-      res[kIter * 4 + 1] = data[y][x * 3 + 1];
-      res[kIter * 4 + 2] = data[y][x * 3 + 2];
-      res[kIter * 4 + 3] = 255;
+      res[kIter * 4]     = data[y][x * kChannels];
+      res[kIter * 4 + 1] = data[y][x * kChannels + 1];
+      res[kIter * 4 + 2] = data[y][x * kChannels + 2];
+      if (kChannels == 4) {
+        res[kIter * 4 + 3] = data[y][x * kChannels + 3];
+      } else {
+        res[kIter * 4 + 3] = 255;
+      }
     }
   }
 
