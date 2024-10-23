@@ -4,7 +4,7 @@
 #include "opengl/opengl.hpp" // IWYU pragma: keep
 
 namespace core::mouse {
-enum Button : char {
+enum Button : unsigned char {
   BUTTON_LEFT  = GLFW_MOUSE_BUTTON_LEFT,
   BUTTON_RIGHT = GLFW_MOUSE_BUTTON_RIGHT,
   BUTTON_MID   = GLFW_MOUSE_BUTTON_MIDDLE
