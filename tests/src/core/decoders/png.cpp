@@ -4,17 +4,18 @@
 
 using namespace core;
 
-// clang-format off
-#define RED     255, 0,   0,   255
-#define GREEN   0,   255, 0,   255
-#define BLUE    0,   0,   255, 255
-#define YELLOW  255, 255, 0,   255
-#define MAGENTA 255, 0,   255, 255
-#define CYAN    0,   255, 255, 255
-#define WHITE   255, 255, 255, 255
-#define GRAY    127, 127, 127, 255
-#define BLACK   0,   0,   0,   255
-// clang-format on
+#define RGB(r, g, b) r, g, b, 255
+
+#define RED         RGB(255, 0, 0)
+#define GREEN       RGB(0, 255, 0)
+#define BLUE        RGB(0, 0, 255)
+#define YELLOW      RGB(255, 255, 0)
+#define MAGENTA     RGB(255, 0, 255)
+#define CYAN        RGB(0, 255, 255)
+#define WHITE       RGB(255, 255, 255)
+#define GRAY        RGB(127, 127, 127)
+#define BLACK       RGB(0, 0, 0)
+#define TRANSPARENT 0, 0, 0, 0
 
 static void _assert_png(
   const Png &png, unsigned short expectedW, unsigned short expectedH,
@@ -64,6 +65,18 @@ TEST(PngDecoder, Decode_3x7_RgbTest) {
     // clang-format on
   };
   _assert_png(decode("../tests/assets/rgb_3x7.png"), 3, 7, EXPECTED_DATA);
+}
+
+TEST(PngDecoder, Decode_4x4_RgbaTest) {
+  constexpr unsigned char EXPECTED_DATA[] = {
+    // clang-format off
+    RED,         BLACK,       TRANSPARENT, TRANSPARENT,
+    BLACK,       GREEN,       BLACK,       TRANSPARENT,
+    TRANSPARENT, BLACK,       BLUE,        BLACK,
+    TRANSPARENT, TRANSPARENT, BLACK,       WHITE
+    // clang-format on
+  };
+  _assert_png(decode("../tests/assets/rgba_4x4.png"), 4, 4, EXPECTED_DATA);
 }
 
 TEST(PngDecoder, CorruptedPngCheckTest) {

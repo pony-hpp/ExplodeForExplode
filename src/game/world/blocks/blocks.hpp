@@ -14,6 +14,8 @@ BLOCK(DefaultBlock)
 BLOCK(GrassBlock)
 BLOCK(EarthBlock)
 BLOCK(StoneBlock)
+BLOCK(OakBlock)
+BLOCK(OakLeaves)
 }
 
 #endif
