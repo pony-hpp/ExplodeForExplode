@@ -5,8 +5,10 @@
 
 #include <string>
 
-namespace gl {
-class Shader {
+namespace gl
+{
+class Shader
+{
 public:
   virtual ~Shader() noexcept;
 
@@ -27,7 +29,8 @@ private:
 };
 
 #define SHADER(className) \
-  class className final : public Shader { \
+  class className final : public Shader \
+  { \
   public: \
     className() noexcept; \
 \
@@ -38,7 +41,9 @@ private:
 SHADER(VertexShader)
 SHADER(FragmentShader)
 
-struct ShaderCompilationException {};
+struct ShaderCompilationException
+{
+};
 }
 
 #endif

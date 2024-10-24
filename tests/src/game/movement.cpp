@@ -6,13 +6,15 @@ using namespace game;
 
 static void _assert_mv(
   Movement &mv, long long x, long long y, const MovementOffset &expectedVal
-) noexcept {
+) noexcept
+{
   mv(x, y);
   ASSERT_NEAR(mv.get().x, expectedVal.x, 0.0001f);
   ASSERT_NEAR(mv.get().y, expectedVal.y, 0.0001f);
 }
 
-TEST(Movement, MoveXTest) {
+TEST(Movement, MoveXTest)
+{
   Movement mv(1.0f);
 
   _assert_mv(mv, 50, 0, {-0.0f, 0.0f}); // Set origin.
@@ -30,7 +32,8 @@ TEST(Movement, MoveXTest) {
   _assert_mv(mv, 0, 0, {50.0f, 0.0f});
 }
 
-TEST(Movement, MoveYTest) {
+TEST(Movement, MoveYTest)
+{
   Movement mv(1.0f);
 
   _assert_mv(mv, 0, 0, {0.0f, 0.0f});
@@ -48,7 +51,8 @@ TEST(Movement, MoveYTest) {
   _assert_mv(mv, 0, 33, {0.0f, -67.0f});
 }
 
-TEST(Movement, SensitivityTest) {
+TEST(Movement, SensitivityTest)
+{
   Movement mv(3.5f);
   mv(5, 10);
   _assert_mv(mv, 9, 4, {-(4.0f * 3.5f), -(6.0f * 3.5f)});

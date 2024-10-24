@@ -21,8 +21,10 @@ static constexpr unsigned char _FALLBACK_TEX[] = {
   // clang-format on
 };
 
-namespace game {
-Block::Block() noexcept {
+namespace game
+{
+Block::Block() noexcept
+{
   glGenBuffers(1, &_coordsVbo);
   glGenTextures(1, &_tex);
   glGenBuffers(1, &_texCoordsVbo);
@@ -33,32 +35,37 @@ Block::Block() noexcept {
   glEnableVertexAttribArray(1);
 }
 
-Block::~Block() noexcept {
+Block::~Block() noexcept
+{
   glDeleteBuffers(1, &_coordsVbo);
   glDeleteTextures(1, &_tex);
   glDeleteBuffers(1, &_texCoordsVbo);
   glDeleteVertexArrays(1, &_vao);
 }
 
-void Block::draw(const core::Renderer &renderer) const noexcept {
-  const float kViewXBlockCoord = _x * renderer.view.get_scale() * SIZE +
+void Block::draw(const core::Renderer &renderer) const noexcept
+{
+  const float kViewBlockXCoord = _x * renderer.view.get_scale() * SIZE +
                                  renderer.view.get_offset_x(),
-              kViewYBlockCoord = _y * renderer.view.get_scale() * SIZE +
+              kViewBlockYCoord = _y * renderer.view.get_scale() * SIZE +
                                  renderer.view.get_offset_y();
 
-  if (kViewXBlockCoord >= -SIZE * renderer.view.get_scale() &&
-      kViewXBlockCoord <= renderer.viewport_w() &&
-      kViewYBlockCoord >= -SIZE * renderer.view.get_scale() &&
-      kViewYBlockCoord <= renderer.viewport_h()) {
+  if (kViewBlockXCoord >= -SIZE * renderer.view.get_scale() &&
+      kViewBlockXCoord <= renderer.viewport_w() &&
+      kViewBlockYCoord >= -SIZE * renderer.view.get_scale() &&
+      kViewBlockYCoord <= renderer.viewport_h())
+  {
     glBindVertexArray(_vao);
     glBindTexture(GL_TEXTURE_2D, _tex);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
   }
 }
 
-std::unique_ptr<Block> Block::from_data(const BlockData &data) noexcept {
+std::unique_ptr<Block> Block::from_data(const BlockData &data) noexcept
+{
   std::unique_ptr<Block> res;
-  switch (data.id) {
+  switch (data.id)
+  {
   case blocks::DEFAULT_BLOCK:
     res = std::make_unique<blocks::DefaultBlock>();
     break;
@@ -74,7 +81,8 @@ std::unique_ptr<Block> Block::from_data(const BlockData &data) noexcept {
   return res;
 }
 
-void Block::set_pos(int x, int y) noexcept {
+void Block::set_pos(int x, int y) noexcept
+{
   _x = x;
   _y = y;
 
@@ -87,39 +95,49 @@ void Block::set_pos(int x, int y) noexcept {
     kXCoord + SIZE, kYCoord + SIZE
     // clang-format on
   };
+
   glBindBuffer(GL_ARRAY_BUFFER, _coordsVbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(kCoords), kCoords, GL_STATIC_DRAW);
   glBindVertexArray(_vao);
   glVertexAttribPointer(0, 2, GL_INT, false, 0, nullptr);
 }
 
-void Block::load_texture(core::PngDecoder &pngDecoder) noexcept {
+void Block::load_texture(core::PngDecoder &pngDecoder) noexcept
+{
   glBindBuffer(GL_ARRAY_BUFFER, _texCoordsVbo);
   glBufferData(
     GL_ARRAY_BUFFER, sizeof(_TEX_COORDS), _TEX_COORDS, GL_STATIC_DRAW
   );
+  glBindTexture(GL_TEXTURE_2D, _tex);
   glBindVertexArray(_vao);
   glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, nullptr);
-  glBindTexture(GL_TEXTURE_2D, _tex);
 
-  if (strcmp(texture_path(), "") != 0) {
-    try {
+  if (strcmp(texture_path(), "") != 0)
+  {
+    try
+    {
       const core::Png &kTex = pngDecoder(texture_path());
       glTexImage2D(
         GL_TEXTURE_2D, 0, GL_RGBA, kTex.w, kTex.h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
         kTex.data.get()
       );
-    } catch (...) {
+    }
+    catch (...)
+    {
       _load_default_tex();
     }
-  } else {
+  }
+  else
+  {
     _load_default_tex();
   }
+
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
-void Block::_load_default_tex() noexcept {
+void Block::_load_default_tex() noexcept
+{
   glTexImage2D(
     GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, _FALLBACK_TEX
   );

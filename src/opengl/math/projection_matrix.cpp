@@ -1,6 +1,7 @@
 #include "opengl/math/matrix.hpp"
 
-namespace gl::math {
+namespace gl::math
+{
 ProjectionMatrix::ProjectionMatrix(
   unsigned short maxX, unsigned short maxY
 ) noexcept
@@ -11,6 +12,7 @@ ProjectionMatrix::ProjectionMatrix(
       0.0f,            0.0f,            1.0f,  0.0f,
       0.0f,            0.0f,            0.0f,  1.0f
       // clang-format on
-    }) {
+    })
+{
 }
 }

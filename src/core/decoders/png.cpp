@@ -8,11 +8,13 @@
 #include <cstring>
 #include <png.h>
 
-namespace core {
+namespace core
+{
 Png::Png(
   unsigned short w, unsigned short h, std::shared_ptr<unsigned char[]> data
 ) noexcept
-  : data(data), w(w), h(h) {
+  : data(data), w(w), h(h)
+{
 }
 
 static Logger *_pLogger;
@@ -22,38 +24,44 @@ static png_info **_pInfo;
 static FILE **_pFp;
 static const char *_curPngPath;
 
-static void _cleanup() noexcept {
+static void _cleanup() noexcept
+{
   png_destroy_info_struct(*_pLibpng, _pInfo);
   png_destroy_read_struct(_pLibpng, nullptr, nullptr);
   fclose(*_pFp);
 }
 
-static void _libpng_err_handler(png_struct *, const char *msg) {
+static void _libpng_err_handler(png_struct *, const char *msg)
+{
   _pLogger->error_fmt("PNG decoding error: %s.", msg);
   if (std::find(
         _pCorruptedDataPngPaths->cbegin(), _pCorruptedDataPngPaths->cend(),
         _curPngPath
-      ) == _pCorruptedDataPngPaths->cend()) {
+      ) == _pCorruptedDataPngPaths->cend())
+  {
     _pCorruptedDataPngPaths->push_back(_curPngPath);
   }
   _cleanup();
   throw CorruptedPngException();
 }
 
-PngDecoder::PngDecoder() noexcept : _logger("PngDecoder") {
-}
+PngDecoder::PngDecoder() noexcept : _logger("PngDecoder") {}
 
 template <class T>
 static void
-_throw_if_not_empty(const std::vector<const char *> &paths, const char *path) {
-  if (std::find(paths.cbegin(), paths.cend(), path) != paths.cend()) {
+_throw_if_not_empty(const std::vector<const char *> &paths, const char *path)
+{
+  if (std::find(paths.cbegin(), paths.cend(), path) != paths.cend())
+  {
     throw T();
   }
 }
 
-Png &PngDecoder::operator()(const char *pngPath) {
+Png &PngDecoder::operator()(const char *pngPath)
+{
   const auto kCachedPng = _cachedPngs.find(pngPath);
-  if (kCachedPng != _cachedPngs.cend()) {
+  if (kCachedPng != _cachedPngs.cend())
+  {
     return kCachedPng->second;
   }
 
@@ -64,9 +72,12 @@ Png &PngDecoder::operator()(const char *pngPath) {
   _throw_if_not_empty<CorruptedPngException>(_corruptedDataPngPaths, pngPath);
 
   _logger.debug("Checking for correct PNG file extension");
-  try {
+  try
+  {
     check_file_extension(pngPath, "png");
-  } catch (const InvalidFileExtensionException &e) {
+  }
+  catch (const InvalidFileExtensionException &e)
+  {
     _logger.error_fmt(
       "Invalid file extension: png required, but %s provided.",
       e.provided.c_str()
@@ -78,7 +89,8 @@ Png &PngDecoder::operator()(const char *pngPath) {
   _logger.info_fmt("Decoding image \"%s\"", pngPath);
 
   FILE *fp = fopen(pngPath, "rb");
-  if (!fp) {
+  if (!fp)
+  {
     _logger.error_fmt("Failed to open \"%s\": %s.", pngPath, strerror(errno));
     _fopenFailedPngFiles.push_back(pngPath);
     throw FopenException();
@@ -87,7 +99,8 @@ Png &PngDecoder::operator()(const char *pngPath) {
   _logger.debug("Checking for correct PNG signature");
   unsigned char sig[8];
   fread(sig, 1, 8, fp);
-  if (!png_check_sig(sig, 8)) {
+  if (!png_check_sig(sig, 8))
+  {
     _logger.error("PNG signature is incorrect; image is corrupted.");
     _corruptedDataPngPaths.push_back(pngPath);
     fclose(fp);
@@ -115,22 +128,29 @@ Png &PngDecoder::operator()(const char *pngPath) {
     libpng, info, &w, &h, nullptr, &pixFmt, nullptr, nullptr, nullptr
   );
   const char kChannels = pixFmt == PNG_COLOR_TYPE_RGB ? 3 : 4;
+
   _logger.debug_fmt("Image size: %ux%u.", w, h);
   _logger.debug_fmt("Image pixel format: %s.", kChannels == 3 ? "RGB" : "RGBA");
 
   unsigned char **data = png_get_rows(libpng, info);
   unsigned char *res   = new unsigned char[w * h * 4];
 
-  for (unsigned short y = 0; y < h; y++) {
-    for (unsigned short x = 0; x < w; x++) {
+  for (unsigned short y = 0; y < h; y++)
+  {
+    for (unsigned short x = 0; x < w; x++)
+    {
       const unsigned kIter = y * w + x;
 
       res[kIter * 4]     = data[y][x * kChannels];
       res[kIter * 4 + 1] = data[y][x * kChannels + 1];
       res[kIter * 4 + 2] = data[y][x * kChannels + 2];
-      if (kChannels == 4) {
+
+      if (kChannels == 4)
+      {
         res[kIter * 4 + 3] = data[y][x * kChannels + 3];
-      } else {
+      }
+      else
+      {
         res[kIter * 4 + 3] = 255;
       }
     }

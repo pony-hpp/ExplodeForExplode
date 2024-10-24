@@ -5,7 +5,8 @@
 
 #include <utility>
 
-namespace gl {
+namespace gl
+{
 constexpr std::pair<int, int> CTX[] = {
   {GLFW_VERSION_MAJOR, 3},
   {GLFW_VERSION_MINOR, 3},

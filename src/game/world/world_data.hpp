@@ -5,8 +5,10 @@
 
 #include <memory>
 
-namespace game {
-class WorldData final {
+namespace game
+{
+class WorldData final
+{
 public:
   explicit WorldData(
     unsigned w, unsigned short h, unsigned long long blockCount

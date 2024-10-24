@@ -10,8 +10,10 @@
 
 #include <memory>
 
-namespace game {
-class World final : public core::IDrawable {
+namespace game
+{
+class World final : public core::IDrawable
+{
 public:
   World(const WorldData &worldData) noexcept;
 
@@ -20,8 +22,8 @@ public:
   void load_textures(core::PngDecoder &pngDecoder) noexcept;
 
 private:
-  const unsigned _kW;
-  const unsigned short _kH;
+  const unsigned _w;
+  const unsigned short _h;
   const unsigned long long _kBlockCount;
   std::unique_ptr<std::unique_ptr<Block>[]> _data;
   core::Logger _logger;

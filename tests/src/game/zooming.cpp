@@ -6,12 +6,14 @@
 using namespace game;
 
 static void
-_assert_scale(Zooming &zooming, bool scale, float expectedVal) noexcept {
+_assert_scale(Zooming &zooming, bool scale, float expectedVal) noexcept
+{
   zooming(scale, 0, 0);
   ASSERT_NEAR(zooming.get().scale, expectedVal, 0.0001f);
 }
 
-TEST(Zooming, ScaleTest) {
+TEST(Zooming, ScaleTest)
+{
   Zooming zoom(0.1f, -INFINITY, INFINITY);
 
   _assert_scale(zoom, true, 1.1f);
@@ -33,7 +35,8 @@ TEST(Zooming, ScaleTest) {
   _assert_scale(zoom, true, 1.1f);
 }
 
-TEST(Zooming, ClampTest) {
+TEST(Zooming, ClampTest)
+{
   Zooming zoom(0.2f, 0.6f, 1.5f);
 
   _assert_scale(zoom, true, 1.2f);
@@ -53,13 +56,15 @@ TEST(Zooming, ClampTest) {
 
 static void _assert_offset(
   Zooming &zooming, int x, int y, bool scale, float expectedX, float expectedY
-) noexcept {
+) noexcept
+{
   zooming(scale, x, y);
   ASSERT_NEAR(zooming.get().offsetX, expectedX, 0.0001f);
   ASSERT_NEAR(zooming.get().offsetY, expectedY, 0.0001f);
 }
 
-TEST(Zooming, OffsetTest) {
+TEST(Zooming, OffsetTest)
+{
   Zooming zoom(1.0f, 0.2f, 100.0f);
 
   _assert_offset(zoom, 5, 5, true, 5.0f, 5.0f);

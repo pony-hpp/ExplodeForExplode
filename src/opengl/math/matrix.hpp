@@ -3,10 +3,13 @@
 
 #include <initializer_list>
 
-namespace gl::math {
-class Matrix {
+namespace gl::math
+{
+class Matrix
+{
 public:
-  class Row final {
+  class Row final
+  {
   public:
     float operator[](char x) const noexcept;
     float &operator[](char x) noexcept;
@@ -26,12 +29,14 @@ protected:
   Row _data[4];
 };
 
-class ProjectionMatrix : public Matrix {
+class ProjectionMatrix : public Matrix
+{
 public:
   ProjectionMatrix(unsigned short maxX, unsigned short maxY) noexcept;
 };
 
-class ViewMatrix final : public Matrix {
+class ViewMatrix final : public Matrix
+{
 public:
   float get_offset_x() const noexcept;
   float get_offset_y() const noexcept;

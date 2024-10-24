@@ -1,13 +1,16 @@
 #ifndef _SCALING_HPP_
 #define _SCALING_HPP_
 
-namespace game {
-struct Zoom {
+namespace game
+{
+struct Zoom
+{
   float scale;
   float offsetX, offsetY;
 };
 
-class Zooming final {
+class Zooming final
+{
 public:
   explicit Zooming(float sensitivity, float min, float max) noexcept;
 

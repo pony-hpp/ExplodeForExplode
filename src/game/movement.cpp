@@ -1,12 +1,16 @@
 #include "game/movement.hpp"
 
-namespace game {
+namespace game
+{
 Movement::Movement(float sensitivity) noexcept
-  : _kSensitivity(sensitivity), _offset() {
+  : _kSensitivity(sensitivity), _offset()
+{
 }
 
-void Movement::operator()(long long x, long long y) noexcept {
-  if (!_prevPosesInitialized) {
+void Movement::operator()(long long x, long long y) noexcept
+{
+  if (!_prevPosesInitialized)
+  {
     _prevX                = x;
     _prevY                = y;
     _prevPosesInitialized = true;
@@ -19,11 +23,7 @@ void Movement::operator()(long long x, long long y) noexcept {
   _prevY = y;
 }
 
-void Movement::set_next_origin() noexcept {
-  _prevPosesInitialized = false;
-}
+void Movement::set_next_origin() noexcept { _prevPosesInitialized = false; }
 
-const MovementOffset &Movement::get() const noexcept {
-  return _offset;
-}
+const MovementOffset &Movement::get() const noexcept { return _offset; }
 }

@@ -11,10 +11,12 @@
 #include <utility>
 #include <vector>
 
-namespace game {
+namespace game
+{
 using WorldStructure = std::tuple<unsigned char, int, int>;
 
-class PlainWorldGeneratorSettings final {
+class PlainWorldGeneratorSettings final
+{
 public:
   using BlockLayers = std::vector<std::pair<blocks::BlockId, unsigned short>>;
   using Structures  = std::vector<WorldStructure>;
@@ -35,7 +37,8 @@ private:
   mutable unsigned short _cachedH = 0;
 };
 
-class PlainWorldGenerator final {
+class PlainWorldGenerator final
+{
 public:
   explicit PlainWorldGenerator(const PlainWorldGeneratorSettings &settings
   ) noexcept;

@@ -6,18 +6,16 @@
 
 using namespace game;
 
-namespace _mock {
-class CircleStructure final : public Structure {
+namespace _mock
+{
+class CircleStructure final : public Structure
+{
 public:
-  unsigned short w() const noexcept {
-    return 4;
-  }
+  unsigned short w() const noexcept { return 4; }
+  unsigned short h() const noexcept { return 4; }
 
-  unsigned short h() const noexcept {
-    return 4;
-  }
-
-  std::unique_ptr<BlockData[]> data() const noexcept {
+  std::unique_ptr<BlockData[]> data() const noexcept
+  {
     auto data = std::make_unique<BlockData[]>(w() * h());
 
     _push_block(data, {blocks::STONE_BLOCK, 1, 0});
@@ -34,19 +32,19 @@ public:
 };
 
 static std::unique_ptr<Structure> circle_structure_factory(unsigned char
-) noexcept {
+) noexcept
+{
   return std::make_unique<CircleStructure>();
 }
 
-static const char *circle_str(unsigned char) noexcept {
-  return "CIRCLE";
-}
+static const char *circle_str(unsigned char) noexcept { return "CIRCLE"; }
 }
 
 static void _assert_extra_blocks(
   unsigned worldW, unsigned short worldH, int structureX, int structureY,
   int expectedVal
-) noexcept {
+) noexcept
+{
   PlainWorldGeneratorSettings settings;
   settings.structureFactory = _mock::circle_structure_factory;
   settings.w                = worldW;
@@ -56,7 +54,8 @@ static void _assert_extra_blocks(
   ASSERT_EQ(settings.block_count(), settings.w * settings.h() + expectedVal);
 }
 
-TEST(PlainWorldGenerator, BlockCountTest) {
+TEST(PlainWorldGenerator, BlockCountTest)
+{
   _assert_extra_blocks(20, 10, 0, 0, 0);
   _assert_extra_blocks(20, 10, 100, 100, 8);
   _assert_extra_blocks(20, 10, 100, -100, 8);
@@ -87,7 +86,8 @@ TEST(PlainWorldGenerator, BlockCountTest) {
   ASSERT_EQ(settings.block_count(), 20 * 10 + 13);
 }
 
-TEST(PlainWorldGenerator, EmptyWorldGenerationTest) {
+TEST(PlainWorldGenerator, EmptyWorldGenerationTest)
+{
   PlainWorldGeneratorSettings settings;
   settings.w = 0;
   settings.layers.push_back({});
@@ -100,7 +100,8 @@ TEST(PlainWorldGenerator, EmptyWorldGenerationTest) {
   ASSERT_EQ(world.kBlockCount, 0);
 }
 
-TEST(PlainWorldGenerator, World_1x100_GenerationTest) {
+TEST(PlainWorldGenerator, World_1x100_GenerationTest)
+{
   PlainWorldGeneratorSettings settings;
   settings.w = 100;
   settings.layers.push_back({blocks::DEFAULT_BLOCK, 1});
@@ -111,13 +112,16 @@ TEST(PlainWorldGenerator, World_1x100_GenerationTest) {
   ASSERT_EQ(world.w, 100);
   ASSERT_EQ(world.h, 1);
   ASSERT_EQ(world.kBlockCount, 100);
-  for (char i = 0; i < 100; i++) {
+
+  for (char i = 0; i < 100; i++)
+  {
     ASSERT_EQ(world[i].x, i);
     ASSERT_EQ(world[i].y, 0);
   }
 }
 
-TEST(PlainWorldGenerator, World_100x1_GenerationTest) {
+TEST(PlainWorldGenerator, World_100x1_GenerationTest)
+{
   PlainWorldGeneratorSettings settings;
   settings.w = 1;
   settings.layers.push_back({blocks::GRASS_BLOCK, 1});
@@ -130,13 +134,16 @@ TEST(PlainWorldGenerator, World_100x1_GenerationTest) {
   ASSERT_EQ(world.w, 1);
   ASSERT_EQ(world.h, 100);
   ASSERT_EQ(world.kBlockCount, 100);
-  for (char i = 0; i < 100; i++) {
+
+  for (char i = 0; i < 100; i++)
+  {
     ASSERT_EQ(world[i].x, 0);
     ASSERT_EQ(world[i].y, i);
   }
 }
 
-TEST(PlainWorldGenerator, World_100x100_GenerationTest) {
+TEST(PlainWorldGenerator, World_100x100_GenerationTest)
+{
   PlainWorldGeneratorSettings settings;
   settings.w = 100;
   settings.layers.push_back({blocks::EARTH_BLOCK, 5});
@@ -149,15 +156,19 @@ TEST(PlainWorldGenerator, World_100x100_GenerationTest) {
   ASSERT_EQ(world.w, 100);
   ASSERT_EQ(world.h, 100);
   ASSERT_EQ(world.kBlockCount, 100 * 100);
-  for (char y = 0; y < 100; y++) {
-    for (char x = 0; x < 100; x++) {
+
+  for (char y = 0; y < 100; y++)
+  {
+    for (char x = 0; x < 100; x++)
+    {
       ASSERT_EQ(world[y * 100 + x].x, x);
       ASSERT_EQ(world[y * 100 + x].y, y);
     }
   }
 }
 
-TEST(PlainWorldGenerator, BlockLayersTest) {
+TEST(PlainWorldGenerator, BlockLayersTest)
+{
   PlainWorldGeneratorSettings settings;
   settings.w = 1;
   settings.layers.push_back({blocks::EARTH_BLOCK, 0});
@@ -210,12 +221,14 @@ TEST(PlainWorldGenerator, BlockLayersTest) {
     // clang-format on
   };
 
-  for (unsigned short i = 0; i < settings.h(); i++) {
-    ASSERT_EQ(world[settings.h() - 1 - i].id, EXPECTED_BLOCKS[i]);
+  for (unsigned short i = 0; i < settings.h(); i++)
+  {
+    ASSERT_EQ(world[settings.h() - i - 1].id, EXPECTED_BLOCKS[i]);
   }
 }
 
-TEST(PlainWorldGenerator, StructureGenerationInsideWorldTest) {
+TEST(PlainWorldGenerator, StructureGenerationInsideWorldTest)
+{
   PlainWorldGeneratorSettings settings;
   settings.structureFactory = _mock::circle_structure_factory;
   settings.structureIdToStr = _mock::circle_str;
@@ -247,8 +260,10 @@ TEST(PlainWorldGenerator, StructureGenerationInsideWorldTest) {
     // clang-format on
   };
 
-  for (char y = 0; y < 4; y++) {
-    for (char x = 0; x < 4; x++) {
+  for (char y = 0; y < 4; y++)
+  {
+    for (char x = 0; x < 4; x++)
+    {
       ASSERT_EQ(world[y * 4 + x].id, EXPECTED_BLOCKS[y * 4 + x]);
       ASSERT_EQ(world[y * 4 + x].x, x);
       ASSERT_EQ(world[y * 4 + x].y, y);
@@ -256,7 +271,8 @@ TEST(PlainWorldGenerator, StructureGenerationInsideWorldTest) {
   }
 }
 
-TEST(PlainWorldGenerator, StructureGenerationOutsideWorldTest) {
+TEST(PlainWorldGenerator, StructureGenerationOutsideWorldTest)
+{
   PlainWorldGeneratorSettings settings;
   settings.structureFactory = _mock::circle_structure_factory;
   settings.structureIdToStr = _mock::circle_str;
@@ -267,14 +283,17 @@ TEST(PlainWorldGenerator, StructureGenerationOutsideWorldTest) {
   PlainWorldGenerator gen(settings);
   const WorldData &world = gen();
 
-  for (char i = 0; i < 16; i++) {
+  for (char i = 0; i < 16; i++)
+  {
     ASSERT_EQ(world[i].id, blocks::DEFAULT_BLOCK);
   }
 
   const auto kExpectedStructure = _mock::CircleStructure().data();
 
-  for (char i = 0; i < 16; i++) {
-    if (!kExpectedStructure[i].enabled) {
+  for (char i = 0; i < 16; i++)
+  {
+    if (!kExpectedStructure[i].enabled)
+    {
       continue;
     }
 
@@ -284,7 +303,8 @@ TEST(PlainWorldGenerator, StructureGenerationOutsideWorldTest) {
   }
 }
 
-TEST(PlainWorldGenerator, StructureOverwriteTest) {
+TEST(PlainWorldGenerator, StructureOverwriteTest)
+{
   PlainWorldGeneratorSettings settings;
   settings.structureFactory = _mock::circle_structure_factory;
   settings.structureIdToStr = _mock::circle_str;
@@ -317,8 +337,10 @@ TEST(PlainWorldGenerator, StructureOverwriteTest) {
     // clang-format on
   };
 
-  for (char y = 0; y < 4; y++) {
-    for (char x = 0; x < 4; x++) {
+  for (char y = 0; y < 4; y++)
+  {
+    for (char x = 0; x < 4; x++)
+    {
       ASSERT_EQ(world[y * 4 + x].id, EXPECTED_BLOCKS[y * 4 + x]);
       ASSERT_EQ(world[y * 4 + x].x, x);
       ASSERT_EQ(world[y * 4 + x].y, y);

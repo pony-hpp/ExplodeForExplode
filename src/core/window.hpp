@@ -8,8 +8,10 @@
 #include <functional>
 #include <string>
 
-namespace core {
-class Window final {
+namespace core
+{
+class Window final
+{
 public:
   using ResizeCallback = std::function<void(unsigned short, unsigned short)>;
   using CursorMoveCallback = std::function<void(long long, long long)>;
@@ -46,7 +48,8 @@ private:
   const char *_glfw_err() const noexcept;
 };
 
-struct WindowCreationException {
+struct WindowCreationException
+{
   const std::string msg;
 };
 }
