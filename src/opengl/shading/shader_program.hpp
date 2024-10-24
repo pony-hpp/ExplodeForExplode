@@ -7,10 +7,10 @@
 
 #include <unordered_map>
 
-namespace gl {
-struct ShaderProgramLinkException {};
-
-class ShaderProgram final {
+namespace gl
+{
+class ShaderProgram final
+{
 public:
   ShaderProgram() noexcept;
   ~ShaderProgram() noexcept;
@@ -30,6 +30,10 @@ private:
   static constexpr const char *_U_PROJECTION_NAME = "uProjection";
 
   int _get_uniform(const char *name) const noexcept;
+};
+
+struct ShaderProgramLinkException
+{
 };
 }
 

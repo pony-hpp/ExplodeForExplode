@@ -3,9 +3,11 @@
 
 #include "game/world/blocks/block.hpp"
 
-namespace game::blocks {
+namespace game::blocks
+{
 #define BLOCK(className) \
-  class className final : public Block { \
+  class className final : public Block \
+  { \
   public: \
     const char *texture_path() const noexcept override; \
   };

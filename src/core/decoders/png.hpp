@@ -7,8 +7,10 @@
 #include <unordered_map>
 #include <vector>
 
-namespace core {
-struct Png {
+namespace core
+{
+struct Png
+{
   explicit Png(
     unsigned short w, unsigned short h, std::shared_ptr<unsigned char[]> data
   ) noexcept;
@@ -17,7 +19,8 @@ struct Png {
   const std::shared_ptr<unsigned char[]> data;
 };
 
-class PngDecoder final {
+class PngDecoder final
+{
 public:
   PngDecoder() noexcept;
 
@@ -30,7 +33,9 @@ private:
   Logger _logger;
 };
 
-struct CorruptedPngException {};
+struct CorruptedPngException
+{
+};
 }
 
 #endif

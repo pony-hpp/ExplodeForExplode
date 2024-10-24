@@ -3,8 +3,10 @@
 
 #include <string>
 
-namespace core {
-class Logger final {
+namespace core
+{
+class Logger final
+{
 public:
   Logger(const char *module) noexcept;
 
@@ -26,7 +28,8 @@ private:
   const std::string _kModule;
   std::string _section;
 
-  enum _LogColor : char {
+  enum _LogColor : char
+  {
     _RED    = 31,
     _GREEN  = 32,
     _YELLOW = 33,

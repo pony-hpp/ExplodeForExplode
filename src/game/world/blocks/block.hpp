@@ -8,8 +8,10 @@
 
 #include <memory>
 
-namespace game {
-class Block : public core::IDrawable {
+namespace game
+{
+class Block : public core::IDrawable
+{
 public:
   Block() noexcept;
   virtual ~Block() noexcept;

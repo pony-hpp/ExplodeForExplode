@@ -14,14 +14,14 @@ AlignTrailingComments:
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortEnumsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: None
+AllowShortFunctionsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: Empty
 AllowShortLoopsOnASingleLine: false
 AlwaysBreakTemplateDeclarations: Yes
 BracedInitializerIndentWidth: 2
 BreakAfterAttributes: Always
-BreakBeforeBraces: Attach
+BreakBeforeBraces: Allman
 ColumnLimit: 80
 ConstructorInitializerIndentWidth: 2
 ContinuationIndentWidth: 2
@@ -34,7 +34,6 @@ InsertNewlineAtEOF: true
 KeepEmptyLinesAtTheStartOfBlocks: false
 LambdaBodyIndentation: OuterScope
 RemoveSemicolon: true
-SeparateDefinitionBlocks: Always
 SortIncludes: CaseSensitive
 SortUsingDeclarations: Lexicographic
 SpaceBeforeCpp11BracedList: true

@@ -3,16 +3,17 @@
 
 #include <memory>
 
-namespace gl {
-ShaderProgram::ShaderProgram() noexcept : _logger("ShaderProgram") {
+namespace gl
+{
+ShaderProgram::ShaderProgram() noexcept : _logger("ShaderProgram")
+{
   _glHandle = glCreateProgram();
 }
 
-ShaderProgram::~ShaderProgram() noexcept {
-  glDeleteProgram(_glHandle);
-}
+ShaderProgram::~ShaderProgram() noexcept { glDeleteProgram(_glHandle); }
 
-void ShaderProgram::add(const Shader &shader) noexcept {
+void ShaderProgram::add(const Shader &shader) noexcept
+{
   _logger.set_section("");
   _logger.debug_fmt(
     "Adding shader with type %s", gl_const_to_str(shader.gl_type())
@@ -20,7 +21,8 @@ void ShaderProgram::add(const Shader &shader) noexcept {
   glAttachShader(_glHandle, shader.gl_handle());
 }
 
-void ShaderProgram::link() {
+void ShaderProgram::link()
+{
   _logger.set_section("Link");
 
   _logger.info("Linking");
@@ -29,9 +31,11 @@ void ShaderProgram::link() {
 
   int linkStatusStrLen;
   glGetProgramiv(_glHandle, GL_INFO_LOG_LENGTH, &linkStatusStrLen);
-  if (linkStatusStrLen) {
+  if (linkStatusStrLen)
+  {
     auto linkStatus = std::make_unique<char[]>(linkStatusStrLen);
     glGetProgramInfoLog(_glHandle, linkStatusStrLen, nullptr, linkStatus.get());
+
     _logger.error_fmt("Error linking shader program:\n\n%s", linkStatus.get());
     throw ShaderProgramLinkException();
   }
@@ -39,24 +43,27 @@ void ShaderProgram::link() {
   _logger.info("Shader program successfully linked.");
 }
 
-void ShaderProgram::use() noexcept {
-  glUseProgram(_glHandle);
-}
+void ShaderProgram::use() noexcept { glUseProgram(_glHandle); }
 
-void ShaderProgram::view_matrix(const math::ViewMatrix &mat) noexcept {
+void ShaderProgram::view_matrix(const math::ViewMatrix &mat) noexcept
+{
   glUniformMatrix4fv(_get_uniform(_U_VIEW_NAME), 1, true, mat);
 }
 
 void ShaderProgram::projection_matrix(const math::ProjectionMatrix &mat
-) noexcept {
+) noexcept
+{
   glUniformMatrix4fv(_get_uniform(_U_PROJECTION_NAME), 1, true, mat);
 }
 
-int ShaderProgram::_get_uniform(const char *name) const noexcept {
+int ShaderProgram::_get_uniform(const char *name) const noexcept
+{
   const auto kLoc = _cachedUniformLocs.find(name);
-  if (kLoc == _cachedUniformLocs.cend()) {
+  if (kLoc == _cachedUniformLocs.cend())
+  {
     _logger.set_section("");
     _logger.debug_fmt("Caching uniform \"%s\"", name);
+
     _cachedUniformLocs.insert({name, glGetUniformLocation(_glHandle, name)});
     return _cachedUniformLocs.find(name)->second;
   }

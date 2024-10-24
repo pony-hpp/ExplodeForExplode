@@ -5,7 +5,8 @@
 
 using namespace core;
 
-TEST(CoreUtils, CheckFileExtensionTest) {
+TEST(CoreUtils, CheckFileExtensionTest)
+{
   ASSERT_NO_THROW(check_file_extension("shader.glsl", "glsl"));
   ASSERT_NO_THROW(check_file_extension("source.cxx", "cxx"));
   ASSERT_NO_THROW(check_file_extension(".config.ini", "ini"));
@@ -24,9 +25,12 @@ TEST(CoreUtils, CheckFileExtensionTest) {
     InvalidFileExtensionException
   );
 
-  try {
+  try
+  {
     check_file_extension("os.iso", "img");
-  } catch (const InvalidFileExtensionException &e) {
+  }
+  catch (const InvalidFileExtensionException &e)
+  {
     ASSERT_EQ(e.provided, "iso");
   }
 }

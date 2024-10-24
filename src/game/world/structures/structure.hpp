@@ -5,8 +5,10 @@
 
 #include <memory>
 
-namespace game {
-class Structure {
+namespace game
+{
+class Structure
+{
 public:
   virtual ~Structure() = default;
 

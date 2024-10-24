@@ -6,8 +6,10 @@
 #include "opengl/math/matrix.hpp"
 #include "opengl/shading/shader_program.hpp"
 
-namespace core {
-class Renderer final {
+namespace core
+{
+class Renderer final
+{
 public:
   Renderer(Window &win, gl::ShaderProgram &shaderProgram) noexcept;
 

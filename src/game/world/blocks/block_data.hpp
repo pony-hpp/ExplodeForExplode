@@ -3,8 +3,10 @@
 
 #include "game/world/blocks/block_id.hpp"
 
-namespace game {
-struct BlockData {
+namespace game
+{
+struct BlockData
+{
   blocks::BlockId id;
   int x, y;
   bool enabled = false;

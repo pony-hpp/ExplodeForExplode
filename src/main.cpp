@@ -9,14 +9,18 @@
 
 #include <random>
 
-int main() {
+int main()
+{
   core::Logger logger("Game");
   logger.info_fmt("Welcome to Explode for Explode %s!", EFE_VERSION);
 
   core::Window win(1024, 768, "Explode for Explode");
-  try {
+  try
+  {
     win.create();
-  } catch (const core::WindowCreationException &e) {
+  }
+  catch (const core::WindowCreationException &e)
+  {
     logger.critical_fmt("The window couldn't be created: %s.", e.msg.c_str());
     return 1;
   };
@@ -24,7 +28,8 @@ int main() {
   gl::VertexShader vs;
   gl::FragmentShader fs;
   gl::ShaderProgram shaderProgram;
-  try {
+  try
+  {
     vs.load("../assets/shaders/shader.vert");
     vs.compile();
     fs.load("../assets/shaders/shader.frag");
@@ -32,10 +37,13 @@ int main() {
     shaderProgram.add(vs);
     shaderProgram.add(fs);
     shaderProgram.link();
-  } catch (...) {
+  }
+  catch (...)
+  {
     logger.critical("The shaders couldn't be compiled.");
     return 1;
   }
+
   shaderProgram.use();
 
   core::Renderer renderer(win, shaderProgram);
@@ -44,23 +52,25 @@ int main() {
   game::Zooming zoom(0.15f, 0.5f, 5.5f);
 
   bool rightBtnHeld = false;
-  win.on_mouse_click([&win, &rightBtnHeld, &mv](
-                       core::mouse::Button btn, core::mouse::Action action
-                     ) {
-    if (btn == core::mouse::BUTTON_RIGHT) {
+  win.on_mouse_click([&win, &rightBtnHeld,
+                      &mv](core::mouse::Button btn, core::mouse::Action action)
+  {
+    if (btn == core::mouse::BUTTON_RIGHT)
+    {
       win.toggle_cursor_visibility();
-      if (action == core::mouse::ACTION_PRESS) {
-        rightBtnHeld = true;
-      } else {
-        rightBtnHeld = false;
+      rightBtnHeld = action == core::mouse::ACTION_PRESS;
+      if (!rightBtnHeld)
+      {
         mv.set_next_origin();
       }
     }
   });
 
   win.on_cursor_move([&renderer, &shaderProgram, &mv, &zoom,
-                      &rightBtnHeld](long long x, long long y) {
-    if (rightBtnHeld) {
+                      &rightBtnHeld](long long x, long long y)
+  {
+    if (rightBtnHeld)
+    {
       mv(x, y);
 
       renderer.view.set_offset(
@@ -71,7 +81,8 @@ int main() {
     }
   });
 
-  win.on_scroll([&win, &renderer, &shaderProgram, &zoom, &mv](bool up) {
+  win.on_scroll([&win, &renderer, &shaderProgram, &zoom, &mv](bool up)
+  {
     zoom(up, mv.get().x + win.cursor_x(), mv.get().y + win.cursor_y());
 
     renderer.view.set_scale(zoom.get().scale);
@@ -93,8 +104,10 @@ int main() {
   std::mt19937_64 seed(rdev());
   logger.debug_fmt("Spawning trees with seed %li", seed());
 
-  for (unsigned i = 0; i < worldSettings.w; i++) {
-    if (std::uniform_int_distribution<char>(0, 15)(seed) == 0) {
+  for (unsigned i = 0; i < worldSettings.w; i++)
+  {
+    if (std::uniform_int_distribution<char>(0, 15)(seed) == 0)
+    {
       worldSettings.structures.push_back(
         {game::structures::TREE, i, worldSettings.h()}
       );
@@ -108,7 +121,8 @@ int main() {
   world.load_textures(pngDecoder);
 
   win.set_bg(165, 190, 251);
-  while (!win.closed()) {
+  while (!win.closed())
+  {
     win.poll_events();
     win.clear();
     renderer.draw(world);

@@ -6,6 +6,4 @@ out vec4 fColor;
 
 uniform sampler2D uTex;
 
-void main() {
-  fColor = texture(uTex, vTexPos);
-}
+void main() { fColor = texture(uTex, vTexPos); }

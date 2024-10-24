@@ -3,9 +3,11 @@
 
 #include "game/world/structures/structure.hpp"
 
-namespace game::structures {
+namespace game::structures
+{
 #define STRUCTURE(className) \
-  class className final : public Structure { \
+  class className final : public Structure \
+  { \
   public: \
     unsigned short w() const noexcept override; \
     unsigned short h() const noexcept override; \

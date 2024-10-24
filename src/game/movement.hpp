@@ -1,12 +1,15 @@
 #ifndef _MOVEMENT_HPP_
 #define _MOVEMENT_HPP_
 
-namespace game {
-struct MovementOffset {
+namespace game
+{
+struct MovementOffset
+{
   float x, y;
 };
 
-class Movement final {
+class Movement final
+{
 public:
   explicit Movement(float sensitivity) noexcept;
 

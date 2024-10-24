@@ -3,10 +3,14 @@
 
 #include <string>
 
-namespace core {
-struct FopenException {};
+namespace core
+{
+struct FopenException
+{
+};
 
-struct InvalidFileExtensionException {
+struct InvalidFileExtensionException
+{
   const std::string provided;
 };
 }

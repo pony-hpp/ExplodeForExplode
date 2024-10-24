@@ -1,10 +1,9 @@
 #include "game/world/blocks/blocks.hpp"
 
-namespace game::blocks {
+namespace game::blocks
+{
 #define TEXTURE(className, v) \
-  const char *className::texture_path() const noexcept { \
-    return v; \
-  }
+  const char *className::texture_path() const noexcept { return v; }
 
 // clang-format off
 TEXTURE(DefaultBlock, "")

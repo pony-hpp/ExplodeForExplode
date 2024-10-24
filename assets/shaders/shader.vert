@@ -8,7 +8,8 @@ out vec2 vTexPos;
 uniform mat4 uView;
 uniform mat4 uProjection;
 
-void main() {
+void main()
+{
   gl_Position = uProjection * uView * vec4(iPos, 0.0f, 1.0f);
   vTexPos     = iTexPos;
 }
