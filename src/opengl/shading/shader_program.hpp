@@ -18,6 +18,10 @@ public:
   void add(const Shader &shader) noexcept;
   void link();
   void use() noexcept;
+
+  void set_uniform(const char *name, unsigned v) noexcept;
+  void set_uniform(const char *name, const float *v) noexcept;
+
   void view_matrix(const math::ViewMatrix &mat) noexcept;
   void projection_matrix(const math::ProjectionMatrix &mat) noexcept;
 

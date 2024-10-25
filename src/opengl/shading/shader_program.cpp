@@ -45,15 +45,25 @@ void ShaderProgram::link()
 
 void ShaderProgram::use() noexcept { glUseProgram(_glHandle); }
 
+void ShaderProgram::set_uniform(const char *name, unsigned v) noexcept
+{
+  glUniform1ui(_get_uniform(name), v);
+}
+
+void ShaderProgram::set_uniform(const char *name, const float *v) noexcept
+{
+  glUniformMatrix4fv(_get_uniform(name), 1, true, v);
+}
+
 void ShaderProgram::view_matrix(const math::ViewMatrix &mat) noexcept
 {
-  glUniformMatrix4fv(_get_uniform(_U_VIEW_NAME), 1, true, mat);
+  set_uniform(_U_VIEW_NAME, mat);
 }
 
 void ShaderProgram::projection_matrix(const math::ProjectionMatrix &mat
 ) noexcept
 {
-  glUniformMatrix4fv(_get_uniform(_U_PROJECTION_NAME), 1, true, mat);
+  set_uniform(_U_PROJECTION_NAME, mat);
 }
 
 int ShaderProgram::_get_uniform(const char *name) const noexcept
