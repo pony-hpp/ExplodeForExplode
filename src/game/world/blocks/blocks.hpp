@@ -18,6 +18,7 @@ BLOCK(EarthBlock)
 BLOCK(StoneBlock)
 BLOCK(OakBlock)
 BLOCK(OakLeaves)
+BLOCK(Grass)
 }
 
 #endif

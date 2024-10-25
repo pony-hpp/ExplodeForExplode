@@ -5,7 +5,8 @@ namespace game::structures
 {
 enum StructureId : unsigned char
 {
-  TREE
+  TREE,
+  GRASS
 };
 
 extern const char *id_to_str(unsigned char id) noexcept;

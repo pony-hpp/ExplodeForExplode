@@ -9,6 +9,7 @@ std::unique_ptr<Structure> Structure::from_id(unsigned char id) noexcept
   switch (id)
   {
   case structures::TREE: return std::make_unique<structures::Tree>(); break;
+  case structures::GRASS: return std::make_unique<structures::Grass>(); break;
   default: return nullptr;
   };
 }

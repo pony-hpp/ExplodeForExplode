@@ -74,6 +74,7 @@ std::unique_ptr<Block> Block::from_data(const BlockData &data) noexcept
   case blocks::STONE_BLOCK: res = std::make_unique<blocks::StoneBlock>(); break;
   case blocks::OAK_BLOCK: res = std::make_unique<blocks::OakBlock>(); break;
   case blocks::OAK_LEAVES: res = std::make_unique<blocks::OakLeaves>(); break;
+  case blocks::GRASS: res = std::make_unique<blocks::Grass>(); break;
   default: return nullptr;
   }
 
