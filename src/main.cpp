@@ -99,6 +99,8 @@ int main()
   worldSettings.layers.push_back({game::blocks::EARTH_BLOCK, 34});
   worldSettings.layers.push_back({game::blocks::STONE_BLOCK, 65});
 
+  shaderProgram.set_uniform("uWorldH", worldSettings.h() * game::Block::SIZE);
+
   std::random_device rdev;
   std::mt19937_64 seed(rdev());
   logger.debug_fmt("Spawning trees and grass with seed %li", seed());
