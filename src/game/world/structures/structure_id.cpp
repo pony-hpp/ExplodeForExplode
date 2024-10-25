@@ -10,6 +10,7 @@ const char *game::structures::id_to_str(unsigned char id) noexcept
   switch (id)
   {
     REGISTER_STRUCTURE_ID(TREE)
+    REGISTER_STRUCTURE_ID(GRASS)
   default: return "";
   }
 }

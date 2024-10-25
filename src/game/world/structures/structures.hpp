@@ -15,6 +15,7 @@ namespace game::structures
   };
 
 STRUCTURE(Tree)
+STRUCTURE(Grass)
 }
 
 #endif

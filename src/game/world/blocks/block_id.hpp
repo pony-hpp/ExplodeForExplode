@@ -10,7 +10,8 @@ enum BlockId : unsigned char
   EARTH_BLOCK,
   STONE_BLOCK,
   OAK_BLOCK,
-  OAK_LEAVES
+  OAK_LEAVES,
+  GRASS
 };
 
 extern const char *id_to_str(BlockId id) noexcept;

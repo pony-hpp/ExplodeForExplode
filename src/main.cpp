@@ -97,12 +97,11 @@ int main()
   worldSettings.w = 200;
   worldSettings.layers.push_back({game::blocks::GRASS_BLOCK, 1});
   worldSettings.layers.push_back({game::blocks::EARTH_BLOCK, 34});
-  worldSettings.layers.push_back({game::blocks::DEFAULT_BLOCK, 1});
   worldSettings.layers.push_back({game::blocks::STONE_BLOCK, 65});
 
   std::random_device rdev;
   std::mt19937_64 seed(rdev());
-  logger.debug_fmt("Spawning trees with seed %li", seed());
+  logger.debug_fmt("Spawning trees and grass with seed %li", seed());
 
   for (unsigned i = 0; i < worldSettings.w; i++)
   {
@@ -110,6 +109,12 @@ int main()
     {
       worldSettings.structures.push_back(
         {game::structures::TREE, i, worldSettings.h()}
+      );
+    }
+    else if (std::uniform_int_distribution<char>(0, 6)(seed) != 0)
+    {
+      worldSettings.structures.push_back(
+        {game::structures::GRASS, i, worldSettings.h()}
       );
     }
   }
