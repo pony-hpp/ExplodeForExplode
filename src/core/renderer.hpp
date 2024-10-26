@@ -17,12 +17,15 @@ public:
 
   unsigned short viewport_w() const noexcept;
   unsigned short viewport_h() const noexcept;
+
   void draw(const IDrawable &drawable) noexcept;
 
 private:
   Window &_win;
   gl::ShaderProgram &_shaderProgram;
   unsigned short _viewportW, _viewportH;
+
+  void _resize_viewport(unsigned short w, unsigned short h) noexcept;
 };
 }
 

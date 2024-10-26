@@ -87,11 +87,8 @@ void Window::create()
     );
     throw WindowCreationException {"Failed to initialize OpenGL (GLEW)"};
   }
-
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_BLEND);
-
   _logger.info_fmt("OpenGL version: %s.", glGetString(GL_VERSION));
+
   _logger.info("Graphics successfully initialized; the window is created.");
 }
 
@@ -100,19 +97,18 @@ bool Window::closed() const noexcept
   return glfwWindowShouldClose(_glHandle);
 }
 
-void Window::poll_events() const noexcept { glfwPollEvents(); }
-
-void Window::clear() noexcept { glClear(GL_COLOR_BUFFER_BIT); }
-
-void Window::update() noexcept { glfwSwapBuffers(_glHandle); }
-
-void Window::set_bg(unsigned char r, unsigned char g, unsigned char b) noexcept
+unsigned short Window::w() const noexcept
 {
-  _logger.set_section("");
-  _logger.info_fmt(
-    "Setting window background color, where R=%u, G=%u, B=%u", r, g, b
-  );
-  glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
+  int w;
+  glfwGetWindowSize(_glHandle, &w, nullptr);
+  return w;
+}
+
+unsigned short Window::h() const noexcept
+{
+  int h;
+  glfwGetWindowSize(_glHandle, nullptr, &h);
+  return h;
 }
 
 unsigned short Window::cursor_x() const noexcept
@@ -124,11 +120,24 @@ unsigned short Window::cursor_x() const noexcept
 
 unsigned short Window::cursor_y() const noexcept
 {
-  int h;
-  glfwGetWindowSize(_glHandle, nullptr, &h);
   double y;
   glfwGetCursorPos(_glHandle, nullptr, &y);
-  return fmax(0, h - y);
+  return fmax(0, h() - y);
+}
+
+void Window::clear() noexcept { glClear(GL_COLOR_BUFFER_BIT); }
+
+void Window::update() noexcept { glfwSwapBuffers(_glHandle); }
+
+void Window::poll_events() const noexcept { glfwPollEvents(); }
+
+void Window::set_bg(unsigned char r, unsigned char g, unsigned char b) noexcept
+{
+  _logger.set_section("");
+  _logger.info_fmt(
+    "Setting window background color, where R=%u, G=%u, B=%u", r, g, b
+  );
+  glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
 }
 
 void Window::toggle_cursor_visibility() noexcept
@@ -141,6 +150,12 @@ void Window::toggle_cursor_visibility() noexcept
   {
     glfwSetInputMode(_glHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
   }
+}
+
+void Window::set_icon(const Png &icon) noexcept
+{
+  GLFWimage iconImg = {icon.w, icon.h, icon.data.get()};
+  glfwSetWindowIcon(_glHandle, 1, &iconImg);
 }
 
 void Window::on_resize(const ResizeCallback &callback) noexcept

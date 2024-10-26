@@ -15,9 +15,9 @@ public:
   virtual int gl_type() const noexcept                    = 0;
   virtual const char *src_file_extension() const noexcept = 0;
 
+  unsigned gl_handle() const noexcept;
   void load(const char *shaderPath);
   void compile();
-  unsigned gl_handle() const noexcept;
 
 protected:
   explicit Shader(const char *loggerModule) noexcept;

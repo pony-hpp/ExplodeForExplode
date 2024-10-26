@@ -18,6 +18,8 @@ Shader::~Shader() noexcept
   }
 }
 
+unsigned Shader::gl_handle() const noexcept { return _glHandle; }
+
 void Shader::load(const char *shaderPath)
 {
   _logger.set_section("Load");
@@ -86,8 +88,6 @@ void Shader::compile()
 
   _logger.info("Shader successfully compiled.");
 }
-
-unsigned Shader::gl_handle() const noexcept { return _glHandle; }
 
 Shader::Shader(const char *loggerModule) noexcept : _logger(loggerModule) {}
 
