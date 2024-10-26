@@ -7,14 +7,27 @@ project(
   LANGUAGES CXX
 )
 
-add_compile_options(-Wextra -Wpedantic -Werror)
+set(CMAKE_CXX_STANDARD 17)
+
+if (UNIX)
+  add_compile_options(-Wextra -Wpedantic -Werror)
+endif() # Otherwise don't set any flags, because MSVC is too squeamish.
+
 add_compile_definitions(EFE_VERSION="${PROJECT_VERSION}")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(OPENGL REQUIRED glfw3 glew)
-pkg_check_modules(PNG REQUIRED libpng)
+if (UNIX)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(OPENGL REQUIRED glfw3 glew)
+  pkg_check_modules(PNG REQUIRED libpng)
+else()
+  find_package(OpenGL REQUIRED)
+  find_package(GLFW3 REQUIRED)
+  find_package(GLEW REQUIRED)
+  find_package(PNG REQUIRED)
+  set(OPENGL_LIBRARIES ${OPENGL_LIBRARIES} glfw ${GLEW_LIBRARIES})
+endif()
 
 file(GLOB_RECURSE SRC src/*.cpp)
 list(REMOVE_ITEM SRC ${CMAKE_SOURCE_DIR}/src/main.cpp)

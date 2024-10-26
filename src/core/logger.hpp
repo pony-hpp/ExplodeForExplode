@@ -14,13 +14,18 @@ public:
 
   void info(const char *msg) noexcept;
   void info_fmt(const char *fmt, ...) noexcept;
+
   void debug(const char *msg) noexcept;
   void debug_fmt(const char *msg, ...) noexcept;
+
   void warn(const char *msg) noexcept;
+
   void error(const char *msg) noexcept;
   void error_fmt(const char *msg, ...) noexcept;
+
   void critical(const char *msg) noexcept;
   void critical_fmt(const char *msg, ...) noexcept;
+
   void progress(const char *msg) noexcept;
   void progress_fmt(const char *msg, ...) noexcept;
 
@@ -40,6 +45,7 @@ private:
   std::string _format_msg(const char *msg) const noexcept;
   std::string
   _format_msg(const char *msg, _LogColor color, bool bold) const noexcept;
+
   void _log_fmt(const char *msg, va_list &vaArgs) noexcept;
 };
 }

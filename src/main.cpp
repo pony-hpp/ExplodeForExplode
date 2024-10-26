@@ -1,3 +1,4 @@
+#include "core/exception.hpp"
 #include "core/logger.hpp"
 #include "core/renderer.hpp"
 #include "core/window.hpp"
@@ -8,6 +9,18 @@
 #include "opengl/shading/shader_program.hpp"
 
 #include <random>
+
+using RandInt =
+#if _WIN32
+  // For some stupid reason, Windows forbids using char in the
+  // std::uniform_int_distribution<>.
+  short
+#else
+  char
+#endif
+  ;
+
+static constexpr float _MV_SENSITIVITY = 1.5f;
 
 int main()
 {
@@ -24,6 +37,20 @@ int main()
     logger.critical_fmt("The window couldn't be created: %s.", e.msg.c_str());
     return 1;
   };
+
+  core::PngDecoder pngDecoder;
+  try
+  {
+    win.set_icon(pngDecoder("../assets/textures/ui/window_icon.png"));
+  }
+  catch (const core::FopenException &)
+  {
+    logger.error_fmt("Failed to open window icon image.");
+  }
+  catch (const core::CorruptedPngException &)
+  {
+    logger.error_fmt("Window icon is corrupted.");
+  }
 
   gl::VertexShader vs;
   gl::FragmentShader fs;
@@ -48,7 +75,7 @@ int main()
 
   core::Renderer renderer(win, shaderProgram);
 
-  game::Movement mv(1.5f);
+  game::Movement mv(_MV_SENSITIVITY);
   game::Zooming zoom(0.15f, 0.5f, 5.5f);
 
   bool rightBtnHeld = false;
@@ -101,19 +128,30 @@ int main()
 
   shaderProgram.set_uniform("uWorldH", worldSettings.h() * game::Block::SIZE);
 
+  // Set origin.
+  mv(
+    (worldSettings.w / 2.0f) * game::Block::SIZE / _MV_SENSITIVITY,
+    -(worldSettings.h() * game::Block::SIZE - 15 * game::Block::SIZE) /
+      _MV_SENSITIVITY
+  );
+  mv(0, 0); // Apply position.
+  mv.set_next_origin();
+  renderer.view.set_offset(mv.get().x, mv.get().y);
+  shaderProgram.view_matrix(renderer.view);
+
   std::random_device rdev;
   std::mt19937_64 seed(rdev());
   logger.debug_fmt("Spawning trees and grass with seed %li", seed());
 
   for (unsigned i = 0; i < worldSettings.w; i++)
   {
-    if (std::uniform_int_distribution<char>(0, 15)(seed) == 0)
+    if (std::uniform_int_distribution<RandInt>(0, 15)(seed) == 0)
     {
       worldSettings.structures.push_back(
         {game::structures::TREE, i, worldSettings.h()}
       );
     }
-    else if (std::uniform_int_distribution<char>(0, 6)(seed) != 0)
+    else if (std::uniform_int_distribution<RandInt>(0, 6)(seed) != 0)
     {
       worldSettings.structures.push_back(
         {game::structures::GRASS, i, worldSettings.h()}
@@ -122,8 +160,6 @@ int main()
   }
 
   game::PlainWorldGenerator worldGen(worldSettings);
-
-  core::PngDecoder pngDecoder;
   game::World world = worldGen();
   world.load_textures(pngDecoder);
 

@@ -1,6 +1,7 @@
 #ifndef _WINDOW_HPP_
 #define _WINDOW_HPP_
 
+#include "core/decoders/png.hpp"
 #include "core/input/mouse.hpp"
 #include "core/logger.hpp"
 #include "opengl/opengl.hpp" // IWYU pragma: keep
@@ -24,14 +25,19 @@ public:
   ~Window() noexcept;
 
   void create();
+
   bool closed() const noexcept;
-  void poll_events() const noexcept;
-  void clear() noexcept;
-  void update() noexcept;
-  void set_bg(unsigned char r, unsigned char g, unsigned char b) noexcept;
+  unsigned short w() const noexcept;
+  unsigned short h() const noexcept;
   unsigned short cursor_x() const noexcept;
   unsigned short cursor_y() const noexcept;
+
+  void clear() noexcept;
+  void update() noexcept;
+  void poll_events() const noexcept;
+  void set_bg(unsigned char r, unsigned char g, unsigned char b) noexcept;
   void toggle_cursor_visibility() noexcept;
+  void set_icon(const Png &icon) noexcept;
 
   void on_resize(const ResizeCallback &callback) noexcept;
   void on_cursor_move(const CursorMoveCallback &callback) noexcept;
@@ -49,6 +55,11 @@ private:
 };
 
 struct WindowCreationException
+{
+  const std::string msg;
+};
+
+struct IconCreationException
 {
   const std::string msg;
 };
