@@ -1,5 +1,4 @@
 #include "core/exception.hpp"
-#include "core/utils.hpp"
 #include "opengl/opengl.hpp"
 #include "opengl/shading/shader.hpp"
 
@@ -23,20 +22,6 @@ unsigned Shader::gl_handle() const noexcept { return _glHandle; }
 void Shader::load(const char *shaderPath)
 {
   _logger.set_section("Load");
-
-  _logger.debug("Checking for correct shader source file extension");
-  try
-  {
-    core::check_file_extension(shaderPath, src_file_extension());
-  }
-  catch (const core::InvalidFileExtensionException &e)
-  {
-    _logger.error_fmt(
-      "Invalid file extension: %s required, but %s provided.",
-      src_file_extension(), e.provided.c_str()
-    );
-    throw core::InvalidFileExtensionException();
-  }
 
   _glHandle = glCreateShader(gl_type());
 

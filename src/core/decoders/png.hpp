@@ -28,8 +28,7 @@ public:
 
 private:
   std::unordered_map<const char *, Png> _cachedPngs;
-  std::vector<const char *> _fopenFailedPngFiles, _invalidExtensionPngPaths,
-    _corruptedDataPngPaths;
+  std::vector<const char *> _fopenFailedPngFiles, _corruptedDataPngPaths;
   Logger _logger;
 };
 
