@@ -150,7 +150,7 @@ void Window::on_resize(const ResizeCallback &callback) noexcept
   _resizeCallback = callback;
   glfwSetWindowSizeCallback(
     _glHandle,
-    [](GLFWwindow *, int w, int h)
+    [](GLFWwindow *, int w, int h) noexcept
   {
     glViewport(0, 0, w, h);
     _resizeCallback(w, h);
@@ -166,7 +166,7 @@ void Window::on_cursor_move(const CursorMoveCallback &callback) noexcept
   _cursorMoveCallback = callback;
   glfwSetCursorPosCallback(
     _glHandle,
-    [](GLFWwindow *, double x, double y)
+    [](GLFWwindow *, double x, double y) noexcept
   {
     _cursorMoveCallback(x, y);
   }
@@ -181,7 +181,7 @@ void Window::on_mouse_click(const MouseClickCallback &callback) noexcept
   _mouseClickCallback = callback;
   glfwSetMouseButtonCallback(
     _glHandle,
-    [](GLFWwindow *, int btn, int action, int)
+    [](GLFWwindow *, int btn, int action, int) noexcept
   {
     _mouseClickCallback((mouse::Button)btn, (mouse::Action)action);
   }
@@ -196,7 +196,7 @@ void Window::on_scroll(const ScrollCallback &callback) noexcept
   _scrollCallback = callback;
   glfwSetScrollCallback(
     _glHandle,
-    [](GLFWwindow *, double, double y)
+    [](GLFWwindow *, double, double y) noexcept
   {
     if ((char)y == 0)
     {

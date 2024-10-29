@@ -12,8 +12,7 @@ class Shader
 public:
   virtual ~Shader() noexcept;
 
-  virtual int gl_type() const noexcept                    = 0;
-  virtual const char *src_file_extension() const noexcept = 0;
+  virtual int gl_type() const noexcept = 0;
 
   unsigned gl_handle() const noexcept;
   void load(const char *shaderPath);
@@ -35,7 +34,6 @@ private:
     className() noexcept; \
 \
     int gl_type() const noexcept override; \
-    const char *src_file_extension() const noexcept override; \
   };
 
 SHADER(VertexShader)

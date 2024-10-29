@@ -1,6 +1,7 @@
 #ifndef _LOGGER_HPP_
 #define _LOGGER_HPP_
 
+#include <cstdarg>
 #include <string>
 
 namespace core

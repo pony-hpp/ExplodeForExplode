@@ -15,10 +15,10 @@ namespace game::blocks
 BLOCK(DefaultBlock)
 BLOCK(GrassBlock)
 BLOCK(EarthBlock)
+BLOCK(Grass)
 BLOCK(StoneBlock)
 BLOCK(OakBlock)
 BLOCK(OakLeaves)
-BLOCK(Grass)
 }
 
 #endif
