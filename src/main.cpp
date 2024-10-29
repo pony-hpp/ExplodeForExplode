@@ -93,15 +93,16 @@ int main()
     }
   });
 
-  win.on_cursor_move([&renderer, &shaderProgram, &mv, &zoom,
-                      &rightBtnHeld](long long x, long long y)
+  win.on_cursor_move([&renderer, &shaderProgram, &rightBtnHeld, &mv,
+                      &zoom](long long x, long long y)
   {
     if (rightBtnHeld)
     {
-      mv(x, y);
+      mv(x / zoom.get().scale, y / zoom.get().scale);
 
       renderer.view.set_offset(
-        zoom.get().offsetX + mv.get().x, zoom.get().offsetY + mv.get().y
+        zoom.get().offsetX + mv.get().x * zoom.get().scale,
+        zoom.get().offsetY + mv.get().y * zoom.get().scale
       );
 
       shaderProgram.view_matrix(renderer.view);
@@ -110,11 +111,12 @@ int main()
 
   win.on_scroll([&win, &renderer, &shaderProgram, &zoom, &mv](bool up)
   {
-    zoom(up, mv.get().x + win.cursor_x(), mv.get().y + win.cursor_y());
+    zoom(up, win.w() / 2.0f, win.h() / 2.0f);
 
     renderer.view.set_scale(zoom.get().scale);
     renderer.view.set_offset(
-      mv.get().x + zoom.get().offsetX, mv.get().y + zoom.get().offsetY
+      zoom.get().offsetX + mv.get().x * zoom.get().scale,
+      zoom.get().offsetY + mv.get().y * zoom.get().scale
     );
 
     shaderProgram.view_matrix(renderer.view);

@@ -8,26 +8,26 @@ Zooming::Zooming(float sensitivity, float min, float max) noexcept
 {
 }
 
-void Zooming::operator()(bool scale, int pointX, int pointY) noexcept
+void Zooming::operator()(bool scale, int x, int y) noexcept
 {
   _zoom.scale += _kSensitivity * (scale == true ? 1 : -1);
 
   if (_zoom.scale < _kMin)
   {
     _zoom.scale = _kMin;
-    _translate_to_point(pointX, pointY);
+    _translate_to_point(x, y);
     _clamped = true;
   }
   else if (_zoom.scale > _kMax)
   {
     _zoom.scale = _kMax;
-    _translate_to_point(pointX, pointY);
+    _translate_to_point(x, y);
     _clamped = true;
   }
   else
   {
     _clamped = false;
-    _translate_to_point(pointX, pointY);
+    _translate_to_point(x, y);
   }
 }
 

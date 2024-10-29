@@ -177,6 +177,7 @@ TEST(PlainWorldGenerator, BlockLayersTest)
   settings.layers.push_back({blocks::GRASS_BLOCK, 8});
   settings.layers.push_back({blocks::DEFAULT_BLOCK, 1});
   settings.layers.push_back({blocks::DEFAULT_BLOCK, 0});
+  settings.layers.push_back({blocks::DEFAULT_BLOCK, 0});
   settings.layers.push_back({blocks::GRASS_BLOCK, 2});
   settings.layers.push_back({blocks::EARTH_BLOCK, 0});
   settings.layers.push_back({blocks::DEFAULT_BLOCK, 0});

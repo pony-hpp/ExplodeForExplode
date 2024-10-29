@@ -29,8 +29,6 @@ public:
   bool closed() const noexcept;
   unsigned short w() const noexcept;
   unsigned short h() const noexcept;
-  unsigned short cursor_x() const noexcept;
-  unsigned short cursor_y() const noexcept;
 
   void clear() noexcept;
   void update() noexcept;
