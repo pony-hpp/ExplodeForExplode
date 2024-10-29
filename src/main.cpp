@@ -79,8 +79,9 @@ int main()
   game::Zooming zoom(0.15f, 0.5f, 5.5f);
 
   bool rightBtnHeld = false;
-  win.on_mouse_click([&win, &rightBtnHeld,
-                      &mv](core::mouse::Button btn, core::mouse::Action action)
+  win.on_mouse_click([&win, &rightBtnHeld, &mv](
+                       core::mouse::Button btn, core::mouse::Action action
+                     ) noexcept
   {
     if (btn == core::mouse::BUTTON_RIGHT)
     {
@@ -94,7 +95,7 @@ int main()
   });
 
   win.on_cursor_move([&renderer, &shaderProgram, &rightBtnHeld, &mv,
-                      &zoom](long long x, long long y)
+                      &zoom](long long x, long long y) noexcept
   {
     if (rightBtnHeld)
     {
@@ -105,11 +106,11 @@ int main()
         zoom.get().offsetY + mv.get().y * zoom.get().scale
       );
 
-      shaderProgram.view_matrix(renderer.view);
+      shaderProgram.set_view_matrix(renderer.view);
     }
   });
 
-  win.on_scroll([&win, &renderer, &shaderProgram, &zoom, &mv](bool up)
+  win.on_scroll([&win, &renderer, &shaderProgram, &zoom, &mv](bool up) noexcept
   {
     zoom(up, win.w() / 2.0f, win.h() / 2.0f);
 
@@ -119,7 +120,7 @@ int main()
       zoom.get().offsetY + mv.get().y * zoom.get().scale
     );
 
-    shaderProgram.view_matrix(renderer.view);
+    shaderProgram.set_view_matrix(renderer.view);
   });
 
   game::PlainWorldGeneratorSettings worldSettings;
@@ -139,7 +140,7 @@ int main()
   mv(0, 0); // Apply position.
   mv.set_next_origin();
   renderer.view.set_offset(mv.get().x, mv.get().y);
-  shaderProgram.view_matrix(renderer.view);
+  shaderProgram.set_view_matrix(renderer.view);
 
   std::random_device rdev;
   std::mt19937_64 seed(rdev());

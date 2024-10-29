@@ -6,9 +6,9 @@ Renderer::Renderer(Window &win, gl::ShaderProgram &shaderProgram) noexcept
   : _win(win), _shaderProgram(shaderProgram)
 {
   _resize_viewport(win.w(), win.h());
+  _shaderProgram.set_view_matrix(view);
 
-  _shaderProgram.view_matrix(view);
-  win.on_resize([this](unsigned short w, unsigned short h)
+  win.on_resize([this](unsigned short w, unsigned short h) noexcept
   {
     _resize_viewport(w, h);
   });
@@ -27,7 +27,7 @@ void Renderer::draw(const IDrawable &drawable) noexcept
 
 void Renderer::_resize_viewport(unsigned short w, unsigned short h) noexcept
 {
-  _shaderProgram.projection_matrix(gl::math::ProjectionMatrix(w, h));
+  _shaderProgram.set_projection_matrix(gl::math::ProjectionMatrix(w, h));
   _viewportW = w;
   _viewportH = h;
 }

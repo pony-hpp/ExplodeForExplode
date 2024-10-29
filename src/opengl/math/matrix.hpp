@@ -29,12 +29,6 @@ protected:
   Row _data[4];
 };
 
-class ProjectionMatrix : public Matrix
-{
-public:
-  ProjectionMatrix(unsigned short maxX, unsigned short maxY) noexcept;
-};
-
 class ViewMatrix final : public Matrix
 {
 public:
@@ -44,6 +38,12 @@ public:
 
   float get_scale() const noexcept;
   void set_scale(float v) noexcept;
+};
+
+class ProjectionMatrix : public Matrix
+{
+public:
+  ProjectionMatrix(unsigned short maxX, unsigned short maxY) noexcept;
 };
 }
 

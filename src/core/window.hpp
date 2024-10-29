@@ -56,11 +56,6 @@ struct WindowCreationException
 {
   const std::string msg;
 };
-
-struct IconCreationException
-{
-  const std::string msg;
-};
 }
 
 #endif

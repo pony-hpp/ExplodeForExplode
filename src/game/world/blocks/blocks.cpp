@@ -9,9 +9,9 @@ namespace game::blocks
 TEXTURE(DefaultBlock, "")
 TEXTURE(GrassBlock,   "../assets/textures/blocks/grass_block.png")
 TEXTURE(EarthBlock,   "../assets/textures/blocks/earth_block.png")
+TEXTURE(Grass,        "../assets/textures/blocks/grass.png")
 TEXTURE(StoneBlock,   "../assets/textures/blocks/stone_block.png")
 TEXTURE(OakBlock,     "../assets/textures/blocks/oak_block.png")
 TEXTURE(OakLeaves,    "../assets/textures/blocks/oak_leaves.png")
-TEXTURE(Grass,        "../assets/textures/blocks/grass.png")
 // clang-format on
 }

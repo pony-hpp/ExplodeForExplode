@@ -9,6 +9,8 @@
 
 namespace gl
 {
+Shader::Shader(const char *loggerModule) noexcept : _logger(loggerModule) {}
+
 Shader::~Shader() noexcept
 {
   if (_glHandle)
@@ -67,23 +69,16 @@ void Shader::compile()
       _glHandle, compileStatusStrLen, nullptr, compileStatus.get()
     );
 
-    _logger.error_fmt("Error compiling shader:\n\n%s", compileStatus.get());
+    _logger.error_fmt("Error compiling shader:\n\n%s\n", compileStatus.get());
     throw ShaderCompilationException();
   }
 
   _logger.info("Shader successfully compiled.");
 }
 
-Shader::Shader(const char *loggerModule) noexcept : _logger(loggerModule) {}
-
 VertexShader::VertexShader() noexcept : Shader("Shader/Vertex") {}
 int VertexShader::gl_type() const noexcept { return GL_VERTEX_SHADER; }
-const char *VertexShader::src_file_extension() const noexcept { return "vert"; }
 
 FragmentShader::FragmentShader() noexcept : Shader("Shader/Fragment") {}
 int FragmentShader::gl_type() const noexcept { return GL_FRAGMENT_SHADER; }
-const char *FragmentShader::src_file_extension() const noexcept
-{
-  return "frag";
-}
 }
