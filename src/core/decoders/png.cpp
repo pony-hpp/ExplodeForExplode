@@ -1,6 +1,5 @@
 #include "core/decoders/png.hpp"
 #include "core/exception.hpp"
-#include "core/utils.hpp"
 
 #include <algorithm>
 #include <cerrno>
@@ -65,26 +64,8 @@ Png &PngDecoder::operator()(const char *pngPath)
     return kCachedPng->second;
   }
 
-  _throw_if_not_empty<InvalidFileExtensionException>(
-    _invalidExtensionPngPaths, pngPath
-  );
   _throw_if_not_empty<FopenException>(_fopenFailedPngFiles, pngPath);
   _throw_if_not_empty<CorruptedPngException>(_corruptedDataPngPaths, pngPath);
-
-  _logger.debug("Checking for correct PNG file extension");
-  try
-  {
-    check_file_extension(pngPath, "png");
-  }
-  catch (const InvalidFileExtensionException &e)
-  {
-    _logger.error_fmt(
-      "Invalid file extension: png required, but %s provided.",
-      e.provided.c_str()
-    );
-    _invalidExtensionPngPaths.push_back(pngPath);
-    throw InvalidFileExtensionException();
-  }
 
   _logger.info_fmt("Decoding image \"%s\"", pngPath);
 
