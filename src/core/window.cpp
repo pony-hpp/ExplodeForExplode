@@ -1,8 +1,6 @@
 #include "core/window.hpp"
 #include "opengl/ctx.hpp"
 
-#include <cmath>
-
 namespace core
 {
 static Window::ResizeCallback _resizeCallback;
@@ -109,20 +107,6 @@ unsigned short Window::h() const noexcept
   int h;
   glfwGetWindowSize(_glHandle, nullptr, &h);
   return h;
-}
-
-unsigned short Window::cursor_x() const noexcept
-{
-  double x;
-  glfwGetCursorPos(_glHandle, &x, nullptr);
-  return fmax(0, x); // Convert negative values to 0.
-}
-
-unsigned short Window::cursor_y() const noexcept
-{
-  double y;
-  glfwGetCursorPos(_glHandle, nullptr, &y);
-  return fmax(0, h() - y);
 }
 
 void Window::clear() noexcept { glClear(GL_COLOR_BUFFER_BIT); }

@@ -11,8 +11,11 @@ uniform uint uWorldH;
 
 void main()
 {
+  vec4 pix = texture(uTex, vTexPos);
+
   fColor = mix(
-    texture(uTex, vTexPos), vec4(0.0f, 0.0f, 0.0f, 1.0f),
-    ((vViewportH - vPos.y) / uWorldH) + 1.0f
+    pix, vec4(0.0f, 0.0f, 0.0f, 1.0f),
+    vPos.y <= uWorldH ? ((vViewportH - vPos.y) / uWorldH) + 1.0f : 0.0f
   );
+  fColor.a = pix.a;
 }

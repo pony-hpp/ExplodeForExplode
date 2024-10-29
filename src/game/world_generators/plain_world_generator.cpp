@@ -53,6 +53,7 @@ WorldData &PlainWorldGenerator::operator()() noexcept
       if (_kSettings.layers[curLayer].second == 0)
       {
         _logger.warn("Ignored layer with 0 height.");
+        y--;
         continue;
       }
     }
