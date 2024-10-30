@@ -9,7 +9,7 @@ project(
 
 set(CMAKE_CXX_STANDARD 17)
 
-if (UNIX)
+if(UNIX)
   add_compile_options(-Wextra -Wpedantic -Werror)
 endif() # Otherwise don't set any flags, because MSVC is too squeamish.
 
@@ -17,7 +17,7 @@ add_compile_definitions(EFE_VERSION="${PROJECT_VERSION}")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if (UNIX)
+if(UNIX)
   find_package(PkgConfig REQUIRED)
   pkg_check_modules(OPENGL REQUIRED glfw3 glew)
   pkg_check_modules(PNG REQUIRED libpng)
@@ -39,4 +39,6 @@ target_link_libraries(${EFE_COMMON} ${OPENGL_LIBRARIES} ${PNG_LIBRARIES})
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} ${EFE_COMMON})
 
-add_subdirectory(tests)
+if(EFE_TESTS)
+  add_subdirectory(tests)
+endif()
