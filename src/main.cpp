@@ -110,9 +110,9 @@ int main()
     }
   });
 
-  win.on_scroll([&win, &renderer, &shaderProgram, &zoom, &mv](bool up) noexcept
+  win.on_scroll([&renderer, &shaderProgram, &zoom, &mv](bool up) noexcept
   {
-    zoom(up, win.w() / 2.0f, win.h() / 2.0f);
+    zoom(up, renderer.viewport_w() / 2.0f, renderer.viewport_h() / 2.0f);
 
     renderer.view.set_scale(zoom.get().scale);
     renderer.view.set_offset(
