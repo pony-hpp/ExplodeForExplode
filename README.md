@@ -14,7 +14,7 @@ There's no official builds for this game, but you can build it yourself.
   <li>CMake 3.6+;</li>
   <li>OpenGL: GLFW and GLEW libraries;</li>
   <li>libpng;</li>
-  <li>GTest (optional);</li>
+  <li>GTest (optional).</li>
 </ul>
 
 If you're using Linux, make sure you have pkgconf installed.
