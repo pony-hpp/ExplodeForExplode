@@ -13,14 +13,14 @@ class Movement final
 public:
   explicit Movement(float sensitivity) noexcept;
 
-  void operator()(long long x, long long y) noexcept;
+  void operator()(float x, float y) noexcept;
   void set_next_origin() noexcept;
   const MovementOffset &get() const noexcept;
 
 private:
   const float _kSensitivity;
   MovementOffset _offset;
-  long long _prevX, _prevY;
+  float _prevX, _prevY;
   bool _prevPosesInitialized = false;
 };
 }
