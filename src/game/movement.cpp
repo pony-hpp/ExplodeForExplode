@@ -7,7 +7,7 @@ Movement::Movement(float sensitivity) noexcept
 {
 }
 
-void Movement::operator()(long long x, long long y) noexcept
+void Movement::operator()(float x, float y) noexcept
 {
   if (!_prevPosesInitialized)
   {
