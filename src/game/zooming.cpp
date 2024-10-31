@@ -8,7 +8,7 @@ Zooming::Zooming(float sensitivity, float min, float max) noexcept
 {
 }
 
-void Zooming::operator()(bool scale, int x, int y) noexcept
+void Zooming::operator()(bool scale, float x, float y) noexcept
 {
   _zoom.scale += _kSensitivity * (scale == true ? 1 : -1);
 
@@ -33,7 +33,7 @@ void Zooming::operator()(bool scale, int x, int y) noexcept
 
 const Zoom &Zooming::get() const noexcept { return _zoom; }
 
-void Zooming::_translate_to_point(int x, int y) noexcept
+void Zooming::_translate_to_point(float x, float y) noexcept
 {
   if (!_clamped)
   {
