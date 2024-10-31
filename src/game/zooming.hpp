@@ -14,7 +14,7 @@ class Zooming final
 public:
   explicit Zooming(float sensitivity, float min, float max) noexcept;
 
-  void operator()(bool scale, int x, int y) noexcept;
+  void operator()(bool scale, float x, float y) noexcept;
   const Zoom &get() const noexcept;
 
 private:
@@ -22,7 +22,7 @@ private:
   Zoom _zoom;
   bool _clamped;
 
-  void _translate_to_point(int x, int y) noexcept;
+  void _translate_to_point(float x, float y) noexcept;
 };
 }
 

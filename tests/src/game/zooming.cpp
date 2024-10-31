@@ -55,7 +55,8 @@ TEST(Zooming, ClampTest)
 }
 
 static void _assert_offset(
-  Zooming &zooming, bool scale, int x, int y, float expectedX, float expectedY
+  Zooming &zooming, bool scale, float x, float y, float expectedX,
+  float expectedY
 ) noexcept
 {
   zooming(scale, x, y);
@@ -67,11 +68,11 @@ TEST(Zooming, OffsetTest)
 {
   Zooming zoom(1.0f, 0.2f, 100.0f);
 
-  _assert_offset(zoom, true, 5, 5, 5.0f, 5.0f);
-  _assert_offset(zoom, true, 5, 5, 10.0f, 10.0f);
-  _assert_offset(zoom, true, 4, 6, 12.0f, 18.0f);
-  _assert_offset(zoom, false, 5, 6, 10.0f, 12.0f);
-  _assert_offset(zoom, false, 4, 2, 4.0f, 2.0f);
-  _assert_offset(zoom, false, 314, 159, 0.0f, 0.0f);
-  _assert_offset(zoom, false, 5, 6, -4.0f, -4.8f);
+  _assert_offset(zoom, true, 5.0f, 5.0f, 5.0f, 5.0f);
+  _assert_offset(zoom, true, 5.0f, 5.0f, 10.0f, 10.0f);
+  _assert_offset(zoom, true, 4.1f, 5.9f, 4.1f * 3.0f, 5.9f * 3.0f);
+  _assert_offset(zoom, false, 5.0f, 6.0f, 10.0f, 12.0f);
+  _assert_offset(zoom, false, 4.0f, 2.0f, 4.0f, 2.0f);
+  _assert_offset(zoom, false, 314.15f, 926.53f, 0.0f, 0.0f);
+  _assert_offset(zoom, false, 5.0f, 6.0f, -4.0f, -4.8f);
 }

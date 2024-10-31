@@ -21,23 +21,21 @@ Shader::~Shader() noexcept
 
 unsigned Shader::gl_handle() const noexcept { return _glHandle; }
 
-void Shader::load(const char *shaderPath)
+void Shader::load(const char *srcPath)
 {
   _logger.set_section("Load");
 
   _glHandle = glCreateShader(gl_type());
 
-  std::ifstream f(shaderPath);
+  std::ifstream f(srcPath);
   if (!f)
   {
-    _logger.error_fmt(
-      "Failed to open \"%s\": %s.", shaderPath, strerror(errno)
-    );
+    _logger.error_fmt("Failed to open \"%s\": %s.", srcPath, strerror(errno));
     f.close();
     throw core::FopenException();
   }
 
-  _logger.info_fmt("Loading shader source from \"%s\"", shaderPath);
+  _logger.info_fmt("Loading shader source from \"%s\"", srcPath);
 
   char c;
   while ((c = f.get()) != EOF)

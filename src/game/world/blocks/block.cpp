@@ -82,7 +82,7 @@ std::unique_ptr<Block> Block::from_data(const BlockData &data) noexcept
   return res;
 }
 
-void Block::set_pos(int x, int y) noexcept
+void Block::set_pos(long long x, long long y) noexcept
 {
   _x = x;
   _y = y;

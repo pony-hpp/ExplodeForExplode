@@ -95,7 +95,7 @@ int main()
   });
 
   win.on_cursor_move([&renderer, &shaderProgram, &rightBtnHeld, &mv,
-                      &zoom](long long x, long long y) noexcept
+                      &zoom](int x, int y) noexcept
   {
     if (rightBtnHeld)
     {

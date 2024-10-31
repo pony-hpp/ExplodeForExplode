@@ -16,7 +16,7 @@ public:
   Block() noexcept;
   virtual ~Block() noexcept;
 
-  static constexpr unsigned char SIZE = 24;
+  static constexpr char SIZE = 24;
 
   void draw(const core::Renderer &renderer) const noexcept override;
 
@@ -24,11 +24,11 @@ public:
 
   static std::unique_ptr<Block> from_data(const BlockData &data) noexcept;
 
-  void set_pos(int x, int y) noexcept;
+  void set_pos(long long x, long long y) noexcept;
   void load_texture(core::PngDecoder &pngDecoder) noexcept;
 
 private:
-  int _x, _y;
+  long long _x, _y;
 
   unsigned _coordsVbo;
   unsigned _tex;

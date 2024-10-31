@@ -15,7 +15,7 @@ class Window final
 {
 public:
   using ResizeCallback = std::function<void(unsigned short, unsigned short)>;
-  using CursorMoveCallback = std::function<void(long long, long long)>;
+  using CursorMoveCallback = std::function<void(int, int)>;
   using MouseClickCallback = std::function<void(mouse::Button, mouse::Action)>;
   using ScrollCallback     = std::function<void(bool)>;
 
