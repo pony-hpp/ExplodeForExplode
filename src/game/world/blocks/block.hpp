@@ -24,11 +24,14 @@ public:
 
   static std::unique_ptr<Block> from_data(const BlockData &data) noexcept;
 
-  void set_pos(long long x, long long y) noexcept;
+  int x() const noexcept;
+  int y() const noexcept;
+
+  void set_pos(int x, int y) noexcept;
   void load_texture(core::PngDecoder &pngDecoder) noexcept;
 
 private:
-  long long _x, _y;
+  int _x, _y;
 
   unsigned _coordsVbo;
   unsigned _tex;

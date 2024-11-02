@@ -28,8 +28,27 @@ void World::draw(const core::Renderer &renderer) const noexcept
 {
   for (unsigned long long i = 0; i < _kBlockCount; i++)
   {
-    _data[i]->draw(renderer);
+    if (_data[i])
+    {
+      _data[i]->draw(renderer);
+    }
   }
+}
+
+std::unique_ptr<Block> *World::at(int x, int y) noexcept
+{
+  if ((x < 0 || x >= (int)_w) || (y < 0 || y >= _h))
+  {
+    for (unsigned long long i = _w * _h; i < _kBlockCount; i++)
+    {
+      if (_data[i] && _data[i]->x() == x && _data[i]->y() == y)
+      {
+        return &_data[i];
+      }
+    }
+    return nullptr;
+  }
+  return &_data[y * _w + x];
 }
 
 void World::load_textures(core::PngDecoder &pngDecoder) noexcept

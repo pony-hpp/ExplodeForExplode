@@ -2,24 +2,9 @@
 #include "game/world/blocks/block.hpp"
 #include "game/world/blocks/blocks.hpp"
 #include "opengl/opengl.hpp"
+#include "opengl/texture.hpp"
 
 #include <cstring>
-
-static constexpr float _TEX_COORDS[] = {
-  // clang-format off
-  0.0f, 1.0f,
-  1.0f, 1.0f,
-  0.0f, 0.0f,
-  1.0f, 0.0f,
-  // clang-format on
-};
-
-static constexpr unsigned char _FALLBACK_TEX[] = {
-  // clang-format off
-  0,   0, 0,   255,  255, 0,  255, 255,
-  255, 0, 255, 255,  0,   0,  0,   255
-  // clang-format on
-};
 
 namespace game
 {
@@ -82,7 +67,10 @@ std::unique_ptr<Block> Block::from_data(const BlockData &data) noexcept
   return res;
 }
 
-void Block::set_pos(long long x, long long y) noexcept
+int Block::x() const noexcept { return _x; }
+int Block::y() const noexcept { return _y; }
+
+void Block::set_pos(int x, int y) noexcept
 {
   _x = x;
   _y = y;
@@ -107,7 +95,7 @@ void Block::load_texture(core::PngDecoder &pngDecoder) noexcept
 {
   glBindBuffer(GL_ARRAY_BUFFER, _texCoordsVbo);
   glBufferData(
-    GL_ARRAY_BUFFER, sizeof(_TEX_COORDS), _TEX_COORDS, GL_STATIC_DRAW
+    GL_ARRAY_BUFFER, sizeof(gl::TEX_COORDS), gl::TEX_COORDS, GL_STATIC_DRAW
   );
   glBindTexture(GL_TEXTURE_2D, _tex);
   glBindVertexArray(_vao);
@@ -140,7 +128,8 @@ void Block::load_texture(core::PngDecoder &pngDecoder) noexcept
 void Block::_load_default_tex() noexcept
 {
   glTexImage2D(
-    GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, _FALLBACK_TEX
+    GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+    gl::FALLBACK_TEX
   );
 }
 }

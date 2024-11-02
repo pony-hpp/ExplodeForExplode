@@ -19,6 +19,7 @@ public:
 
   void draw(const core::Renderer &renderer) const noexcept override;
 
+  std::unique_ptr<Block> *at(int x, int y) noexcept;
   void load_textures(core::PngDecoder &pngDecoder) noexcept;
 
 private:

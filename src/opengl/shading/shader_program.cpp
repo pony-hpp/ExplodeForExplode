@@ -5,7 +5,10 @@
 
 namespace gl
 {
-ShaderProgram::ShaderProgram() noexcept : _logger("ShaderProgram")
+unsigned ShaderProgram::_used;
+
+ShaderProgram::ShaderProgram(const char *name) noexcept
+  : _logger((std::string("ShaderProgram/") + name).c_str())
 {
   _glHandle = glCreateProgram();
 }
@@ -45,26 +48,46 @@ void ShaderProgram::link()
   _logger.info("Shader program successfully linked.");
 }
 
-void ShaderProgram::use() noexcept { glUseProgram(_glHandle); }
+void ShaderProgram::use() noexcept
+{
+  glUseProgram(_glHandle);
+  _used = _glHandle;
+}
 
 void ShaderProgram::set_uniform(const char *name, unsigned v) noexcept
 {
+  if (_used != _glHandle)
+  {
+    use();
+  }
   glUniform1ui(_get_uniform(name), v);
 }
 
 void ShaderProgram::set_uniform(const char *name, const float *v) noexcept
 {
+  if (_used != _glHandle)
+  {
+    use();
+  }
   glUniformMatrix4fv(_get_uniform(name), 1, true, v);
 }
 
 void ShaderProgram::set_view_matrix(const math::ViewMatrix &mat) noexcept
 {
+  if (_used != _glHandle)
+  {
+    use();
+  }
   set_uniform(_U_VIEW_NAME, mat);
 }
 
 void ShaderProgram::set_projection_matrix(const math::ProjectionMatrix &mat
 ) noexcept
 {
+  if (_used != _glHandle)
+  {
+    use();
+  }
   set_uniform(_U_PROJECTION_NAME, mat);
 }
 

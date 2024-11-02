@@ -109,6 +109,20 @@ unsigned short Window::h() const noexcept
   return h;
 }
 
+unsigned short Window::cursor_x() const noexcept
+{
+  double x;
+  glfwGetCursorPos(_glHandle, &x, nullptr);
+  return x;
+}
+
+unsigned short Window::cursor_y() const noexcept
+{
+  double y;
+  glfwGetCursorPos(_glHandle, nullptr, &y);
+  return h() - y;
+}
+
 void Window::clear() noexcept { glClear(GL_COLOR_BUFFER_BIT); }
 
 void Window::update() noexcept { glfwSwapBuffers(_glHandle); }

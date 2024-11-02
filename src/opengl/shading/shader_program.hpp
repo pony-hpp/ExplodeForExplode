@@ -12,7 +12,7 @@ namespace gl
 class ShaderProgram final
 {
 public:
-  ShaderProgram() noexcept;
+  explicit ShaderProgram(const char *name) noexcept;
   ~ShaderProgram() noexcept;
 
   void add(const Shader &shader) noexcept;
@@ -26,6 +26,8 @@ public:
   void set_projection_matrix(const math::ProjectionMatrix &mat) noexcept;
 
 private:
+  static unsigned _used;
+
   unsigned _glHandle;
   mutable std::unordered_map<const char *, int> _cachedUniformLocs;
   mutable core::Logger _logger;

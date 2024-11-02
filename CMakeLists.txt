@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.6)
 
 project(
   ExplodeForExplode
-  DESCRIPTION "Explode, make money, buy TNT and explode again!"
+  DESCRIPTION "Explode, make money, buy dynamites and explode again!"
   VERSION 0.9.0
   LANGUAGES CXX
 )
