@@ -9,7 +9,7 @@ namespace core
 class Logger final
 {
 public:
-  Logger(const char *module) noexcept;
+  explicit Logger(std::string_view module) noexcept;
 
   void set_section(const char *section) noexcept;
 
@@ -31,9 +31,6 @@ public:
   void progress_fmt(const char *msg, ...) noexcept;
 
 private:
-  const std::string _kModule;
-  std::string _section;
-
   enum _LogColor : char
   {
     _RED    = 31,
@@ -42,12 +39,17 @@ private:
     _CYAN   = 36,
   };
 
+  const std::string _kModule;
+  std::string _section;
+
   std::string _format_msg_base(const char *msg) const noexcept;
   std::string _format_msg(const char *msg) const noexcept;
   std::string
   _format_msg(const char *msg, _LogColor color, bool bold) const noexcept;
 
-  void _log_fmt(const char *msg, va_list &vaArgs) noexcept;
+  std::string _format_progress_base(const char *msg) const noexcept;
+
+  void _log_fmt(const std::string &msg, va_list &vaArgs) noexcept;
 };
 }
 

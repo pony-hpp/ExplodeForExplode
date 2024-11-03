@@ -45,8 +45,8 @@ void Window::create()
     throw WindowCreationException {kErr};
   }
 
-  _logger.info("Window successfully created; initializing graphics");
   _glHandle = glfwCreateWindow(_kInitW, _kInitH, _kInitTitle, nullptr, nullptr);
+
   if (!_glHandle)
   {
     const char *kErr = _glfw_err();
@@ -54,6 +54,7 @@ void Window::create()
     throw WindowCreationException {kErr};
   }
 
+  _logger.debug("Creating context");
   _logger.debug("Received these OpenGL initialization parameters:");
   for (const auto &param : gl::CTX)
   {
@@ -70,24 +71,13 @@ void Window::create()
         "    %s: %i", gl::glfw_const_to_str(param.first), param.second
       );
     }
+
     glfwWindowHint(param.first, param.second);
   }
+
   glfwMakeContextCurrent(_glHandle);
 
-  _logger.debug("Initializing GLEW");
-  glewExperimental       = true;
-  const int kGlewInitErr = glewInit();
-  if (kGlewInitErr != 0)
-  {
-    const unsigned char *kErr = glewGetErrorString(kGlewInitErr);
-    _logger.error_fmt(
-      "Failed to initialize GLEW! %s (code: %i).", kErr, kGlewInitErr
-    );
-    throw WindowCreationException {"Failed to initialize OpenGL (GLEW)"};
-  }
-  _logger.info_fmt("OpenGL version: %s.", glGetString(GL_VERSION));
-
-  _logger.info("Graphics successfully initialized; the window is created.");
+  _logger.info("Window successfully created.");
 }
 
 bool Window::closed() const noexcept

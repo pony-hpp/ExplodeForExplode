@@ -15,11 +15,11 @@ std::unique_ptr<Structure> Structure::from_id(unsigned char id) noexcept
 }
 
 void Structure::_push_block(
-  std::unique_ptr<BlockData[]> &structure, const BlockData &block
+  std::unique_ptr<BlockData[]> &data, const BlockData &block
 ) const noexcept
 {
-  structure[_pushIdx]         = block;
-  structure[_pushIdx].enabled = true;
+  data[_pushIdx]         = block;
+  data[_pushIdx].enabled = true;
   _pushIdx++;
 }
 }

@@ -1,5 +1,4 @@
 #include "game/dynamites/dynamite.hpp"
-#include "game/world/blocks/block.hpp"
 #include "opengl/opengl.hpp"
 #include "opengl/texture.hpp"
 
@@ -17,7 +16,6 @@ Dynamite::Dynamite(World &world) noexcept : _world(world)
   glBindVertexArray(_vao);
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
-  glEnableVertexAttribArray(2);
 }
 
 Dynamite::~Dynamite() noexcept
@@ -72,14 +70,14 @@ void Dynamite::set_pos(int x, int y) noexcept
   _x = x;
   _y = y;
 
-  const int kW        = _texLoaded ? _texW : FALLBACK_TEX_SIZE,
-            kH        = _texLoaded ? _texH : FALLBACK_TEX_SIZE;
+  const int w         = _texLoaded ? _texW : FALLBACK_TEX_SIZE,
+            h         = _texLoaded ? _texH : FALLBACK_TEX_SIZE;
   const int kCoords[] = {
     // clang-format off
-    x - kW / 2, y - kH / 2,
-    x + kW / 2, y - kH / 2,
-    x - kW / 2, y + kH / 2,
-    x + kW / 2, y + kH / 2
+    x - w / 2, y - h / 2,
+    x + w / 2, y - h / 2,
+    x - w / 2, y + h / 2,
+    x + w / 2, y + h / 2
     // clang-format on
   };
 
@@ -106,6 +104,7 @@ void Dynamite::explode() noexcept
       auto block = _world.at(_x / Block::SIZE + x, _y / Block::SIZE + y);
       if (block)
       {
+        // It's safe to reset std::unique_ptr that points to nullptr.
         (*block).reset();
       }
     }

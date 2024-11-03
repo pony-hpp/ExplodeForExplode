@@ -25,31 +25,35 @@ unsigned long long PlainWorldGeneratorSettings::block_count() const noexcept
     return res;
   }
 
-  std::vector<std::pair<int, int>> extraBlocks;
+  std::vector<std::pair<int, int>> extraBlocksPoses;
   for (const WorldStructure &worldStructure : structures)
   {
-    const auto kStructure     = structureFactory(std::get<0>(worldStructure));
+    const auto kStructure     = structureFactory(worldStructure.id);
     const auto kStructureData = kStructure->data();
 
     for (unsigned short y = 0; y < kStructure->h(); y++)
     {
       for (unsigned short x = 0; x < kStructure->w(); x++)
       {
-        const BlockData &kBlock = kStructureData[y * kStructure->w() + x];
-        const int kX            = std::get<1>(worldStructure) + kBlock.x;
-        const int kY            = std::get<2>(worldStructure) + kBlock.y;
+        const BlockData &kCurBlock = kStructureData[y * kStructure->w() + x];
+        const int kAbsX            = worldStructure.x + kCurBlock.x;
+        const int kAbsY            = worldStructure.y + kCurBlock.y;
 
-        if (!kBlock.enabled ||
+        // Ignore:
+        //   1. Empty blocks;
+        //   2. Already counted blocks;
+        //   3. Blocks that aren't outside of the world.
+        if (!kCurBlock.enabled ||
             std::find(
-              extraBlocks.cbegin(), extraBlocks.cend(),
-              std::pair<int, int>(kX, kY)
-            ) != extraBlocks.cend() ||
-            ((kY < h() && kY >= 0) && (kX < (int)w && kX >= 0)))
+              extraBlocksPoses.cbegin(), extraBlocksPoses.cend(),
+              std::pair(kAbsX, kAbsY)
+            ) != extraBlocksPoses.cend() ||
+            ((kAbsY < h() && kAbsY >= 0) && (kAbsX < (int)w && kAbsX >= 0)))
         {
           continue;
         }
 
-        extraBlocks.push_back({kX, kY});
+        extraBlocksPoses.push_back({kAbsX, kAbsY});
         res++;
       }
     }

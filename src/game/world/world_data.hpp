@@ -18,8 +18,8 @@ public:
   const unsigned short h;
   const unsigned long long kBlockCount;
 
-  BlockData &operator[](unsigned long long idx) noexcept;
   const BlockData &operator[](unsigned long long idx) const noexcept;
+  BlockData &operator[](unsigned long long idx) noexcept;
 
 private:
   std::unique_ptr<BlockData[]> _data;

@@ -1,4 +1,4 @@
-#include "core/decoders/png.hpp"
+#include "core/renderer.hpp"
 #include "game/world/blocks/block.hpp"
 #include "game/world/blocks/blocks.hpp"
 #include "opengl/opengl.hpp"

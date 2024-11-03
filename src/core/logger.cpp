@@ -10,7 +10,7 @@ using Clock      = chrono::system_clock;
 
 namespace core
 {
-Logger::Logger(const char *module) noexcept : _kModule(module) {}
+Logger::Logger(std::string_view module) noexcept : _kModule(module) {}
 
 void Logger::set_section(const char *section) noexcept { _section = section; }
 
@@ -20,7 +20,7 @@ void Logger::info_fmt(const char *msg, ...) noexcept
 {
   va_list list;
   va_start(list, msg);
-  _log_fmt(_format_msg(msg).c_str(), list);
+  _log_fmt(_format_msg(msg), list);
 }
 
 void Logger::debug(const char *msg) noexcept
@@ -32,48 +32,48 @@ void Logger::debug_fmt(const char *msg, ...) noexcept
 {
   va_list list;
   va_start(list, msg);
-  _log_fmt(_format_msg(msg, _CYAN, true).c_str(), list);
+  _log_fmt(_format_msg(msg, _CYAN, true), list);
 }
 
 void Logger::warn(const char *msg) noexcept
 {
-  std::cerr << _format_msg(msg, _YELLOW, false).c_str();
+  std::cerr << _format_msg(msg, _YELLOW, false);
 }
 
 void Logger::error(const char *msg) noexcept
 {
-  std::cerr << _format_msg(msg, _RED, false).c_str();
+  std::cerr << _format_msg(msg, _RED, false);
 }
 
 void Logger::error_fmt(const char *msg, ...) noexcept
 {
   va_list list;
   va_start(list, msg);
-  _log_fmt(_format_msg(msg, _RED, false).c_str(), list);
+  _log_fmt(_format_msg(msg, _RED, false), list);
 }
 
 void Logger::critical(const char *msg) noexcept
 {
-  std::cerr << _format_msg(msg, _RED, true).c_str();
+  std::cerr << _format_msg(msg, _RED, true);
 }
 
 void Logger::critical_fmt(const char *msg, ...) noexcept
 {
   va_list list;
   va_start(list, msg);
-  _log_fmt(_format_msg(msg, _RED, true).c_str(), list);
+  _log_fmt(_format_msg(msg, _RED, true), list);
 }
 
 void Logger::progress(const char *msg) noexcept
 {
-  std::cerr << _format_msg(msg, _GREEN, false).c_str();
+  std::cerr << _format_progress_base(msg);
 }
 
 void Logger::progress_fmt(const char *msg, ...) noexcept
 {
   va_list list;
   va_start(list, msg);
-  _log_fmt(_format_msg(msg, _GREEN, false).c_str(), list);
+  _log_fmt(_format_progress_base(msg), list);
 }
 
 std::string Logger::_format_msg_base(const char *msg) const noexcept
@@ -82,7 +82,7 @@ std::string Logger::_format_msg_base(const char *msg) const noexcept
   const time_t kRawCTime = Clock::to_time_t(kTime);
   const tm *kCTime       = localtime(&kRawCTime);
 
-  char time[13];
+  char time[13]; // HH:MM:SS.mmm is always 13 characters (including NUL).
   strftime(time, sizeof(time), "%T.", kCTime);
   sprintf(
     &time[9], "%.3li",
@@ -107,9 +107,14 @@ Logger::_format_msg(const char *msg, _LogColor color, bool bold) const noexcept
          _format_msg_base(msg) + "\033[0;39m\n";
 }
 
-void Logger::_log_fmt(const char *msg, va_list &vaArgs) noexcept
+std::string Logger::_format_progress_base(const char *msg) const noexcept
 {
-  vfprintf(stderr, msg, vaArgs);
+  return "\r\033[2K" + _format_msg(msg, _GREEN, false) + "\033[A";
+}
+
+void Logger::_log_fmt(const std::string &msg, va_list &vaArgs) noexcept
+{
+  vfprintf(stderr, msg.data(), vaArgs);
   va_end(vaArgs);
 }
 }

@@ -1,38 +1,44 @@
-#include "game/world/structures/structure.hpp"
 #include "game/world_generators/plain_world_generator.hpp"
 
 namespace game
 {
-PlainWorldGenerator::PlainWorldGenerator(
-  const PlainWorldGeneratorSettings &settings
+static void _log_settings(
+  const PlainWorldGeneratorSettings &settings, core::Logger &logger
 ) noexcept
-  : _world(settings.w, settings.h(), settings.block_count()),
-    _kSettings(settings), _logger("PlainWorldGenerator")
 {
-  _logger.info("Received these plain world generator settings:");
-  _logger.info_fmt("    Width: %u", _kSettings.w);
-  _logger.info_fmt("    Height: %u", _kSettings.h());
+  logger.info("Received these plain world generator settings:");
+  logger.info_fmt("    Width: %u", settings.w);
+  logger.info_fmt("    Height: %u", settings.h());
 
-  _logger.info_fmt("    Block layers (%u):", _kSettings.layers.size());
-  for (const auto &layer : _kSettings.layers)
+  logger.info_fmt("    Block layers (%u):", settings.layers.size());
+  for (const auto &layer : settings.layers)
   {
-    _logger.info_fmt(
+    logger.info_fmt(
       "        x%u %s", layer.second, blocks::id_to_str(layer.first)
     );
   }
 
-  if (!_kSettings.structures.empty())
+  if (!settings.structures.empty())
   {
-    _logger.info_fmt("    Structures (%u):", _kSettings.structures.size());
+    logger.info_fmt("    Structures (%u):", settings.structures.size());
   }
-  for (const WorldStructure &structure : _kSettings.structures)
+  for (const WorldStructure &structure : settings.structures)
   {
-    _logger.info_fmt(
-      "        %s at (%i; %i)",
-      _kSettings.structureIdToStr(std::get<0>(structure)),
-      std::get<1>(structure), std::get<2>(structure)
+    logger.info_fmt(
+      "        %s at (%i; %i)", settings.structureFactory(structure.id)->name(),
+      structure.x, structure.y
     );
   }
+}
+
+PlainWorldGenerator::PlainWorldGenerator(
+  const PlainWorldGeneratorSettings &settings
+) noexcept
+  : _kSettings(settings),
+    _world(settings.w, settings.h(), settings.block_count()),
+    _logger("PlainWorldGenerator")
+{
+  _log_settings(settings, _logger);
 }
 
 WorldData &PlainWorldGenerator::operator()() noexcept
@@ -75,8 +81,8 @@ WorldData &PlainWorldGenerator::operator()() noexcept
     {
       _logger.info_fmt(
         "Generating %s at (%i; %i)",
-        _kSettings.structureIdToStr(std::get<0>(structure)),
-        std::get<1>(structure), std::get<2>(structure)
+        _kSettings.structureFactory(structure.id)->name(), structure.x,
+        structure.y
       );
 
       _generate_structure(structure);
@@ -93,8 +99,7 @@ void PlainWorldGenerator::_generate_structure(
   const WorldStructure &worldStructure
 ) noexcept
 {
-  const auto kStructure =
-    _kSettings.structureFactory(std::get<0>(worldStructure));
+  const auto kStructure     = _kSettings.structureFactory(worldStructure.id);
   const auto kStructureData = kStructure->data();
 
   for (unsigned short y = 0; y < kStructure->h(); y++)
@@ -107,26 +112,33 @@ void PlainWorldGenerator::_generate_structure(
         continue;
       }
 
-      const int kX = std::get<1>(worldStructure) + kBlock.x,
-                kY = std::get<2>(worldStructure) + kBlock.y;
+      const int kAbsX = worldStructure.x + kBlock.x,
+                kAbsY = worldStructure.y + kBlock.y;
 
-      const auto kGeneratedBlock = _generatedStructureBlocks.find({kX, kY});
-      if (kGeneratedBlock != _generatedStructureBlocks.cend())
+      const auto kGeneratedBlock =
+        _generatedStructureBlocksIndexes.find({kAbsX, kAbsY});
+      if (kGeneratedBlock != _generatedStructureBlocksIndexes.cend())
       {
-        _world[kGeneratedBlock->second] = {kBlock.id, kX, kY}; // Replace block.
+        // Replace block.
+        _world[kGeneratedBlock->second] = {kBlock.id, kAbsX, kAbsY};
         continue;
       }
 
-      if (kX >= 0 && kX < (int)_kSettings.w && kY >= 0 && kY < _kSettings.h())
+      if (kAbsX >= 0 && kAbsX < (int)_kSettings.w && kAbsY >= 0 &&
+          kAbsY < _kSettings.h())
       {
-        const unsigned long long kIdx = kY * _kSettings.w + kX;
-        _generatedStructureBlocks.insert({{kX, kY}, kIdx});
-        _world[kIdx] = {kBlock.id, kX, kY};
+        // Replace block inside world.
+        const unsigned long long kIdx = kAbsY * _kSettings.w + kAbsX;
+        _generatedStructureBlocksIndexes.insert({{kAbsX, kAbsY}, kIdx});
+        _world[kIdx] = {kBlock.id, kAbsX, kAbsY};
       }
       else
       {
-        _generatedStructureBlocks.insert({{kX, kY}, _blocksGenerated});
-        _world[_blocksGenerated++] = {kBlock.id, kX, kY};
+        // Generate extra block.
+        _generatedStructureBlocksIndexes.insert(
+          {{kAbsX, kAbsY}, _blocksGenerated}
+        );
+        _world[_blocksGenerated++] = {kBlock.id, kAbsX, kAbsY};
       }
     }
   }

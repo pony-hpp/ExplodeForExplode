@@ -46,13 +46,13 @@ static void _libpng_err_handler(png_struct *, const char *msg)
 
 PngDecoder::PngDecoder() noexcept : _logger("PngDecoder") {}
 
-template <class T>
+template <class Exception>
 static void
 _throw_if_not_empty(const std::vector<const char *> &paths, const char *path)
 {
   if (std::find(paths.cbegin(), paths.cend(), path) != paths.cend())
   {
-    throw T();
+    throw Exception();
   }
 }
 
@@ -101,6 +101,7 @@ Png &PngDecoder::operator()(const char *pngPath)
   _pInfo                  = &info;
   _pFp                    = &fp;
   _curPngPath             = pngPath;
+
   png_read_png(libpng, info, PNG_TRANSFORM_IDENTITY, nullptr);
 
   unsigned w, h;
@@ -137,7 +138,6 @@ Png &PngDecoder::operator()(const char *pngPath)
     }
   }
 
-  _logger.debug("Caching image");
   _cachedPngs.insert({pngPath, Png(w, h, std::shared_ptr<unsigned char[]>(res))}
   );
 

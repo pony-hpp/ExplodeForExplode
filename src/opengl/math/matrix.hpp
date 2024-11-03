@@ -43,7 +43,7 @@ public:
 class ProjectionMatrix : public Matrix
 {
 public:
-  ProjectionMatrix(unsigned short maxX, unsigned short maxY) noexcept;
+  explicit ProjectionMatrix(unsigned short maxX, unsigned short maxY) noexcept;
 };
 }
 

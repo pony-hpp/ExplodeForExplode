@@ -10,11 +10,12 @@ WorldData::WorldData(
   _data = std::make_unique<BlockData[]>(blockCount);
 }
 
-BlockData &WorldData::operator[](unsigned long long idx) noexcept
+const BlockData &WorldData::operator[](unsigned long long idx) const noexcept
 {
   return _data[idx];
 }
-const BlockData &WorldData::operator[](unsigned long long idx) const noexcept
+
+BlockData &WorldData::operator[](unsigned long long idx) noexcept
 {
   return _data[idx];
 }

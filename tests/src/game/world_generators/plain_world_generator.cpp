@@ -11,6 +11,7 @@ namespace _mock
 class CircleStructure final : public Structure
 {
 public:
+  const char *name() const noexcept { return "Circle"; }
   unsigned short w() const noexcept { return 4; }
   unsigned short h() const noexcept { return 4; }
 
@@ -36,8 +37,6 @@ static std::unique_ptr<Structure> circle_structure_factory(unsigned char
 {
   return std::make_unique<CircleStructure>();
 }
-
-static const char *circle_str(unsigned char) noexcept { return "CIRCLE"; }
 }
 
 static void _assert_extra_blocks(
@@ -232,7 +231,6 @@ TEST(PlainWorldGenerator, StructureGenerationInsideWorldTest)
 {
   PlainWorldGeneratorSettings settings;
   settings.structureFactory = _mock::circle_structure_factory;
-  settings.structureIdToStr = _mock::circle_str;
   settings.w                = 4;
   settings.layers.push_back({blocks::DEFAULT_BLOCK, 4});
   settings.structures.push_back({0, 0, 0});
@@ -276,7 +274,6 @@ TEST(PlainWorldGenerator, StructureGenerationOutsideWorldTest)
 {
   PlainWorldGeneratorSettings settings;
   settings.structureFactory = _mock::circle_structure_factory;
-  settings.structureIdToStr = _mock::circle_str;
   settings.w                = 4;
   settings.layers.push_back({blocks::DEFAULT_BLOCK, 4});
   settings.structures.push_back({0, 5, 5});
@@ -308,7 +305,6 @@ TEST(PlainWorldGenerator, StructureOverwriteTest)
 {
   PlainWorldGeneratorSettings settings;
   settings.structureFactory = _mock::circle_structure_factory;
-  settings.structureIdToStr = _mock::circle_str;
   settings.w                = 4;
   settings.layers.push_back({blocks::DEFAULT_BLOCK, 4});
   settings.structures.push_back({0, 0, 0});

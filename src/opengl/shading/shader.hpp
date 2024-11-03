@@ -19,7 +19,7 @@ public:
   void compile();
 
 protected:
-  explicit Shader(const char *loggerModule) noexcept;
+  explicit Shader(const char *name) noexcept;
 
 private:
   unsigned _glHandle = 0;

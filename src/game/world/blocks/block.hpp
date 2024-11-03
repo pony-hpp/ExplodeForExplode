@@ -3,7 +3,6 @@
 
 #include "core/decoders/png.hpp"
 #include "core/drawable.hpp"
-#include "core/renderer.hpp"
 #include "game/world/blocks/block_data.hpp"
 
 #include <memory>

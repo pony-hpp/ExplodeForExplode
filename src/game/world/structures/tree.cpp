@@ -3,6 +3,7 @@
 
 namespace game::structures
 {
+const char *Tree::name() const noexcept { return "Tree"; }
 unsigned short Tree::w() const noexcept { return 7; }
 unsigned short Tree::h() const noexcept { return 10; }
 

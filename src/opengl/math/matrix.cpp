@@ -24,18 +24,18 @@ Matrix::Matrix(std::initializer_list<float> v) noexcept
   }
 }
 
-Matrix::Row &Matrix::operator[](char y) noexcept { return _data[y]; }
-const Matrix::Row &Matrix::operator[](char y) const noexcept
-{
-  return _data[y];
-}
-
 Matrix::operator const float *() const noexcept
 {
   // We can safely cast _data (aka _MatrixRow[4]) to the float pointer because
   // _MatrixRow takes 16 bytes, which is 4 floats.
   return (float *)_data;
 }
+
+const Matrix::Row &Matrix::operator[](char y) const noexcept
+{
+  return _data[y];
+}
+Matrix::Row &Matrix::operator[](char y) noexcept { return _data[y]; }
 
 float Matrix::Row::operator[](char x) const noexcept { return _data[x]; }
 float &Matrix::Row::operator[](char x) noexcept { return _data[x]; }

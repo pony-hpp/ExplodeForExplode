@@ -8,7 +8,7 @@ namespace gl
 unsigned ShaderProgram::_used;
 
 ShaderProgram::ShaderProgram(const char *name) noexcept
-  : _logger((std::string("ShaderProgram/") + name).c_str())
+  : _logger(std::string("ShaderProgram/") + name)
 {
   _glHandle = glCreateProgram();
 }
@@ -72,25 +72,6 @@ void ShaderProgram::set_uniform(const char *name, const float *v) noexcept
   glUniformMatrix4fv(_get_uniform(name), 1, true, v);
 }
 
-void ShaderProgram::set_view_matrix(const math::ViewMatrix &mat) noexcept
-{
-  if (_used != _glHandle)
-  {
-    use();
-  }
-  set_uniform(_U_VIEW_NAME, mat);
-}
-
-void ShaderProgram::set_projection_matrix(const math::ProjectionMatrix &mat
-) noexcept
-{
-  if (_used != _glHandle)
-  {
-    use();
-  }
-  set_uniform(_U_PROJECTION_NAME, mat);
-}
-
 int ShaderProgram::_get_uniform(const char *name) const noexcept
 {
   const auto kLoc = _cachedUniformLocs.find(name);
@@ -99,8 +80,9 @@ int ShaderProgram::_get_uniform(const char *name) const noexcept
     _logger.set_section("");
     _logger.debug_fmt("Caching uniform \"%s\"", name);
 
-    _cachedUniformLocs.insert({name, glGetUniformLocation(_glHandle, name)});
-    return _cachedUniformLocs.find(name)->second;
+    const int kUniformLoc = glGetUniformLocation(_glHandle, name);
+    _cachedUniformLocs.insert({name, kUniformLoc});
+    return kUniformLoc;
   }
 
   return kLoc->second;

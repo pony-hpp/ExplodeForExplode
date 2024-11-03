@@ -9,7 +9,10 @@
 
 namespace gl
 {
-Shader::Shader(const char *loggerModule) noexcept : _logger(loggerModule) {}
+Shader::Shader(const char *name) noexcept
+  : _logger(std::string("Shader/") + name)
+{
+}
 
 Shader::~Shader() noexcept
 {
@@ -24,8 +27,6 @@ unsigned Shader::gl_handle() const noexcept { return _glHandle; }
 void Shader::load(const char *srcPath)
 {
   _logger.set_section("Load");
-
-  _glHandle = glCreateShader(gl_type());
 
   std::ifstream f(srcPath);
   if (!f)
@@ -44,6 +45,7 @@ void Shader::load(const char *srcPath)
   }
   f.close();
 
+  _glHandle         = glCreateShader(gl_type());
   const char *kCSrc = _src.c_str();
   glShaderSource(_glHandle, 1, &kCSrc, nullptr);
 
@@ -67,16 +69,16 @@ void Shader::compile()
       _glHandle, compileStatusStrLen, nullptr, compileStatus.get()
     );
 
-    _logger.error_fmt("Error compiling shader:\n\n%s\n", compileStatus.get());
+    _logger.error_fmt("Shader compilation error\n\n%s\n", compileStatus.get());
     throw ShaderCompilationException();
   }
 
   _logger.info("Shader successfully compiled.");
 }
 
-VertexShader::VertexShader() noexcept : Shader("Shader/Vertex") {}
+VertexShader::VertexShader() noexcept : Shader("Vertex") {}
 int VertexShader::gl_type() const noexcept { return GL_VERTEX_SHADER; }
 
-FragmentShader::FragmentShader() noexcept : Shader("Shader/Fragment") {}
+FragmentShader::FragmentShader() noexcept : Shader("Fragment") {}
 int FragmentShader::gl_type() const noexcept { return GL_FRAGMENT_SHADER; }
 }

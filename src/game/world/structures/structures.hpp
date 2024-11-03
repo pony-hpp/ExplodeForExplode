@@ -9,6 +9,7 @@ namespace game::structures
   class className final : public Structure \
   { \
   public: \
+    const char *name() const noexcept override; \
     unsigned short w() const noexcept override; \
     unsigned short h() const noexcept override; \
     std::unique_ptr<BlockData[]> data() const noexcept override; \
