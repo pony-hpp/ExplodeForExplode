@@ -8,6 +8,9 @@
 
 namespace game
 {
+gl::ShaderProgram *Block::_defaultShaderProgram;
+std::unordered_map<blocks::BlockId, gl::ShaderProgram *> Block::_shaderPrograms;
+
 Block::Block() noexcept
 {
   glGenBuffers(1, &_coordsVbo);
@@ -40,6 +43,16 @@ void Block::draw(const core::Renderer &renderer) const noexcept
       kViewBlockYCoord >= -SIZE * renderer.view.get_scale() &&
       kViewBlockYCoord <= renderer.viewport_h())
   {
+    const auto kShaderProgram = _shaderPrograms.find(id());
+    if (kShaderProgram != _shaderPrograms.end())
+    {
+      kShaderProgram->second->use();
+    }
+    else
+    {
+      _defaultShaderProgram->use();
+    }
+
     glBindVertexArray(_vao);
     glBindTexture(GL_TEXTURE_2D, _tex);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -56,15 +69,29 @@ std::unique_ptr<Block> Block::from_data(const BlockData &data) noexcept
     break;
   case blocks::GRASS_BLOCK: res = std::make_unique<blocks::GrassBlock>(); break;
   case blocks::EARTH_BLOCK: res = std::make_unique<blocks::EarthBlock>(); break;
-  case blocks::GRASS: res = std::make_unique<blocks::Grass>(); break;
   case blocks::STONE_BLOCK: res = std::make_unique<blocks::StoneBlock>(); break;
   case blocks::OAK_BLOCK: res = std::make_unique<blocks::OakBlock>(); break;
   case blocks::OAK_LEAVES: res = std::make_unique<blocks::OakLeaves>(); break;
+  case blocks::GRASS: res = std::make_unique<blocks::Grass>(); break;
+  case blocks::WATER: res = std::make_unique<blocks::Water>(); break;
+  case blocks::WATER_WAVE: res = std::make_unique<blocks::WaterWave>(); break;
   default: return nullptr;
   }
 
   res->set_pos(data.x, data.y);
   return res;
+}
+
+void Block::default_shader_program(gl::ShaderProgram &shaderProgram) noexcept
+{
+  _defaultShaderProgram = &shaderProgram;
+}
+
+void Block::match_shader_program(
+  blocks::BlockId id, gl::ShaderProgram &shaderProgram
+) noexcept
+{
+  _shaderPrograms.insert({id, &shaderProgram});
 }
 
 int Block::x() const noexcept { return _x; }

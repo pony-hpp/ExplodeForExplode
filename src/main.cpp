@@ -1,5 +1,6 @@
 #include "core/exception.hpp"
 #include "core/logger.hpp"
+#include "core/rand.hpp"
 #include "core/renderer.hpp"
 #include "core/window.hpp"
 #include "game/dynamites/dynamite.hpp"
@@ -12,7 +13,6 @@
 #include "opengl/shading/uniforms.hpp"
 
 #include <memory>
-#include <random>
 #include <thread>
 #include <vector>
 
@@ -58,6 +58,8 @@ public:
       _logger.error_fmt("Window icon image is corrupted.");
     }
 
+    _win->set_bg(165, 190, 251);
+
     return true;
   }
 
@@ -82,30 +84,42 @@ public:
   {
     _worldShaderProgram    = std::make_unique<gl::ShaderProgram>("World");
     _dynamiteShaderProgram = std::make_unique<gl::ShaderProgram>("Dynamite");
+    _pondShaderProgram     = std::make_unique<gl::ShaderProgram>("Pond");
 
     try
     {
-      {
-        gl::VertexShader worldVs;
-        worldVs.load("../assets/shaders/world_shader.vert");
-        worldVs.compile();
-        _worldShaderProgram->add(worldVs);
-        gl::FragmentShader worldFs;
-        worldFs.load("../assets/shaders/world_shader.frag");
-        worldFs.compile();
-        _worldShaderProgram->add(worldFs);
+      { // World shader program.
+        gl::VertexShader vs;
+        vs.load("../assets/shaders/world.vert");
+        vs.compile();
+        _worldShaderProgram->add(vs);
+        gl::FragmentShader fs;
+        fs.load("../assets/shaders/world.frag");
+        fs.compile();
+        _worldShaderProgram->add(fs);
         _worldShaderProgram->link();
       }
-      {
-        gl::VertexShader dynamiteVs;
-        dynamiteVs.load("../assets/shaders/dynamite_shader.vert");
-        dynamiteVs.compile();
-        _dynamiteShaderProgram->add(dynamiteVs);
-        gl::FragmentShader dynamiteFs;
-        dynamiteFs.load("../assets/shaders/dynamite_shader.frag");
-        dynamiteFs.compile();
-        _dynamiteShaderProgram->add(dynamiteFs);
+      { // Dynamite shader program.
+        gl::VertexShader vs;
+        vs.load("../assets/shaders/dynamite.vert");
+        vs.compile();
+        _dynamiteShaderProgram->add(vs);
+        gl::FragmentShader fs;
+        fs.load("../assets/shaders/dynamite.frag");
+        fs.compile();
+        _dynamiteShaderProgram->add(fs);
         _dynamiteShaderProgram->link();
+      }
+      { // Pond shader program.
+        gl::VertexShader vs;
+        vs.load("../assets/shaders/pond.vert");
+        vs.compile();
+        _pondShaderProgram->add(vs);
+        gl::FragmentShader fs;
+        fs.load("../assets/shaders/pond.frag");
+        fs.compile();
+        _pondShaderProgram->add(fs);
+        _pondShaderProgram->link();
       }
     }
     catch (...)
@@ -116,6 +130,13 @@ public:
 
     _renderer->add_shader_program(*_worldShaderProgram);
     _renderer->add_shader_program(*_dynamiteShaderProgram);
+    _renderer->add_shader_program(*_pondShaderProgram);
+
+    game::Block::default_shader_program(*_worldShaderProgram);
+    game::Block::match_shader_program(game::blocks::WATER, *_pondShaderProgram);
+    game::Block::match_shader_program(
+      game::blocks::WATER_WAVE, *_pondShaderProgram
+    );
 
     return true;
   }
@@ -158,7 +179,7 @@ public:
     _renderer->update_view();
   }
 
-  void create_world_settings(std::mt19937 &seed) noexcept
+  void create_world_settings() noexcept
   {
     _worldSettings.w = 200;
     _worldSettings.layers.push_back({game::blocks::GRASS_BLOCK, 1});
@@ -169,21 +190,38 @@ public:
       gl::UNIFORM_WORLD_H, _worldSettings.h() * game::Block::SIZE
     );
 
-    _logger.debug_fmt("Spawning trees and grass with seed %li", seed);
+    const unsigned short
+      kPondW = game::Structure::from_id(game::structures::POND)->w(),
+      kPondH = game::Structure::from_id(game::structures::POND)->h();
+
+    _pondShaderProgram->set_uniform(
+      gl::UNIFORM_POND_TOP, (_worldSettings.h() - 1) * game::Block::SIZE
+    );
+    _pondShaderProgram->set_uniform(
+      gl::UNIFORM_POND_BOTTOM,
+      (_worldSettings.h() - 1 - kPondH) * game::Block::SIZE
+    );
 
     for (unsigned i = 0; i < _worldSettings.w; i++)
     {
-      if (std::uniform_int_distribution<_RandInt>(0, 15)(seed) == 0)
+      if (core::rand(0, 15) == 0)
       {
         _worldSettings.structures.push_back(
           {game::structures::TREE, (int)i, _worldSettings.h()}
         );
       }
-      else if (std::uniform_int_distribution<_RandInt>(0, 6)(seed) != 0)
+      else if (core::rand(0, 6) != 0)
       {
         _worldSettings.structures.push_back(
           {game::structures::GRASS, (int)i, _worldSettings.h()}
         );
+      }
+      else if (core::rand(0, 8) == 0 && i + kPondW <= _worldSettings.w)
+      {
+        _worldSettings.structures.push_back(
+          {game::structures::POND, (int)i, _worldSettings.h() - 1}
+        );
+        i += kPondW;
       }
     }
   }
@@ -191,13 +229,12 @@ public:
   void generate_world() noexcept
   {
     game::PlainWorldGenerator worldGen(_worldSettings);
-    _world = std::make_unique<game::World>(worldGen());
+    _world = std::make_unique<game::World>(*worldGen());
     _world->load_textures(_pngDecoder);
   }
 
   void operator()() noexcept
   {
-    _win->set_bg(165, 190, 251);
     while (!_win->closed())
     {
       _win->poll_events();
@@ -212,7 +249,6 @@ public:
         }
       }
 
-      _worldShaderProgram->use();
       _renderer->draw(*_world);
 
       _dynamiteShaderProgram->use();
@@ -229,20 +265,10 @@ public:
   }
 
 private:
-  using _RandInt =
-#if _WIN32
-    // For some stupid reason, Windows forbids using char in the
-    // std::uniform_int_distribution<>.
-    short
-#else
-    char
-#endif
-    ;
-
   std::unique_ptr<core::Window> _win;
   std::unique_ptr<core::Renderer> _renderer;
-  std::unique_ptr<gl::ShaderProgram> _worldShaderProgram;
-  std::unique_ptr<gl::ShaderProgram> _dynamiteShaderProgram;
+  std::unique_ptr<gl::ShaderProgram> _worldShaderProgram,
+    _dynamiteShaderProgram, _pondShaderProgram;
 
   core::PngDecoder _pngDecoder;
 
@@ -312,7 +338,7 @@ private:
                     _win->cursor_y() / _zoom.get().scale;
     _dynamites.back().first->set_pos(x, y);
 
-    _logger.info_fmt("Spawned dynamite at (%f; %f).", x, y);
+    _logger.info_fmt("Created dynamite at (%.1f; %.1f).", x, y);
   }
 };
 
@@ -335,9 +361,7 @@ int main()
     return 1;
   }
 
-  std::random_device rd;
-  std::mt19937 seed(rd());
-  game.create_world_settings(seed);
+  game.create_world_settings();
   game.generate_world();
 
   game.setup_movement_and_zooming();

@@ -16,6 +16,7 @@ namespace game::structures
   };
 
 STRUCTURE(Tree)
+STRUCTURE(Pond)
 STRUCTURE(Grass)
 }
 

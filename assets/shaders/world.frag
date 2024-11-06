@@ -2,7 +2,7 @@
 
 in vec2 vPos;
 in vec2 vTexPos;
-in float vViewportH;
+flat in uint vViewportH;
 
 out vec4 fColor;
 

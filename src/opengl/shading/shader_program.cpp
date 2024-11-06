@@ -5,7 +5,7 @@
 
 namespace gl
 {
-unsigned ShaderProgram::_used;
+unsigned ShaderProgram::_curGlHandle;
 
 ShaderProgram::ShaderProgram(const char *name) noexcept
   : _logger(std::string("ShaderProgram/") + name)
@@ -17,11 +17,12 @@ ShaderProgram::~ShaderProgram() noexcept { glDeleteProgram(_glHandle); }
 
 void ShaderProgram::add(const Shader &shader) noexcept
 {
+  glAttachShader(_glHandle, shader.gl_handle());
+
   _logger.set_section("");
   _logger.debug_fmt(
-    "Adding shader with type %s", gl_const_to_str(shader.gl_type())
+    "Added shader with type %s.", gl_const_to_str(shader.gl_type())
   );
-  glAttachShader(_glHandle, shader.gl_handle());
 }
 
 void ShaderProgram::link()
@@ -50,25 +51,24 @@ void ShaderProgram::link()
 
 void ShaderProgram::use() noexcept
 {
-  glUseProgram(_glHandle);
-  _used = _glHandle;
+  if (!used())
+  {
+    glUseProgram(_glHandle);
+    _curGlHandle = _glHandle;
+  }
 }
+
+bool ShaderProgram::used() const noexcept { return _curGlHandle == _glHandle; }
 
 void ShaderProgram::set_uniform(const char *name, unsigned v) noexcept
 {
-  if (_used != _glHandle)
-  {
-    use();
-  }
+  use();
   glUniform1ui(_get_uniform(name), v);
 }
 
 void ShaderProgram::set_uniform(const char *name, const float *v) noexcept
 {
-  if (_used != _glHandle)
-  {
-    use();
-  }
+  use();
   glUniformMatrix4fv(_get_uniform(name), 1, true, v);
 }
 
@@ -77,11 +77,12 @@ int ShaderProgram::_get_uniform(const char *name) const noexcept
   const auto kLoc = _cachedUniformLocs.find(name);
   if (kLoc == _cachedUniformLocs.cend())
   {
-    _logger.set_section("");
-    _logger.debug_fmt("Caching uniform \"%s\"", name);
-
     const int kUniformLoc = glGetUniformLocation(_glHandle, name);
     _cachedUniformLocs.insert({name, kUniformLoc});
+
+    _logger.set_section("");
+    _logger.debug_fmt("Cached uniform \"%s\".", name);
+
     return kUniformLoc;
   }
 

@@ -28,6 +28,8 @@ void Shader::load(const char *srcPath)
 {
   _logger.set_section("Load");
 
+  _logger.info_fmt("Loading shader source from \"%s\"", srcPath);
+
   std::ifstream f(srcPath);
   if (!f)
   {
@@ -35,8 +37,6 @@ void Shader::load(const char *srcPath)
     f.close();
     throw core::FopenException();
   }
-
-  _logger.info_fmt("Loading shader source from \"%s\"", srcPath);
 
   char c;
   while ((c = f.get()) != EOF)
@@ -49,7 +49,7 @@ void Shader::load(const char *srcPath)
   const char *kCSrc = _src.c_str();
   glShaderSource(_glHandle, 1, &kCSrc, nullptr);
 
-  _logger.info("Shader source loaded.");
+  _logger.info("Shader source successfully loaded.");
 }
 
 void Shader::compile()
@@ -69,7 +69,7 @@ void Shader::compile()
       _glHandle, compileStatusStrLen, nullptr, compileStatus.get()
     );
 
-    _logger.error_fmt("Shader compilation error\n\n%s\n", compileStatus.get());
+    _logger.error_fmt("Shader compilation error:\n\n%s\n", compileStatus.get());
     throw ShaderCompilationException();
   }
 

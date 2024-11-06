@@ -3,20 +3,17 @@
 namespace game
 {
 WorldData::WorldData(
-  unsigned w, unsigned short h, unsigned long long blockCount
+  unsigned w, unsigned short h, unsigned short extraBlocks
 ) noexcept
-  : w(w), h(h), kBlockCount(blockCount)
+  : w(w), h(h), kExtraBlocks(extraBlocks)
 {
-  _data = std::make_unique<BlockData[]>(blockCount);
+  _data = std::make_unique<BlockData[]>(w * h + extraBlocks);
 }
 
-const BlockData &WorldData::operator[](unsigned long long idx) const noexcept
+const BlockData &WorldData::at(unsigned long long idx) const noexcept
 {
   return _data[idx];
 }
 
-BlockData &WorldData::operator[](unsigned long long idx) noexcept
-{
-  return _data[idx];
-}
+BlockData &WorldData::at(unsigned long long idx) noexcept { return _data[idx]; }
 }

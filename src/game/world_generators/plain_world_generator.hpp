@@ -6,6 +6,7 @@
 #include "game/world/world_data.hpp"
 
 #include <map>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -32,7 +33,11 @@ public:
   StructureFactory structureFactory = Structure::from_id;
 
   unsigned short h() const noexcept;
-  unsigned long long block_count() const noexcept;
+
+  // Don't generate structure data here, because they may depend on randomness.
+  unsigned short
+  extra_blocks(const std::vector<std::unique_ptr<BlockData[]>> &structures
+  ) const noexcept;
 
 private:
   mutable unsigned short _cachedH = 0;
@@ -41,20 +46,20 @@ private:
 class PlainWorldGenerator final
 {
 public:
-  explicit PlainWorldGenerator(const PlainWorldGeneratorSettings &settings
-  ) noexcept;
+  explicit PlainWorldGenerator(PlainWorldGeneratorSettings &settings) noexcept;
 
-  WorldData &operator()() noexcept;
+  std::unique_ptr<WorldData> operator()() noexcept;
 
 private:
   const PlainWorldGeneratorSettings &_kSettings;
-  WorldData _world;
+  std::unique_ptr<WorldData> _world;
   unsigned long long _blocksGenerated = 0;
   std::map<std::pair<int, int>, unsigned long long>
-    _generatedStructureBlocksIndexes;
+    _generatedStructureBlockIndexes;
+  std::vector<std::unique_ptr<BlockData[]>> _generatedStructures;
   core::Logger _logger;
 
-  void _generate_structure(const WorldStructure &worldStructure) noexcept;
+  void _generate_structure(unsigned short idx) noexcept;
 };
 }
 

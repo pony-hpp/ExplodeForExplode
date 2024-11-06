@@ -17,12 +17,13 @@ public:
   void add(const Shader &shader) noexcept;
   void link();
   void use() noexcept;
+  bool used() const noexcept;
 
   void set_uniform(const char *name, unsigned v) noexcept;
   void set_uniform(const char *name, const float *v) noexcept;
 
 private:
-  static unsigned _used;
+  static unsigned _curGlHandle;
 
   unsigned _glHandle;
   mutable std::unordered_map<const char *, int> _cachedUniformLocs;

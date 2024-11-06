@@ -9,16 +9,19 @@ namespace game::blocks
   class className final : public Block \
   { \
   public: \
+    BlockId id() const noexcept override; \
     const char *texture_path() const noexcept override; \
   };
 
 BLOCK(DefaultBlock)
 BLOCK(GrassBlock)
 BLOCK(EarthBlock)
-BLOCK(Grass)
 BLOCK(StoneBlock)
 BLOCK(OakBlock)
 BLOCK(OakLeaves)
+BLOCK(Grass)
+BLOCK(Water)
+BLOCK(WaterWave)
 }
 
 #endif

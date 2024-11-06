@@ -11,15 +11,15 @@ class WorldData final
 {
 public:
   explicit WorldData(
-    unsigned w, unsigned short h, unsigned long long blockCount
+    unsigned w, unsigned short h, unsigned short extraBlocks
   ) noexcept;
 
   const unsigned w;
   const unsigned short h;
-  const unsigned long long kBlockCount;
+  const unsigned short kExtraBlocks;
 
-  const BlockData &operator[](unsigned long long idx) const noexcept;
-  BlockData &operator[](unsigned long long idx) noexcept;
+  const BlockData &at(unsigned long long idx) const noexcept;
+  BlockData &at(unsigned long long idx) noexcept;
 
 private:
   std::unique_ptr<BlockData[]> _data;

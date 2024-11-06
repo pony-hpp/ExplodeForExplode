@@ -3,22 +3,22 @@
 namespace game
 {
 World::World(const WorldData &worldData) noexcept
-  : _w(worldData.w), _h(worldData.h), _kBlockCount(worldData.kBlockCount),
+  : _w(worldData.w), _h(worldData.h),
+    _kBlockCount(worldData.w * worldData.h + worldData.kExtraBlocks),
     _logger("World")
 {
   _logger.set_section("Create");
 
   _logger.debug_fmt(
-    "Converting %ux%u (%llu blocks, %u extra blocks) world data into real "
+    "Converting %ux%u (with %u extra blocks) world data into real "
     "world",
-    worldData.h, worldData.w, worldData.kBlockCount,
-    worldData.kBlockCount - worldData.w * worldData.h
+    worldData.h, worldData.w, worldData.kExtraBlocks
   );
 
-  _data = std::make_unique<std::unique_ptr<Block>[]>(worldData.kBlockCount);
-  for (unsigned long long i = 0; i < worldData.kBlockCount; i++)
+  _data = std::make_unique<std::unique_ptr<Block>[]>(_kBlockCount);
+  for (unsigned long long i = 0; i < _kBlockCount; i++)
   {
-    _data[i] = Block::from_data(worldData[i]);
+    _data[i] = Block::from_data(worldData.at(i));
   }
 
   _logger.debug("Converted.");

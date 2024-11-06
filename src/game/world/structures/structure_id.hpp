@@ -6,6 +6,7 @@ namespace game::structures
 enum StructureId : unsigned char
 {
   TREE,
+  POND,
   GRASS
 };
 }
