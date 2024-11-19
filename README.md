@@ -11,7 +11,7 @@ There's no official builds for this game, but you can build it yourself.
 <ul>
   <li>OS: Windows/Linux (macOS not tested yet);</li>
   <li>C++17 compatible compiler;</li>
-  <li>CMake 3.6+;</li>
+  <li>CMake 3.10+;</li>
   <li>OpenGL: GLFW and GLEW libraries;</li>
   <li>libpng;</li>
   <li>GTest (optional).</li>
