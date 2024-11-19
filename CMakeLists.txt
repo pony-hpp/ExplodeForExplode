@@ -39,6 +39,6 @@ target_link_libraries(${EFE_COMMON} ${OPENGL_LIBRARIES} ${PNG_LIBRARIES})
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} ${EFE_COMMON})
 
-if(EFE_TESTS)
+if(EFE_BUILD_TESTS)
   add_subdirectory(tests)
 endif()

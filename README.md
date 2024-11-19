@@ -23,8 +23,8 @@ If you're using Microsoft Windows, you'll need Microsoft Visual Studio with
 CMake and C++ support. Install the dependencies via vcpkg.
 
 The build is the same as in an average project using CMake: build files
-generation and build. If you also want build tests, use the `-DEFE_TESTS=1` flag
-when generating build files.
+generation and build. If you also want build tests, use the
+`-DEFE_BUILD_TESTS=1` flag when generating build files.
 
 ## Contributing
 
