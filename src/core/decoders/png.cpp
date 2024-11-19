@@ -3,21 +3,13 @@
 
 #include <algorithm>
 #include <cerrno>
-#include <cstdio>
 #include <cstring>
 #include <png.h>
 
 namespace core
 {
-Png::Png(
-  unsigned short w, unsigned short h, std::shared_ptr<unsigned char[]> data
-) noexcept
-  : data(data), w(w), h(h)
-{
-}
-
 static Logger *_pLogger;
-static std::vector<const char *> *_pCorruptedDataPngPaths;
+static std::vector<const char *> *_pCorruptedPngPaths;
 static png_struct **_pLibpng;
 static png_info **_pInfo;
 static FILE **_pFp;
@@ -25,34 +17,34 @@ static const char *_curPngPath;
 
 static void _cleanup() noexcept
 {
-  png_destroy_info_struct(*_pLibpng, _pInfo);
-  png_destroy_read_struct(_pLibpng, nullptr, nullptr);
   fclose(*_pFp);
+  png_destroy_read_struct(_pLibpng, nullptr, _pInfo);
 }
 
 static void _libpng_err_handler(png_struct *, const char *msg)
 {
   _pLogger->error_fmt("PNG decoding error: %s.", msg);
-  if (std::find(
-        _pCorruptedDataPngPaths->cbegin(), _pCorruptedDataPngPaths->cend(),
-        _curPngPath
-      ) == _pCorruptedDataPngPaths->cend())
+
+  const auto kFoundCorruptedPng = std::find(
+    _pCorruptedPngPaths->cbegin(), _pCorruptedPngPaths->cend(), _curPngPath
+  );
+  if (kFoundCorruptedPng == _pCorruptedPngPaths->cend())
   {
-    _pCorruptedDataPngPaths->push_back(_curPngPath);
+    _pCorruptedPngPaths->push_back(_curPngPath);
   }
+
   _cleanup();
+
   throw CorruptedPngException();
 }
 
-PngDecoder::PngDecoder() noexcept : _logger("PngDecoder") {}
-
-template <class Exception>
+template <class E>
 static void
-_throw_if_not_empty(const std::vector<const char *> &paths, const char *path)
+_throw_if_found(const std::vector<const char *> &paths, const char *path)
 {
   if (std::find(paths.cbegin(), paths.cend(), path) != paths.cend())
   {
-    throw Exception();
+    throw E();
   }
 }
 
@@ -64,26 +56,27 @@ Png &PngDecoder::operator()(const char *pngPath)
     return kCachedPng->second;
   }
 
-  _throw_if_not_empty<FopenException>(_fopenFailedPngFiles, pngPath);
-  _throw_if_not_empty<CorruptedPngException>(_corruptedDataPngPaths, pngPath);
-
-  _logger.info_fmt("Decoding image \"%s\"", pngPath);
+  _throw_if_found<FopenException>(_fopenFailedPngPaths, pngPath);
+  _throw_if_found<CorruptedPngException>(_corruptedPngPaths, pngPath);
 
   FILE *fp = fopen(pngPath, "rb");
   if (!fp)
   {
     _logger.error_fmt("Failed to open \"%s\": %s.", pngPath, strerror(errno));
-    _fopenFailedPngFiles.push_back(pngPath);
+    _fopenFailedPngPaths.push_back(pngPath);
     throw FopenException();
   }
 
+  _logger.info_fmt("Decoding image \"%s\"", pngPath);
+
   _logger.debug("Checking for correct PNG signature");
-  unsigned char sig[8];
+
+  ubyte sig[8];
   fread(sig, 1, 8, fp);
   if (!png_check_sig(sig, 8))
   {
     _logger.error("PNG signature is incorrect; image is corrupted.");
-    _corruptedDataPngPaths.push_back(pngPath);
+    _corruptedPngPaths.push_back(pngPath);
     fclose(fp);
     throw CorruptedPngException();
   }
@@ -91,37 +84,38 @@ Png &PngDecoder::operator()(const char *pngPath)
   png_struct *libpng = png_create_read_struct(
     PNG_LIBPNG_VER_STRING, nullptr, _libpng_err_handler, _libpng_err_handler
   );
-  png_set_sig_bytes(libpng, 8);
   png_info *info = png_create_info_struct(libpng);
+
+  png_set_sig_bytes(libpng, 8);
   png_init_io(libpng, fp);
 
-  _pLogger                = &_logger;
-  _pCorruptedDataPngPaths = &_corruptedDataPngPaths;
-  _pLibpng                = &libpng;
-  _pInfo                  = &info;
-  _pFp                    = &fp;
-  _curPngPath             = pngPath;
+  _pLogger            = &_logger;
+  _pCorruptedPngPaths = &_corruptedPngPaths;
+  _pLibpng            = &libpng;
+  _pInfo              = &info;
+  _pFp                = &fp;
+  _curPngPath         = pngPath;
 
   png_read_png(libpng, info, PNG_TRANSFORM_IDENTITY, nullptr);
 
-  unsigned w, h;
+  uint w, h;
   int pixFmt;
   png_get_IHDR(
     libpng, info, &w, &h, nullptr, &pixFmt, nullptr, nullptr, nullptr
   );
-  const char kChannels = pixFmt == PNG_COLOR_TYPE_RGB ? 3 : 4;
+  const byte kChannels = pixFmt == PNG_COLOR_TYPE_RGB ? 3 : 4;
 
   _logger.debug_fmt("Image size: %ux%u.", w, h);
   _logger.debug_fmt("Image pixel format: %s.", kChannels == 3 ? "RGB" : "RGBA");
 
-  unsigned char **data = png_get_rows(libpng, info);
-  unsigned char *res   = new unsigned char[w * h * 4];
+  ubyte **data = png_get_rows(libpng, info);
+  ubyte *res   = new ubyte[w * h * 4];
 
-  for (unsigned short y = 0; y < h; y++)
+  for (uint y = 0; y < h; y++)
   {
-    for (unsigned short x = 0; x < w; x++)
+    for (uint x = 0; x < w; x++)
     {
-      const unsigned kIter = y * w + x;
+      const uint kIter = y * w + x;
 
       res[kIter * 4]     = data[y][x * kChannels];
       res[kIter * 4 + 1] = data[y][x * kChannels + 1];
@@ -138,8 +132,7 @@ Png &PngDecoder::operator()(const char *pngPath)
     }
   }
 
-  _cachedPngs.insert({pngPath, Png(w, h, std::shared_ptr<unsigned char[]>(res))}
-  );
+  _cachedPngs.insert({pngPath, Png(w, h, Png::Data(res))});
 
   _cleanup();
 

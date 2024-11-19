@@ -1,54 +1,48 @@
 #include "game/world/world.hpp"
+#include "opengl/window/renderer.hpp"
 
 namespace game
 {
-World::World(const WorldData &worldData) noexcept
-  : _w(worldData.w), _h(worldData.h),
-    _kBlockCount(worldData.w * worldData.h + worldData.kExtraBlocks),
+World::World(const BlockDataWorldData &blocksData) noexcept
+  : data(blocksData.w(), blocksData.h(), blocksData.extra_data_size()),
     _logger("World")
 {
   _logger.set_section("Create");
 
   _logger.debug_fmt(
-    "Converting %ux%u (with %u extra blocks) world data into real "
-    "world",
-    worldData.h, worldData.w, worldData.kExtraBlocks
+    "Converting %ux%u (with %u extra blocks) world data", blocksData.h(),
+    blocksData.w(), blocksData.extra_data_size()
   );
 
-  _data = std::make_unique<std::unique_ptr<Block>[]>(_kBlockCount);
-  for (unsigned long long i = 0; i < _kBlockCount; i++)
+  for (ullong i = 0; i < blocksData.dimensions_size(); i++)
   {
-    _data[i] = Block::from_data(worldData.at(i));
+    data.push(Block::from_data(*blocksData.at(i)));
   }
 
-  _logger.debug("Converted.");
-}
-
-void World::draw(const core::Renderer &renderer) const noexcept
-{
-  for (unsigned long long i = 0; i < _kBlockCount; i++)
+  for (ullong i = blocksData.dimensions_size(); i < blocksData.size(); i++)
   {
-    if (_data[i])
+    if (blocksData.at(i))
     {
-      _data[i]->draw(renderer);
+      // Use block position as element position
+      data.push(
+        Block::from_data(*blocksData.at(i)),
+        {blocksData.at(i)->x, blocksData.at(i)->y}
+      );
     }
   }
+
+  _logger.debug_fmt("Converted %llu blocks.", blocksData.size());
 }
 
-std::unique_ptr<Block> *World::at(int x, int y) noexcept
+void World::draw(gl::Drawer &drawer) const noexcept
 {
-  if ((x < 0 || x >= (int)_w) || (y < 0 || y >= _h))
+  for (ullong i = 0; i < data.size(); i++)
   {
-    for (unsigned long long i = _w * _h; i < _kBlockCount; i++)
+    if (*data.at(i))
     {
-      if (_data[i] && _data[i]->x() == x && _data[i]->y() == y)
-      {
-        return &_data[i];
-      }
+      drawer.draw(**data.at(i));
     }
-    return nullptr;
   }
-  return &_data[y * _w + x];
 }
 
 void World::load_textures(core::PngDecoder &pngDecoder) noexcept
@@ -56,28 +50,31 @@ void World::load_textures(core::PngDecoder &pngDecoder) noexcept
   _logger.set_section("LoadTextures");
 
   _logger.info("Loading textures for world blocks");
-  for (unsigned short y = 0; y < _h; y++)
+
+  for (uint y = 0; y < data.h(); y++)
   {
+    const float kProgress = (y + 1) / (float)data.h() * 100;
+
     _logger.progress_fmt(
-      "Loading textures for row %u/%u (%.1f%%)", y + 1, _h,
-      (y + 1) / (float)_h * 100
+      "Loading textures for row %u/%u (%.1f%%)", y + 1, data.h(), kProgress
     );
 
-    for (unsigned x = 0; x < _w; x++)
+    for (uint x = 0; x < data.w(); x++)
     {
-      _data[y * _w + x]->load_texture(pngDecoder);
+      (*data.at(x, y))->load_texture(pngDecoder);
     }
   }
 
-  if (_kBlockCount > _w * _h)
+  if (data.extra_data_size())
   {
     _logger.progress("Loading textures for extra blocks");
-    for (unsigned long long i = _w * _h; i < _kBlockCount; i++)
+
+    for (ullong i = data.dimensions_size(); i < data.size(); i++)
     {
-      _data[i]->load_texture(pngDecoder);
+      (*data.at(i))->load_texture(pngDecoder);
     }
   }
 
-  _logger.info("Textures successfully loaded.");
+  _logger.info("Textures loaded.");
 }
 }

@@ -1,13 +1,14 @@
-#ifndef _STRUCTURE_ID_HPP_
-#define _STRUCTURE_ID_HPP_
+#ifndef _EFE_STRUCTURE_ID_HPP_
+#define _EFE_STRUCTURE_ID_HPP_
+
+#include "core/types.hpp"
 
 namespace game::structures
 {
-enum StructureId : unsigned char
+enum StructureId : ubyte
 {
   TREE,
-  POND,
-  GRASS
+  POND
 };
 }
 

@@ -1,28 +1,23 @@
 #include "core/exception.hpp"
 #include "core/logger.hpp"
 #include "core/rand.hpp"
-#include "core/renderer.hpp"
-#include "core/window.hpp"
 #include "game/dynamites/dynamite.hpp"
-#include "game/movement.hpp"
+#include "game/world/generators/plain_world_generator.hpp"
 #include "game/world/structures/structure_id.hpp"
-#include "game/world/world.hpp"
-#include "game/world_generators/plain_world_generator.hpp"
-#include "game/zooming.hpp"
 #include "opengl/shading/shader_program.hpp"
 #include "opengl/shading/uniforms.hpp"
+#include "opengl/window/camera.hpp"
+#include "opengl/window/renderer.hpp"
+#include "opengl/window/window.hpp"
 
 #include <memory>
 #include <thread>
 #include <vector>
 
-static constexpr float _MV_SENSITIVITY = 1.5f;
-
 class Game final
 {
 public:
-  Game() noexcept
-    : _logger("Game"), _mv(_MV_SENSITIVITY), _zoom(0.15f, 0.5f, 5.5f)
+  Game() noexcept : _logger("Game")
   {
     _logger.info_fmt("Welcome to Explode for Explode %s!", EFE_VERSION);
   }
@@ -31,13 +26,11 @@ public:
 
   bool setup_win() noexcept
   {
-    _win = std::make_unique<core::Window>(1024, 768, "Explode for Explode");
-
     try
     {
-      _win->create();
+      _win = std::make_unique<gl::Window>(1024, 768, "Explode for Explode");
     }
-    catch (const core::WindowCreationException &e)
+    catch (const gl::WindowCreationException &e)
     {
       _logger.critical_fmt(
         "The window couldn't be created: %s.", e.msg.c_str()
@@ -58,29 +51,29 @@ public:
       _logger.error_fmt("Window icon image is corrupted.");
     }
 
-    _win->set_bg(165, 190, 251);
-
     return true;
   }
 
   bool setup_renderer() noexcept
   {
-    _renderer = std::make_unique<core::Renderer>(*_win);
     try
     {
-      _renderer->init();
-      return true;
+      _renderer = std::make_unique<gl::Renderer>(*_win);
     }
-    catch (const core::RendererInitializationException &e)
+    catch (const gl::RendererInitializationException &e)
     {
       _logger.critical_fmt(
         "Renderer couldn't be initialized: %s.", e.msg.c_str()
       );
       return false;
     }
+
+    _renderer->clear_color(165, 190, 251);
+
+    return true;
   }
 
-  bool compile_shaders() noexcept
+  bool setup_shaders() noexcept
   {
     _worldShaderProgram    = std::make_unique<gl::ShaderProgram>("World");
     _dynamiteShaderProgram = std::make_unique<gl::ShaderProgram>("Dynamite");
@@ -88,7 +81,7 @@ public:
 
     try
     {
-      { // World shader program.
+      { // World shader program
         gl::VertexShader vs;
         vs.load("../assets/shaders/world.vert");
         vs.compile();
@@ -99,7 +92,7 @@ public:
         _worldShaderProgram->add(fs);
         _worldShaderProgram->link();
       }
-      { // Dynamite shader program.
+      { // Dynamite shader program
         gl::VertexShader vs;
         vs.load("../assets/shaders/dynamite.vert");
         vs.compile();
@@ -110,7 +103,7 @@ public:
         _dynamiteShaderProgram->add(fs);
         _dynamiteShaderProgram->link();
       }
-      { // Pond shader program.
+      { // Pond shader program
         gl::VertexShader vs;
         vs.load("../assets/shaders/pond.vert");
         vs.compile();
@@ -138,92 +131,88 @@ public:
       game::blocks::WATER_WAVE, *_pondShaderProgram
     );
 
+    game::Dynamite::shader_program(*_dynamiteShaderProgram);
+
     return true;
   }
 
-  void setup_movement_and_zooming() noexcept
+  void setup_camera() noexcept
   {
-    _win->on_mouse_click(
-      [this](core::mouse::Button btn, core::mouse::Action action) noexcept
-    {
-      if (btn == core::mouse::BUTTON_RIGHT)
-      {
-        _win->toggle_cursor_visibility();
-        _rightBtnHeld = action == core::mouse::ACTION_PRESS;
-        if (!_rightBtnHeld)
-        {
-          _mv.set_next_origin();
-        }
-      }
-      else if (btn == core::mouse::BUTTON_LEFT &&
-               action == core::mouse::ACTION_PRESS)
-      {
-        _create_dynamite();
-      }
-    }
-    );
+    gl::CameraSettings settings;
+    settings.win         = _win.get();
+    settings.renderer    = _renderer.get();
+    settings.mvButton    = gl::MOUSE_BUTTON_MID;
+    settings.sensitivity = 1.4f;
+    settings.maxZoomIn   = 5.0f;
+    settings.maxZoomOut  = 0.5f;
 
-    _setup_movement();
-    _setup_zooming();
+    settings.initPosX = _worldSettings.w * game::Block::SIZE / 2.0f;
+    settings.initPosY = -((_worldSettings.h() + 5) * game::Block::SIZE);
 
-    // Set origin.
-    _mv(
-      (_worldSettings.w / 2.0f) * game::Block::SIZE / _MV_SENSITIVITY -
-        _win->w() / 2.0f,
-      -(_worldSettings.h() * game::Block::SIZE - 15 * game::Block::SIZE) /
-        _MV_SENSITIVITY
-    );
-    _mv(0, 0); // Apply position.
-    _mv.set_next_origin();
-    _renderer->view.set_offset(_mv.get().x, _mv.get().y);
-    _renderer->update_view();
+    _cam = std::make_unique<gl::Camera>(settings);
   }
 
   void create_world_settings() noexcept
   {
-    _worldSettings.w = 200;
-    _worldSettings.layers.push_back({game::blocks::GRASS_BLOCK, 1});
-    _worldSettings.layers.push_back({game::blocks::EARTH_BLOCK, 34});
-    _worldSettings.layers.push_back({game::blocks::STONE_BLOCK, 65});
+    _worldSettings.w      = 200;
+    _worldSettings.layers = {
+      {game::blocks::GRASS_BLOCK, 1},
+      {game::blocks::EARTH_BLOCK, 34},
+      {game::blocks::STONE_BLOCK, 65}
+    };
 
     _worldShaderProgram->set_uniform(
       gl::UNIFORM_WORLD_H, _worldSettings.h() * game::Block::SIZE
     );
 
-    const unsigned short
-      kPondW = game::Structure::from_id(game::structures::POND)->w(),
-      kPondH = game::Structure::from_id(game::structures::POND)->h();
+    core::Rand::init();
+    uint maxPondH = 0;
+    for (uint i = 0; i < _worldSettings.w; i++)
+    {
+      if (core::Rand::next(0, 15) == 0)
+      {
+        _structuresGen.push({game::structures::TREE, (int)i, _worldSettings.h()}
+        );
+      }
+      else if (core::Rand::next(0, 6) != 0)
+      {
+        _worldSettings.overridenBlocks.push_back(
+          {game::blocks::GRASS, (int)i, _worldSettings.h()}
+        );
+      }
+      else if (core::Rand::next(0, 8) == 0)
+      {
+        _structuresGen.push(
+          {game::structures::POND, (int)i, _worldSettings.h() - 1}
+        );
+
+        const auto &kPond = _structuresGen.structuresData().back();
+
+        if (i + kPond.w() >= _worldSettings.w)
+        {
+          _structuresGen.pop();
+          continue;
+        }
+
+        if (kPond.h() > maxPondH)
+        {
+          maxPondH = kPond.h();
+        }
+
+        i += kPond.w() - 1;
+      }
+    }
+
+    _worldSettings.structuresGenerator = &_structuresGen;
 
     _pondShaderProgram->set_uniform(
       gl::UNIFORM_POND_TOP, (_worldSettings.h() - 1) * game::Block::SIZE
     );
+
     _pondShaderProgram->set_uniform(
       gl::UNIFORM_POND_BOTTOM,
-      (_worldSettings.h() - 1 - kPondH) * game::Block::SIZE
+      (_worldSettings.h() - 1 - maxPondH - 10) * game::Block::SIZE
     );
-
-    for (unsigned i = 0; i < _worldSettings.w; i++)
-    {
-      if (core::rand(0, 15) == 0)
-      {
-        _worldSettings.structures.push_back(
-          {game::structures::TREE, (int)i, _worldSettings.h()}
-        );
-      }
-      else if (core::rand(0, 6) != 0)
-      {
-        _worldSettings.structures.push_back(
-          {game::structures::GRASS, (int)i, _worldSettings.h()}
-        );
-      }
-      else if (core::rand(0, 8) == 0 && i + kPondW <= _worldSettings.w)
-      {
-        _worldSettings.structures.push_back(
-          {game::structures::POND, (int)i, _worldSettings.h() - 1}
-        );
-        i += kPondW;
-      }
-    }
   }
 
   void generate_world() noexcept
@@ -235,10 +224,21 @@ public:
 
   void operator()() noexcept
   {
+    _win->on_mouse_click(
+      [this](gl::MouseButton btn, gl::MouseAction action) noexcept
+    {
+      if (btn == gl::MOUSE_BUTTON_LEFT && action == gl::MOUSE_ACTION_PRESS)
+      {
+        _create_dynamite();
+      }
+    }
+    );
+
     while (!_win->closed())
     {
       _win->poll_events();
-      _win->clear();
+
+      _renderer->clear();
 
       for (auto &dynamite : _dynamites)
       {
@@ -251,7 +251,6 @@ public:
 
       _renderer->draw(*_world);
 
-      _dynamiteShaderProgram->use();
       for (const auto &dynamite : _dynamites)
       {
         if (dynamite.first)
@@ -260,61 +259,29 @@ public:
         }
       }
 
-      _win->update();
+      _renderer->update();
     }
   }
 
 private:
-  std::unique_ptr<core::Window> _win;
-  std::unique_ptr<core::Renderer> _renderer;
+  using _tGameDynamite = std::pair<std::unique_ptr<game::Dynamite>, bool>;
+
+  std::unique_ptr<gl::Window> _win;
+  std::unique_ptr<gl::Camera> _cam;
+  std::unique_ptr<gl::Renderer> _renderer;
   std::unique_ptr<gl::ShaderProgram> _worldShaderProgram,
     _dynamiteShaderProgram, _pondShaderProgram;
 
   core::PngDecoder _pngDecoder;
 
   game::PlainWorldGeneratorSettings _worldSettings;
+  game::StructuresGenerator _structuresGen;
   std::unique_ptr<game::World> _world;
 
-  game::Movement _mv;
-  game::Zooming _zoom;
-  bool _rightBtnHeld = false;
-
-  unsigned _explodedDynamites = 0;
-  std::vector<std::pair<std::unique_ptr<game::Dynamite>, bool>> _dynamites;
+  uint _explodedDynamites = 0;
+  std::vector<_tGameDynamite> _dynamites;
 
   core::Logger _logger;
-
-  void _setup_movement() noexcept
-  {
-    _win->on_cursor_move([this](int x, int y) noexcept
-    {
-      if (_rightBtnHeld)
-      {
-        _mv(x / _zoom.get().scale, y / _zoom.get().scale);
-
-        _renderer->view.set_offset(
-          _zoom.get().offsetX + _mv.get().x * _zoom.get().scale,
-          _zoom.get().offsetY + _mv.get().y * _zoom.get().scale
-        );
-        _renderer->update_view();
-      }
-    });
-  }
-
-  void _setup_zooming() noexcept
-  {
-    _win->on_scroll([this](bool up) noexcept
-    {
-      _zoom(up, _renderer->viewport_w() / 2.0f, _renderer->viewport_h() / 2.0f);
-
-      _renderer->view.set_scale(_zoom.get().scale);
-      _renderer->view.set_offset(
-        _zoom.get().offsetX + _mv.get().x * _zoom.get().scale,
-        _zoom.get().offsetY + _mv.get().y * _zoom.get().scale
-      );
-      _renderer->update_view();
-    });
-  }
 
   void _create_dynamite() noexcept
   {
@@ -322,7 +289,7 @@ private:
     {
       std::this_thread::sleep_for(std::chrono::milliseconds(750));
 
-      if (!_win->closed()) // Avoid UB when window is closed.
+      if (!_win->closed()) // Avoid UB when the window is closed
       {
         _dynamites[_explodedDynamites++].second = true;
       }
@@ -332,13 +299,13 @@ private:
 
     _dynamites.back().first->load_texture(_pngDecoder);
 
-    const float x = _zoom.get().offsetX / _zoom.get().scale + _mv.get().x +
-                    _win->cursor_x() / _zoom.get().scale,
-                y = _zoom.get().offsetY / _zoom.get().scale + _mv.get().y +
-                    _win->cursor_y() / _zoom.get().scale;
-    _dynamites.back().first->set_pos(x, y);
+    const float kX = _cam->zoom().offsetX / _cam->zoom().scale + _cam->mv().x +
+                     _win->cursor_x() / _cam->zoom().scale,
+                kY = _cam->zoom().offsetY / _cam->zoom().scale + _cam->mv().y +
+                     _win->cursor_y() / _cam->zoom().scale;
+    _dynamites.back().first->set_pos(kX, kY);
 
-    _logger.info_fmt("Created dynamite at (%.1f; %.1f).", x, y);
+    _logger.info_fmt("Created dynamite at (%.1f; %.1f).", kX, kY);
   }
 };
 
@@ -356,7 +323,7 @@ int main()
     return 1;
   }
 
-  if (!game.compile_shaders())
+  if (!game.setup_shaders())
   {
     return 1;
   }
@@ -364,7 +331,7 @@ int main()
   game.create_world_settings();
   game.generate_world();
 
-  game.setup_movement_and_zooming();
+  game.setup_camera();
 
   game();
 

@@ -1,9 +1,11 @@
-#ifndef _BLOCK_ID_HPP_
-#define _BLOCK_ID_HPP_
+#ifndef _EFE_BLOCK_ID_HPP_
+#define _EFE_BLOCK_ID_HPP_
+
+#include "core/types.hpp"
 
 namespace game::blocks
 {
-enum BlockId : unsigned char
+enum BlockId : ubyte
 {
   DEFAULT_BLOCK,
   GRASS_BLOCK,
@@ -16,7 +18,22 @@ enum BlockId : unsigned char
   WATER_WAVE
 };
 
-extern const char *id_to_str(BlockId id) noexcept;
+constexpr const char *id_to_str(BlockId id)
+{
+  switch (id)
+  {
+  case DEFAULT_BLOCK: return "Default block"; break;
+  case GRASS_BLOCK: return "Grass block"; break;
+  case EARTH_BLOCK: return "Earth"; break;
+  case STONE_BLOCK: return "Stone"; break;
+  case OAK_BLOCK: return "Oak"; break;
+  case OAK_LEAVES: return "Oak leaves"; break;
+  case GRASS: return "Grass"; break;
+  case WATER: return "Water"; break;
+  case WATER_WAVE: return "Water wave"; break;
+  default: return "";
+  }
+}
 }
 
 #endif

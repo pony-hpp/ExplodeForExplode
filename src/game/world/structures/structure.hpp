@@ -1,6 +1,8 @@
-#ifndef _STRUCTURE_HPP_
-#define _STRUCTURE_HPP_
+#ifndef _EFE_STRUCTURE_HPP_
+#define _EFE_STRUCTURE_HPP_
 
+#include "core/types.hpp"
+#include "game/utils/data_2d.hpp"
 #include "game/world/blocks/block_data.hpp"
 
 #include <memory>
@@ -10,21 +12,14 @@ namespace game
 class Structure
 {
 public:
+  using Data = utils::Data2D<BlockData>;
+
   virtual ~Structure() = default;
 
-  virtual const char *name() const noexcept                  = 0;
-  virtual unsigned short w() const noexcept                  = 0;
-  virtual unsigned short h() const noexcept                  = 0;
-  virtual std::unique_ptr<BlockData[]> data() const noexcept = 0;
+  virtual const char *name() const noexcept = 0;
+  virtual Data data() const noexcept        = 0;
 
-  static std::unique_ptr<Structure> from_id(unsigned char id) noexcept;
-
-protected:
-  void _push_block(std::unique_ptr<BlockData[]> &data, const BlockData &block)
-    const noexcept;
-
-private:
-  mutable unsigned _pushIdx = 0;
+  static std::unique_ptr<Structure> from_id(ubyte id) noexcept;
 };
 }
 

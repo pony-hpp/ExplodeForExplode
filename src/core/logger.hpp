@@ -1,17 +1,21 @@
-#ifndef _LOGGER_HPP_
-#define _LOGGER_HPP_
+#ifndef _EFE_LOGGER_HPP_
+#define _EFE_LOGGER_HPP_
+
+#include "core/types.hpp"
 
 #include <cstdarg>
 #include <string>
+#include <string_view>
 
 namespace core
 {
 class Logger final
 {
 public:
-  explicit Logger(std::string_view module) noexcept;
+  inline explicit Logger(std::string_view module) noexcept
+    : _kModule(module) {};
 
-  void set_section(const char *section) noexcept;
+  inline void set_section(const char *section) noexcept { _section = section; }
 
   void info(const char *msg) noexcept;
   void info_fmt(const char *fmt, ...) noexcept;
@@ -31,23 +35,23 @@ public:
   void progress_fmt(const char *msg, ...) noexcept;
 
 private:
-  enum _LogColor : char
+  enum _tLogColor : byte
   {
-    _RED    = 31,
-    _GREEN  = 32,
-    _YELLOW = 33,
-    _CYAN   = 36,
+    RED    = 31,
+    GREEN  = 32,
+    YELLOW = 33,
+    CYAN   = 36,
   };
 
   const std::string _kModule;
   std::string _section;
 
-  std::string _format_msg_base(const char *msg) const noexcept;
+  std::string _basic_format_msg(const char *msg) const noexcept;
   std::string _format_msg(const char *msg) const noexcept;
   std::string
-  _format_msg(const char *msg, _LogColor color, bool bold) const noexcept;
+  _format_msg(const char *msg, _tLogColor color, bool bold) const noexcept;
 
-  std::string _format_progress_base(const char *msg) const noexcept;
+  std::string _basic_format_progress(const char *msg) const noexcept;
 
   void _log_fmt(const std::string &msg, va_list &vaArgs) noexcept;
 };

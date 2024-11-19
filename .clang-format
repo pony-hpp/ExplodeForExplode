@@ -1,39 +1,52 @@
----
+ContinuationIndentWidth: 2
+ConstructorInitializerIndentWidth: 2
+
+LambdaBodyIndentation: OuterScope
+
 AlignAfterOpenBracket: BlockIndent
+AlignEscapedNewlines: DontAlign
 AlignConsecutiveAssignments:
   Enabled: true
-  AcrossComments: false
-  AcrossEmptyLines: false
 AlignConsecutiveMacros:
   Enabled: true
-  AcrossComments: false
-  AcrossEmptyLines: false
-AlignEscapedNewlines: DontAlign
 AlignTrailingComments:
   Kind: Never
+
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortEnumsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: Never
-AllowShortLambdasOnASingleLine: Empty
+AllowShortLambdasOnASingleLine: true
 AllowShortLoopsOnASingleLine: false
-AlwaysBreakTemplateDeclarations: Yes
-BracedInitializerIndentWidth: 2
-BreakAfterAttributes: Always
-BreakBeforeBraces: Allman
+
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: true
+  BeforeWhile: true
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+BreakBeforeBraces: Custom
+AlwaysBreakTemplateDeclarations: true
+
 ColumnLimit: 80
-ConstructorInitializerIndentWidth: 2
-ContinuationIndentWidth: 2
-EmptyLineBeforeAccessModifier: Always
-FixNamespaceComments: false
-IncludeBlocks: Regroup
-IndentExternBlock: NoIndent
-InsertBraces: true
 InsertNewlineAtEOF: true
-KeepEmptyLinesAtTheStartOfBlocks: false
-LambdaBodyIndentation: OuterScope
+EmptyLineBeforeAccessModifier: Always
+InsertBraces: true
 RemoveSemicolon: true
+SpaceBeforeCpp11BracedList: true
+FixNamespaceComments: false
+
+IncludeBlocks: Regroup
 SortIncludes: CaseSensitive
 SortUsingDeclarations: Lexicographic
-SpaceBeforeCpp11BracedList: true

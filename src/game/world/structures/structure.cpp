@@ -4,23 +4,13 @@
 
 namespace game
 {
-std::unique_ptr<Structure> Structure::from_id(unsigned char id) noexcept
+std::unique_ptr<Structure> Structure::from_id(ubyte id) noexcept
 {
   switch (id)
   {
-  case structures::TREE: return std::make_unique<structures::Tree>(); break;
-  case structures::POND: return std::make_unique<structures::Pond>(); break;
-  case structures::GRASS: return std::make_unique<structures::Grass>(); break;
+  case structures::TREE: return std::make_unique<structures::Tree>();
+  case structures::POND: return std::make_unique<structures::Pond>();
   default: return nullptr;
   };
-}
-
-void Structure::_push_block(
-  std::unique_ptr<BlockData[]> &data, const BlockData &block
-) const noexcept
-{
-  data[_pushIdx]         = block;
-  data[_pushIdx].enabled = true;
-  _pushIdx++;
 }
 }

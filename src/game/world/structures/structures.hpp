@@ -1,5 +1,5 @@
-#ifndef _STRUCTURES_HPP_
-#define _STRUCTURES_HPP_
+#ifndef _EFE_STRUCTURES_HPP_
+#define _EFE_STRUCTURES_HPP_
 
 #include "game/world/structures/structure.hpp"
 
@@ -10,14 +10,11 @@ namespace game::structures
   { \
   public: \
     const char *name() const noexcept override; \
-    unsigned short w() const noexcept override; \
-    unsigned short h() const noexcept override; \
-    std::unique_ptr<BlockData[]> data() const noexcept override; \
+    Data data() const noexcept override; \
   };
 
 STRUCTURE(Tree)
 STRUCTURE(Pond)
-STRUCTURE(Grass)
 }
 
 #endif

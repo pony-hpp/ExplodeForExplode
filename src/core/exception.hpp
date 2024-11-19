@@ -1,11 +1,10 @@
-#ifndef _EXCEPTION_HPP_
-#define _EXCEPTION_HPP_
+#ifndef _EFE_EXCEPTION_HPP_
+#define _EFE_EXCEPTION_HPP_
 
 namespace core
 {
 struct FopenException
-{
-};
+{};
 }
 
 #endif

@@ -1,7 +1,8 @@
-#ifndef _SHADER_HPP_
-#define _SHADER_HPP_
+#ifndef _EFE_SHADER_HPP_
+#define _EFE_SHADER_HPP_
 
 #include "core/logger.hpp"
+#include "core/types.hpp"
 
 #include <string>
 
@@ -14,18 +15,23 @@ public:
 
   virtual int gl_type() const noexcept = 0;
 
-  unsigned gl_handle() const noexcept;
+  inline uint gl_handle() const noexcept { return _glHandle; }
   void load(const char *srcPath);
   void compile();
 
 protected:
-  explicit Shader(const char *name) noexcept;
+  inline explicit Shader(const char *name) noexcept
+    : _logger(std::string("Shader/") + name)
+  {}
 
 private:
-  unsigned _glHandle = 0;
+  uint _glHandle = 0;
   std::string _src;
   core::Logger _logger;
 };
+
+struct ShaderCompilationException
+{};
 
 #define SHADER(className) \
   class className final : public Shader \
@@ -38,10 +44,6 @@ private:
 
 SHADER(VertexShader)
 SHADER(FragmentShader)
-
-struct ShaderCompilationException
-{
-};
 }
 
 #endif

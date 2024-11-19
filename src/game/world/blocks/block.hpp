@@ -1,9 +1,10 @@
-#ifndef _BLOCK_HPP_
-#define _BLOCK_HPP_
+#ifndef _EFE_BLOCK_HPP_
+#define _EFE_BLOCK_HPP_
 
 #include "core/decoders/png.hpp"
-#include "core/drawable.hpp"
 #include "game/world/blocks/block_data.hpp"
+#include "opengl/drawable.hpp"
+#include "opengl/mesh.hpp"
 #include "opengl/shading/shader_program.hpp"
 
 #include <memory>
@@ -11,27 +12,39 @@
 
 namespace game
 {
-class Block : public core::IDrawable
+class Block : public gl::ISingleDrawable
 {
 public:
-  Block() noexcept;
-  virtual ~Block() noexcept;
+  virtual ~Block() = default;
 
-  static constexpr char SIZE = 24;
+  static constexpr byte SIZE = 24;
 
-  void draw(const core::Renderer &renderer) const noexcept override;
+  void draw() const noexcept override;
+  inline int x() const noexcept override { return _x * SIZE; }
+  inline int y() const noexcept override { return _y * SIZE; }
+  inline uint w() const noexcept override { return SIZE; }
+  inline uint h() const noexcept override { return SIZE; }
 
   virtual blocks::BlockId id() const noexcept       = 0;
   virtual const char *texture_path() const noexcept = 0;
 
   static std::unique_ptr<Block> from_data(const BlockData &data) noexcept;
-  static void default_shader_program(gl::ShaderProgram &shaderProgram) noexcept;
-  static void match_shader_program(
-    blocks::BlockId id, gl::ShaderProgram &shaderProgram
-  ) noexcept;
 
-  int x() const noexcept;
-  int y() const noexcept;
+  inline static void default_shader_program(gl::ShaderProgram &shaderProgram
+  ) noexcept
+  {
+    _defaultShaderProgram = &shaderProgram;
+  }
+
+  inline static void match_shader_program(
+    blocks::BlockId id, gl::ShaderProgram &shaderProgram
+  ) noexcept
+  {
+    _shaderPrograms.insert_or_assign(id, &shaderProgram);
+  }
+
+  inline int pos_x() const noexcept { return _x; }
+  inline int pos_y() const noexcept { return _y; }
 
   void set_pos(int x, int y) noexcept;
   void load_texture(core::PngDecoder &pngDecoder) noexcept;
@@ -42,13 +55,7 @@ private:
     _shaderPrograms;
 
   int _x, _y;
-
-  unsigned _coordsVbo;
-  unsigned _tex;
-  unsigned _texCoordsVbo;
-  unsigned _vao;
-
-  void _load_default_tex() noexcept;
+  gl::Mesh _mesh;
 };
 }
 

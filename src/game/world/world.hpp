@@ -1,31 +1,34 @@
-#ifndef _WORLD_HPP_
-#define _WORLD_HPP_
+#ifndef _EFE_WORLD_HPP_
+#define _EFE_WORLD_HPP_
 
 #include "core/decoders/png.hpp"
-#include "core/drawable.hpp"
 #include "core/logger.hpp"
+#include "game/utils/data_2d.hpp"
 #include "game/world/blocks/block.hpp"
-#include "game/world/world_data.hpp"
+#include "opengl/drawable.hpp"
 
 #include <memory>
 
 namespace game
 {
-class World final : public core::IDrawable
+// Maybe a little strange name :)
+using BlockDataWorldData = utils::Data2D<BlockData>;
+
+using BlockWorldData = utils::Data2D<std::unique_ptr<Block>>;
+
+class World final : public gl::ICompositeDrawable
 {
 public:
-  World(const WorldData &worldData) noexcept;
+  World(const BlockDataWorldData &blocksData) noexcept;
 
-  void draw(const core::Renderer &renderer) const noexcept override;
+  BlockWorldData data;
 
-  std::unique_ptr<Block> *at(int x, int y) noexcept;
+  void draw(gl::Drawer &drawer) const noexcept override;
+  inline bool always_draw() const noexcept override { return true; }
+
   void load_textures(core::PngDecoder &pngDecoder) noexcept;
 
 private:
-  const unsigned _w;
-  const unsigned short _h;
-  const unsigned long long _kBlockCount;
-  std::unique_ptr<std::unique_ptr<Block>[]> _data;
   core::Logger _logger;
 };
 }

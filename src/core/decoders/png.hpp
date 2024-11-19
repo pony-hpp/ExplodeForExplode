@@ -1,7 +1,8 @@
-#ifndef _PNG_HPP_
-#define _PNG_HPP_
+#ifndef _EFE_PNG_HPP_
+#define _EFE_PNG_HPP_
 
 #include "core/logger.hpp"
+#include "core/types.hpp"
 
 #include <memory>
 #include <unordered_map>
@@ -11,30 +12,31 @@ namespace core
 {
 struct Png
 {
-  explicit Png(
-    unsigned short w, unsigned short h, std::shared_ptr<unsigned char[]> data
-  ) noexcept;
+  using Data = std::shared_ptr<ubyte[]>;
 
-  const unsigned short w, h;
-  const std::shared_ptr<unsigned char[]> data;
+  inline explicit Png(ushort w, ushort h, Data data) noexcept
+    : w(w), h(h), data(data)
+  {}
+
+  const ushort w, h;
+  const Data data;
 };
 
 class PngDecoder final
 {
 public:
-  PngDecoder() noexcept;
+  inline PngDecoder() noexcept : _logger("PngDecoder") {}
 
   Png &operator()(const char *pngPath);
 
 private:
   std::unordered_map<const char *, Png> _cachedPngs;
-  std::vector<const char *> _fopenFailedPngFiles, _corruptedDataPngPaths;
+  std::vector<const char *> _fopenFailedPngPaths, _corruptedPngPaths;
   Logger _logger;
 };
 
 struct CorruptedPngException
-{
-};
+{};
 }
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef _BLOCKS_HPP_
-#define _BLOCKS_HPP_
+#ifndef _EFE_BLOCKS_HPP_
+#define _EFE_BLOCKS_HPP_
 
 #include "game/world/blocks/block.hpp"
 

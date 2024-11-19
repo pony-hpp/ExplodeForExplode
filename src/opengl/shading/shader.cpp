@@ -9,11 +9,6 @@
 
 namespace gl
 {
-Shader::Shader(const char *name) noexcept
-  : _logger(std::string("Shader/") + name)
-{
-}
-
 Shader::~Shader() noexcept
 {
   if (_glHandle)
@@ -21,8 +16,6 @@ Shader::~Shader() noexcept
     glDeleteShader(_glHandle);
   }
 }
-
-unsigned Shader::gl_handle() const noexcept { return _glHandle; }
 
 void Shader::load(const char *srcPath)
 {
@@ -56,7 +49,7 @@ void Shader::compile()
 {
   _logger.set_section("Compile");
 
-  _logger.info("Compiling");
+  _logger.info("Compiling shader");
 
   glCompileShader(_glHandle);
 

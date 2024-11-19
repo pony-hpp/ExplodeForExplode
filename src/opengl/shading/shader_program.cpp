@@ -5,7 +5,7 @@
 
 namespace gl
 {
-unsigned ShaderProgram::_curGlHandle;
+uint ShaderProgram::_curGlHandle;
 
 ShaderProgram::ShaderProgram(const char *name) noexcept
   : _logger(std::string("ShaderProgram/") + name)
@@ -29,7 +29,7 @@ void ShaderProgram::link()
 {
   _logger.set_section("Link");
 
-  _logger.info("Linking");
+  _logger.info("Linking shader program");
 
   glLinkProgram(_glHandle);
 
@@ -49,6 +49,8 @@ void ShaderProgram::link()
   _logger.info("Shader program successfully linked.");
 }
 
+bool ShaderProgram::used() const noexcept { return _curGlHandle == _glHandle; }
+
 void ShaderProgram::use() noexcept
 {
   if (!used())
@@ -58,9 +60,7 @@ void ShaderProgram::use() noexcept
   }
 }
 
-bool ShaderProgram::used() const noexcept { return _curGlHandle == _glHandle; }
-
-void ShaderProgram::set_uniform(const char *name, unsigned v) noexcept
+void ShaderProgram::set_uniform(const char *name, uint v) noexcept
 {
   use();
   glUniform1ui(_get_uniform(name), v);
