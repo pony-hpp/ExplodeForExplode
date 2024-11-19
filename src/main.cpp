@@ -173,6 +173,7 @@ public:
       {
         _structuresGen.push({game::structures::TREE, (int)i, _worldSettings.h()}
         );
+        i += 2;
       }
       else if (core::Rand::next(0, 6) != 0)
       {
