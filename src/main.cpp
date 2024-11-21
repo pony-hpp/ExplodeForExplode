@@ -173,12 +173,28 @@ public:
       {
         _structuresGen.push({game::structures::TREE, (int)i, _worldSettings.h()}
         );
-        i += 2;
+
+        // Make the current block a child of the bottom block
+        _worldSettings.overridenBlocks.push_back(
+          {_worldSettings.layers[0].first,
+           (int)i,
+           _worldSettings.h() - 1,
+           {{i, _worldSettings.h()}}}
+        );
+
+        i += 3;
       }
       else if (core::Rand::next(0, 6) != 0)
       {
         _worldSettings.overridenBlocks.push_back(
           {game::blocks::GRASS, (int)i, _worldSettings.h()}
+        );
+
+        _worldSettings.overridenBlocks.push_back(
+          {_worldSettings.layers[0].first,
+           (int)i,
+           _worldSettings.h() - 1,
+           {{i, _worldSettings.h()}}}
         );
       }
       else if (core::Rand::next(0, 8) == 0)
@@ -219,7 +235,7 @@ public:
   void generate_world() noexcept
   {
     game::PlainWorldGenerator worldGen(_worldSettings);
-    _world = std::make_unique<game::World>(*worldGen());
+    _world = std::make_unique<game::World>(std::move(*worldGen()));
     _world->load_textures(_pngDecoder);
   }
 

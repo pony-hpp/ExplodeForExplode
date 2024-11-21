@@ -49,6 +49,8 @@ private:
   ushort _texW, _texH;
   bool _texLoaded = false;
   gl::Mesh _mesh;
+
+  void _explode_children(const BlockData *data) noexcept;
 };
 }
 

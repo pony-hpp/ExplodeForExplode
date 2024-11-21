@@ -3,6 +3,9 @@
 
 #include "game/world/blocks/block_id.hpp"
 
+#include <utility>
+#include <vector>
+
 namespace game
 {
 struct BlockData
@@ -14,6 +17,9 @@ struct BlockData
 
   blocks::BlockId id;
   int x, y;
+
+  // Once this block is destroyed, the child blocks are also destroyed.
+  std::vector<std::pair<int, int>> childPoses = {};
 };
 }
 

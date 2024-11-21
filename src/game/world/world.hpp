@@ -19,9 +19,10 @@ using BlockWorldData = utils::Data2D<std::unique_ptr<Block>>;
 class World final : public gl::ICompositeDrawable
 {
 public:
-  World(const BlockDataWorldData &blocksData) noexcept;
+  World(BlockDataWorldData &&blocksData) noexcept;
 
-  BlockWorldData data;
+  BlockWorldData blocks;
+  BlockDataWorldData blocksData;
 
   void draw(gl::Drawer &drawer) const noexcept override;
   inline bool always_draw() const noexcept override { return true; }

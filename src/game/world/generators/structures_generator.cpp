@@ -9,11 +9,18 @@ void StructuresGenerator::push(const WorldStructure &structure) noexcept
   auto data = factory(structure.id)->data();
   for (ullong i = 0; i < data.size(); i++)
   {
-    if (data.at(i))
+    BlockData *kBlock = data.at(i);
+    if (kBlock)
     {
       // Convert the structure's block relative position to an absolute position
-      data.at(i)->x += structure.x;
-      data.at(i)->y += structure.y;
+      kBlock->x += structure.x;
+      kBlock->y += structure.y;
+
+      for (auto &childPos : kBlock->childPoses)
+      {
+        childPos.first += structure.x;
+        childPos.second += structure.y;
+      }
     }
   }
 

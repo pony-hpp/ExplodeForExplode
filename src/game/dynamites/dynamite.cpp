@@ -52,12 +52,32 @@ void Dynamite::explode() noexcept
         continue;
       }
 
-      auto block = _world.data.at(_x / Block::SIZE + x, _y / Block::SIZE + y);
+      const int kXPos = _x / Block::SIZE + x, kYPos = _y / Block::SIZE + y;
+      auto block = _world.blocks.at(kXPos, kYPos);
       if (block)
       {
         // It's safe to reset a `std::unique_ptr` that points to `nullptr`
         block->reset();
+
+        _explode_children(_world.blocksData.at(kXPos, kYPos));
       }
+    }
+  }
+}
+
+void Dynamite::_explode_children(const BlockData *data) noexcept
+{
+  if (data && !data->childPoses.empty())
+  {
+    for (const auto &childPos : data->childPoses)
+    {
+      auto *childBlock = _world.blocks.at(childPos.first, childPos.second);
+      if (childBlock)
+      {
+        childBlock->reset();
+      }
+
+      _explode_children(_world.blocksData.at(childPos.first, childPos.second));
     }
   }
 }

@@ -3,44 +3,47 @@
 
 namespace game
 {
-World::World(const BlockDataWorldData &blocksData) noexcept
-  : data(blocksData.w(), blocksData.h(), blocksData.extra_data_size()),
-    _logger("World")
+World::World(BlockDataWorldData &&blocksDataParam) noexcept
+  : blocks(
+      blocksDataParam.w(), blocksDataParam.h(),
+      blocksDataParam.extra_data_size()
+    ),
+    blocksData(std::move(blocksDataParam)), _logger("World")
 {
   _logger.set_section("Create");
 
   _logger.debug_fmt(
-    "Converting %ux%u (with %u extra blocks) world data", blocksData.h(),
-    blocksData.w(), blocksData.extra_data_size()
+    "Converting %ux%u (with %u extra blocks) world data", blocks.h(),
+    blocks.w(), blocks.extra_data_size()
   );
 
-  for (ullong i = 0; i < blocksData.dimensions_size(); i++)
+  for (ullong i = 0; i < blocks.dimensions_size(); i++)
   {
-    data.push(Block::from_data(*blocksData.at(i)));
+    blocks.push(Block::from_data(*blocksData.at(i)));
   }
 
-  for (ullong i = blocksData.dimensions_size(); i < blocksData.size(); i++)
+  for (ullong i = blocks.dimensions_size(); i < blocks.size(); i++)
   {
     if (blocksData.at(i))
     {
       // Use block position as element position
-      data.push(
+      blocks.push(
         Block::from_data(*blocksData.at(i)),
         {blocksData.at(i)->x, blocksData.at(i)->y}
       );
     }
   }
 
-  _logger.debug_fmt("Converted %llu blocks.", blocksData.size());
+  _logger.debug_fmt("Converted %llu blocks.", blocks.size());
 }
 
 void World::draw(gl::Drawer &drawer) const noexcept
 {
-  for (ullong i = 0; i < data.size(); i++)
+  for (ullong i = 0; i < blocks.size(); i++)
   {
-    if (*data.at(i))
+    if (*blocks.at(i))
     {
-      drawer.draw(**data.at(i));
+      drawer.draw(**blocks.at(i));
     }
   }
 }
@@ -51,27 +54,27 @@ void World::load_textures(core::PngDecoder &pngDecoder) noexcept
 
   _logger.info("Loading textures for world blocks");
 
-  for (uint y = 0; y < data.h(); y++)
+  for (uint y = 0; y < blocks.h(); y++)
   {
-    const float kProgress = (y + 1) / (float)data.h() * 100;
+    const float kProgress = (y + 1) / (float)blocks.h() * 100;
 
     _logger.progress_fmt(
-      "Loading textures for row %u/%u (%.1f%%)", y + 1, data.h(), kProgress
+      "Loading textures for row %u/%u (%.1f%%)", y + 1, blocks.h(), kProgress
     );
 
-    for (uint x = 0; x < data.w(); x++)
+    for (uint x = 0; x < blocks.w(); x++)
     {
-      (*data.at(x, y))->load_texture(pngDecoder);
+      (*blocks.at(x, y))->load_texture(pngDecoder);
     }
   }
 
-  if (data.extra_data_size())
+  if (blocks.extra_data_size())
   {
     _logger.progress("Loading textures for extra blocks");
 
-    for (ullong i = data.dimensions_size(); i < data.size(); i++)
+    for (ullong i = blocks.dimensions_size(); i < blocks.size(); i++)
     {
-      (*data.at(i))->load_texture(pngDecoder);
+      (*blocks.at(i))->load_texture(pngDecoder);
     }
   }
 
