@@ -1,5 +1,7 @@
 #include "game/dynamites/dynamite.hpp"
 
+#include <cmath>
+
 namespace game
 {
 gl::ShaderProgram *Dynamite::_shaderProgram;
@@ -24,8 +26,8 @@ void Dynamite::load_texture(core::PngDecoder &pngDecoder) noexcept
 
 void Dynamite::set_pos(int x, int y) noexcept
 {
-  _x = x;
-  _y = y;
+  _posX = x;
+  _posY = y;
 
   _mesh.vertices = {
     {x - w() / 2.0f, y - h() / 2.0f},
@@ -39,22 +41,25 @@ void Dynamite::set_pos(int x, int y) noexcept
 
 void Dynamite::explode() noexcept
 {
-  for (byte y = -EXPLOSION_RADIUS - 1; y < EXPLOSION_RADIUS; y++)
+  for (byte y = -EXPLOSION_RADIUS; y < EXPLOSION_RADIUS; y++)
   {
-    for (byte x = -EXPLOSION_RADIUS - 1; x < EXPLOSION_RADIUS; x++)
+    for (byte x = -EXPLOSION_RADIUS; x < EXPLOSION_RADIUS; x++)
     {
-      if ((x == -EXPLOSION_RADIUS - 1 && y == -EXPLOSION_RADIUS - 1) ||
-          (x == EXPLOSION_RADIUS - 1 && y == -EXPLOSION_RADIUS - 1) ||
-          (x == -EXPLOSION_RADIUS - 1 && y == EXPLOSION_RADIUS - 1) ||
-          (x == EXPLOSION_RADIUS - 1 && y == EXPLOSION_RADIUS - 1
-          )) // Don't touch the corners
+      // Don't touch the blocks outside the circle with the radius
+      // `EXPLOSION_RADIUS`.
+      if (pow(x, 2) + pow(y, 2) >= pow(EXPLOSION_RADIUS, 2))
       {
         continue;
       }
 
-      const int kXPos = _x / Block::SIZE + x, kYPos = _y / Block::SIZE + y;
+      const float kRadiusDist = sqrt(pow(x, 2) + pow(y, 2)) + 1.0f;
+      const float kPower      = EXPLOSION_POWER / kRadiusDist;
+
+      const int kXPos = _posX / Block::SIZE + x,
+                kYPos = _posY / Block::SIZE + y;
+
       auto block = _world.blocks.at(kXPos, kYPos);
-      if (block)
+      if (block && *block && block->get()->explode(kPower))
       {
         // It's safe to reset a `std::unique_ptr` that points to `nullptr`
         block->reset();
@@ -67,12 +72,17 @@ void Dynamite::explode() noexcept
 
 void Dynamite::_explode_children(const BlockData *data) noexcept
 {
-  if (data && !data->childPoses.empty())
+  if (!data)
   {
-    for (const auto &childPos : data->childPoses)
+    return;
+  }
+
+  for (const auto &childPos : data->childPoses)
+  {
+    auto *childBlock = _world.blocks.at(childPos.first, childPos.second);
+    if (childBlock)
     {
-      auto *childBlock = _world.blocks.at(childPos.first, childPos.second);
-      if (childBlock)
+      if (*childBlock)
       {
         childBlock->reset();
       }

@@ -91,6 +91,9 @@ public:
         fs.compile();
         _worldShaderProgram->add(fs);
         _worldShaderProgram->link();
+
+        _worldShaderProgram->set_uniform(gl::UNIFORM_TEX_0, 0);
+        _worldShaderProgram->set_uniform(gl::UNIFORM_TEX_1, 1);
       }
       { // Dynamite shader program
         gl::VertexShader vs;
@@ -162,7 +165,7 @@ public:
     };
 
     _worldShaderProgram->set_uniform(
-      gl::UNIFORM_WORLD_H, _worldSettings.h() * game::Block::SIZE
+      gl::UNIFORM_WORLD_H, uint(_worldSettings.h() * game::Block::SIZE)
     );
 
     core::Rand::init();
@@ -223,12 +226,12 @@ public:
     _worldSettings.structuresGenerator = &_structuresGen;
 
     _pondShaderProgram->set_uniform(
-      gl::UNIFORM_POND_TOP, (_worldSettings.h() - 1) * game::Block::SIZE
+      gl::UNIFORM_POND_TOP, uint((_worldSettings.h() - 1) * game::Block::SIZE)
     );
 
     _pondShaderProgram->set_uniform(
       gl::UNIFORM_POND_BOTTOM,
-      (_worldSettings.h() - 1 - maxPondH - 10) * game::Block::SIZE
+      uint((_worldSettings.h() - 1 - maxPondH - 10) * game::Block::SIZE)
     );
   }
 

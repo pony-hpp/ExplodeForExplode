@@ -8,6 +8,11 @@ namespace game::blocks
 #define TEXTURE(className, v) \
   const char *className::texture_path() const noexcept { return v; }
 
+#define DURABILITY(className, v) \
+  float className::durability() const noexcept { return v; }
+
+static constexpr float NONEXPLOSIVE = -1.0f;
+
 // clang-format off
 ID(DefaultBlock, DEFAULT_BLOCK)
 ID(GrassBlock,   GRASS_BLOCK)
@@ -28,5 +33,15 @@ TEXTURE(OakLeaves,    "../assets/textures/blocks/oak_leaves.png")
 TEXTURE(Grass,        "../assets/textures/blocks/grass.png")
 TEXTURE(Water,        "../assets/textures/blocks/water.png")
 TEXTURE(WaterWave,    "../assets/textures/blocks/water_wave.png")
+
+DURABILITY(DefaultBlock, 0.0f)
+DURABILITY(GrassBlock,   0.6f)
+DURABILITY(EarthBlock,   0.45f)
+DURABILITY(StoneBlock,   0.85f)
+DURABILITY(OakBlock,     0.7f)
+DURABILITY(OakLeaves,    0.03f)
+DURABILITY(Grass,        0.0f)
+DURABILITY(Water,        NONEXPLOSIVE)
+DURABILITY(WaterWave,    NONEXPLOSIVE)
 // clang-format on
 }

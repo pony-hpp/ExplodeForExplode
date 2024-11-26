@@ -20,7 +20,9 @@ public:
   bool used() const noexcept;
   void use() noexcept;
 
+  void set_uniform(const char *name, int v) noexcept;
   void set_uniform(const char *name, uint v) noexcept;
+  void set_uniform(const char *name, float v) noexcept;
   void set_uniform(const char *name, const float *v) noexcept;
 
 private:

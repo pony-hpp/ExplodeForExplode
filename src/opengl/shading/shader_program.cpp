@@ -60,10 +60,22 @@ void ShaderProgram::use() noexcept
   }
 }
 
+void ShaderProgram::set_uniform(const char *name, int v) noexcept
+{
+  use();
+  glUniform1i(_get_uniform(name), v);
+}
+
 void ShaderProgram::set_uniform(const char *name, uint v) noexcept
 {
   use();
   glUniform1ui(_get_uniform(name), v);
+}
+
+void ShaderProgram::set_uniform(const char *name, float v) noexcept
+{
+  use();
+  glUniform1f(_get_uniform(name), v);
 }
 
 void ShaderProgram::set_uniform(const char *name, const float *v) noexcept

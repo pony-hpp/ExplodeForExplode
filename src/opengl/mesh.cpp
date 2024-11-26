@@ -6,21 +6,27 @@ namespace gl
 Mesh::Mesh() noexcept
 {
   glGenBuffers(1, &_coordsVbo);
-  glGenBuffers(1, &_texCoordsVbo);
-  glGenTextures(1, &_tex);
 
   glGenVertexArrays(1, &_vao);
   glBindVertexArray(_vao);
   glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
 }
 
 Mesh::~Mesh() noexcept
 {
-  glDeleteBuffers(1, &_coordsVbo);
-  glDeleteBuffers(1, &_texCoordsVbo);
-  glDeleteTextures(1, &_tex);
   glDeleteVertexArrays(1, &_vao);
+
+  glDeleteBuffers(1, &_coordsVbo);
+
+  if (_anyTexLoaded)
+  {
+    glDeleteBuffers(1, &_texCoordsVbo);
+
+    for (auto &texIdx : _texIndices)
+    {
+      glDeleteTextures(1, &texIdx.second);
+    }
+  }
 }
 
 void Mesh::update_vertices(UpdateIntensity intensity) noexcept
@@ -34,17 +40,30 @@ void Mesh::update_vertices(UpdateIntensity intensity) noexcept
   glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, nullptr);
 }
 
-void Mesh::load_texture(const core::Png *png) noexcept
+void Mesh::load_texture(const core::Png *png, size_t idx) noexcept
 {
-  glBindBuffer(GL_ARRAY_BUFFER, _texCoordsVbo);
-  glBufferData(
-    GL_ARRAY_BUFFER, sizeof(gl::TEX_COORDS), gl::TEX_COORDS, GL_STATIC_DRAW
-  );
+  if (!_anyTexLoaded)
+  {
+    glGenBuffers(1, &_texCoordsVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, _texCoordsVbo);
+    glBufferData(
+      GL_ARRAY_BUFFER, sizeof(gl::TEX_COORDS), gl::TEX_COORDS, GL_STATIC_DRAW
+    );
 
-  glBindVertexArray(_vao);
-  glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, nullptr);
+    glBindVertexArray(_vao);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, nullptr);
 
-  glBindTexture(GL_TEXTURE_2D, _tex);
+    _anyTexLoaded = true;
+  }
+
+  if (_texIndices.find(idx) == _texIndices.cend())
+  {
+    _texIndices.insert({idx, 0});
+    glGenTextures(1, &_texIndices[idx]);
+  }
+
+  glBindTexture(GL_TEXTURE_2D, _texIndices[idx]);
   if (png)
   {
     glTexImage2D(
@@ -67,7 +86,13 @@ void Mesh::load_texture(const core::Png *png) noexcept
 void Mesh::draw(DrawMode mode, uint count, uint start) const noexcept
 {
   glBindVertexArray(_vao);
-  glBindTexture(GL_TEXTURE_2D, _tex);
+
+  for (const auto &texIdx : _texIndices)
+  {
+    glActiveTexture(GL_TEXTURE0 + texIdx.first);
+    glBindTexture(GL_TEXTURE_2D, texIdx.second);
+  }
+
   glDrawArrays(mode, start, start + count);
 }
 }

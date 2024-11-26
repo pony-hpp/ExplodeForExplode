@@ -1,5 +1,6 @@
 #include "game/world/blocks/block.hpp"
 #include "game/world/blocks/blocks.hpp"
+#include "opengl/shading/uniforms.hpp"
 
 #include <cstring>
 
@@ -18,6 +19,17 @@ void Block::draw() const noexcept
   else
   {
     _defaultShaderProgram->use();
+
+    if (!_curDurabilityInitialized)
+    {
+      _defaultShaderProgram->set_uniform(gl::UNIFORM_DURABILITY, 1.0f);
+    }
+    else
+    {
+      _defaultShaderProgram->set_uniform(
+        gl::UNIFORM_DURABILITY, _curDurability
+      );
+    }
   }
 
   _mesh.draw(gl::DRAW_MODE_TRIANGLE_STRIP, 4);
@@ -80,5 +92,36 @@ void Block::load_texture(core::PngDecoder &pngDecoder) noexcept
   {
     _mesh.load_texture();
   }
+
+  // Durability <= 0.0f can't be destroyed or easily destroyed
+  if (durability() > 0.0f)
+  {
+    try
+    {
+      _mesh.load_texture(&pngDecoder("../assets/textures/misc/damage.png"), 1);
+    }
+    catch (...)
+    {
+      _mesh.load_texture(nullptr, 1);
+    }
+  }
+}
+
+bool Block::explode(float power) noexcept
+{
+  if (durability() < 0.0f)
+  {
+    return false;
+  }
+
+  if (!_curDurabilityInitialized)
+  {
+    _curDurability            = durability();
+    _curDurabilityInitialized = true;
+  }
+
+  _curDurability -= power;
+
+  return _curDurability <= 0.0f;
 }
 }

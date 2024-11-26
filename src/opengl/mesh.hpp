@@ -5,6 +5,7 @@
 #include "core/types.hpp"
 #include "opengl/opengl.hpp"
 
+#include <unordered_map>
 #include <vector>
 
 namespace gl
@@ -35,13 +36,15 @@ public:
   std::vector<Vertex> vertices;
 
   void update_vertices(UpdateIntensity intensity) noexcept;
-  void load_texture(const core::Png *png = nullptr) noexcept;
+  void load_texture(const core::Png *png = nullptr, size_t idx = 0) noexcept;
 
   void draw(DrawMode mode, uint count, uint start = 0) const noexcept;
 
 private:
-  uint _coordsVbo, _vao;
-  uint _texCoordsVbo, _tex;
+  uint _vao;
+  uint _coordsVbo, _texCoordsVbo;
+  std::unordered_map<size_t, uint> _texIndices;
+  bool _anyTexLoaded = false;
 };
 };
 

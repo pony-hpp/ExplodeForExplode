@@ -11,6 +11,7 @@ namespace game::blocks
   public: \
     BlockId id() const noexcept override; \
     const char *texture_path() const noexcept override; \
+    float durability() const noexcept override; \
   };
 
 BLOCK(DefaultBlock)

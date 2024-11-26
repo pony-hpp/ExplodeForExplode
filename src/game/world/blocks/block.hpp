@@ -28,6 +28,9 @@ public:
   virtual blocks::BlockId id() const noexcept       = 0;
   virtual const char *texture_path() const noexcept = 0;
 
+  // Negative durability values make the block non-explosive.
+  virtual float durability() const noexcept = 0;
+
   static std::unique_ptr<Block> from_data(const BlockData &data) noexcept;
 
   inline static void default_shader_program(gl::ShaderProgram &shaderProgram
@@ -48,6 +51,7 @@ public:
 
   void set_pos(int x, int y) noexcept;
   void load_texture(core::PngDecoder &pngDecoder) noexcept;
+  bool explode(float power) noexcept;
 
 private:
   static gl::ShaderProgram *_defaultShaderProgram;
@@ -55,6 +59,8 @@ private:
     _shaderPrograms;
 
   int _x, _y;
+  float _curDurability;
+  bool _curDurabilityInitialized = false;
   gl::Mesh _mesh;
 };
 }
