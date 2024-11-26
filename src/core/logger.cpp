@@ -60,18 +60,6 @@ void Logger::critical_fmt(const char *msg, ...) noexcept
   _log_fmt(_format_msg(msg, RED, true), list);
 }
 
-void Logger::progress(const char *msg) noexcept
-{
-  std::cerr << _basic_format_progress(msg);
-}
-
-void Logger::progress_fmt(const char *msg, ...) noexcept
-{
-  va_list list;
-  va_start(list, msg);
-  _log_fmt(_basic_format_progress(msg), list);
-}
-
 std::string Logger::_basic_format_msg(const char *msg) const noexcept
 {
   const auto kTime       = Clock::now();
@@ -116,11 +104,6 @@ Logger::_format_msg(const char *msg, _tLogColor color, bool bold) const noexcept
   colorEscCode.append(std::to_string(color) + "m");
 
   return colorEscCode + _basic_format_msg(msg) + "\033[0;39m\n";
-}
-
-std::string Logger::_basic_format_progress(const char *msg) const noexcept
-{
-  return "\r\033[2K" + _format_msg(msg, GREEN, false) + "\033[A";
 }
 
 void Logger::_log_fmt(const std::string &msg, va_list &vaArgs) noexcept

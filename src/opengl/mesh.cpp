@@ -3,8 +3,16 @@
 
 namespace gl
 {
+uint Mesh::_texCoordsVbo;
+std::unordered_map<const core::Png *, uint> Mesh::_texUnits;
+uint Mesh::_defaultTexUnit;
+bool Mesh::_defaultTexUnitUsed;
+ullong Mesh::_meshCount;
+
 Mesh::Mesh() noexcept
 {
+  _meshCount++;
+
   glGenBuffers(1, &_coordsVbo);
 
   glGenVertexArrays(1, &_vao);
@@ -14,17 +22,24 @@ Mesh::Mesh() noexcept
 
 Mesh::~Mesh() noexcept
 {
+  _meshCount--;
+
   glDeleteVertexArrays(1, &_vao);
 
   glDeleteBuffers(1, &_coordsVbo);
 
-  if (_anyTexLoaded)
+  if ((_texUnits.size() || _defaultTexUnitUsed) && _meshCount == 0)
   {
     glDeleteBuffers(1, &_texCoordsVbo);
 
-    for (auto &texIdx : _texIndices)
+    for (auto &tex : _texUnits)
     {
-      glDeleteTextures(1, &texIdx.second);
+      glDeleteTextures(1, &tex.second);
+    }
+
+    if (_defaultTexUnitUsed)
+    {
+      glDeleteTextures(1, &_defaultTexUnit);
     }
   }
 }
@@ -40,9 +55,9 @@ void Mesh::update_vertices(UpdateIntensity intensity) noexcept
   glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, nullptr);
 }
 
-void Mesh::load_texture(const core::Png *png, size_t idx) noexcept
+void Mesh::load_texture(const core::Png *png, ubyte idx) noexcept
 {
-  if (!_anyTexLoaded)
+  if (!_curTextures.size())
   {
     glGenBuffers(1, &_texCoordsVbo);
     glBindBuffer(GL_ARRAY_BUFFER, _texCoordsVbo);
@@ -53,30 +68,41 @@ void Mesh::load_texture(const core::Png *png, size_t idx) noexcept
     glBindVertexArray(_vao);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, nullptr);
-
-    _anyTexLoaded = true;
   }
 
-  if (_texIndices.find(idx) == _texIndices.cend())
-  {
-    _texIndices.insert({idx, 0});
-    glGenTextures(1, &_texIndices[idx]);
-  }
-
-  glBindTexture(GL_TEXTURE_2D, _texIndices[idx]);
   if (png)
   {
+    if (_texUnits.find(png) != _texUnits.cend())
+    {
+      _curTextures.insert({idx, _texUnits[png]});
+      return;
+    }
+
+    _texUnits.insert({png, 0});
+    uint &tex = _texUnits[png];
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
     glTexImage2D(
       GL_TEXTURE_2D, 0, GL_RGBA, png->w, png->h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
       png->data.get()
     );
+
+    _curTextures.insert({idx, _texUnits[png]});
   }
   else
   {
-    glTexImage2D(
-      GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-      gl::FALLBACK_TEX
-    );
+    if (!_defaultTexUnitUsed)
+    {
+      glGenTextures(1, &_defaultTexUnit);
+      glBindTexture(GL_TEXTURE_2D, _defaultTexUnit);
+      glTexImage2D(
+        GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+        gl::FALLBACK_TEX
+      );
+    }
+
+    _curTextures.insert({idx, _defaultTexUnit});
   }
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -87,10 +113,10 @@ void Mesh::draw(DrawMode mode, uint count, uint start) const noexcept
 {
   glBindVertexArray(_vao);
 
-  for (const auto &texIdx : _texIndices)
+  for (const auto &tex : _curTextures)
   {
-    glActiveTexture(GL_TEXTURE0 + texIdx.first);
-    glBindTexture(GL_TEXTURE_2D, texIdx.second);
+    glActiveTexture(GL_TEXTURE0 + tex.first);
+    glBindTexture(GL_TEXTURE_2D, tex.second);
   }
 
   glDrawArrays(mode, start, start + count);

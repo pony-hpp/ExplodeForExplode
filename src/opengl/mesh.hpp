@@ -36,15 +36,24 @@ public:
   std::vector<Vertex> vertices;
 
   void update_vertices(UpdateIntensity intensity) noexcept;
-  void load_texture(const core::Png *png = nullptr, size_t idx = 0) noexcept;
+  void load_texture(const core::Png *png = nullptr, ubyte idx = 0) noexcept;
 
   void draw(DrawMode mode, uint count, uint start = 0) const noexcept;
 
 private:
-  uint _vao;
-  uint _coordsVbo, _texCoordsVbo;
-  std::unordered_map<size_t, uint> _texIndices;
-  bool _anyTexLoaded = false;
+  uint _coordsVbo, _vao;
+  static uint _texCoordsVbo;
+
+  static std::unordered_map<const core::Png *, uint> _texUnits;
+
+  static uint _defaultTexUnit;
+  static bool _defaultTexUnitUsed;
+
+  // Used to free texture units at the last Mesh destructor.
+  static ullong _meshCount;
+
+  // Reference to the current texture unit by the index.
+  std::unordered_map<ubyte, uint &> _curTextures;
 };
 };
 

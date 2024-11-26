@@ -31,14 +31,10 @@ public:
   void critical(const char *msg) noexcept;
   void critical_fmt(const char *msg, ...) noexcept;
 
-  void progress(const char *msg) noexcept;
-  void progress_fmt(const char *msg, ...) noexcept;
-
 private:
   enum _tLogColor : byte
   {
     RED    = 31,
-    GREEN  = 32,
     YELLOW = 33,
     CYAN   = 36,
   };
@@ -50,8 +46,6 @@ private:
   std::string _format_msg(const char *msg) const noexcept;
   std::string
   _format_msg(const char *msg, _tLogColor color, bool bold) const noexcept;
-
-  std::string _basic_format_progress(const char *msg) const noexcept;
 
   void _log_fmt(const std::string &msg, va_list &vaArgs) noexcept;
 };

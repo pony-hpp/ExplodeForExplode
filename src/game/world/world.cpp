@@ -52,32 +52,13 @@ void World::load_textures(core::PngDecoder &pngDecoder) noexcept
 {
   _logger.set_section("LoadTextures");
 
-  _logger.info("Loading textures for world blocks");
+  _logger.debug_fmt("Loading textures");
 
-  for (uint y = 0; y < blocks.h(); y++)
+  for (ullong i = 0; i < blocks.size(); i++)
   {
-    const float kProgress = (y + 1) / (float)blocks.h() * 100;
-
-    _logger.progress_fmt(
-      "Loading textures for row %u/%u (%.1f%%)", y + 1, blocks.h(), kProgress
-    );
-
-    for (uint x = 0; x < blocks.w(); x++)
-    {
-      (*blocks.at(x, y))->load_texture(pngDecoder);
-    }
+    blocks.at(i)->get()->load_texture(pngDecoder);
   }
 
-  if (blocks.extra_data_size())
-  {
-    _logger.progress("Loading textures for extra blocks");
-
-    for (ullong i = blocks.dimensions_size(); i < blocks.size(); i++)
-    {
-      (*blocks.at(i))->load_texture(pngDecoder);
-    }
-  }
-
-  _logger.info("Textures loaded.");
+  _logger.debug_fmt("Textures loaded.");
 }
 }
