@@ -1,5 +1,5 @@
-#ifndef _EFE_CAMERA_HPP_
-#define _EFE_CAMERA_HPP_
+#ifndef EFE_CAMERA_HPP
+#define EFE_CAMERA_HPP
 
 #include "math/movement.hpp"
 #include "math/zooming.hpp"

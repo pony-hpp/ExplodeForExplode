@@ -1,5 +1,5 @@
-#ifndef _EFE_DATA_2D_HPP_
-#define _EFE_DATA_2D_HPP_
+#ifndef EFE_DATA_2D_HPP
+#define EFE_DATA_2D_HPP
 
 #include "core/types.hpp"
 
@@ -57,7 +57,7 @@ struct NonexistentExtraElementException
 {};
 }
 
-#ifndef _EFE_DATA_2D_IMPL_HPP_
+#ifndef EFE_DATA_2D_IMPL_HPP
 #include "game/utils/data_2d_impl.hpp" // IWYU pragma: keep
 #endif
 

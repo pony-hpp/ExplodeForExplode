@@ -1,5 +1,5 @@
-#ifndef _EFE_BLOCK_ID_HPP_
-#define _EFE_BLOCK_ID_HPP_
+#ifndef EFE_BLOCK_ID_HPP
+#define EFE_BLOCK_ID_HPP
 
 #include "core/types.hpp"
 

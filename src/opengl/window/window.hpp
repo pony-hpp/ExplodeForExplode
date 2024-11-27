@@ -1,5 +1,5 @@
-#ifndef _EFE_WINDOW_HPP_
-#define _EFE_WINDOW_HPP_
+#ifndef EFE_WINDOW_HPP
+#define EFE_WINDOW_HPP
 
 #include "core/decoders/png.hpp"
 #include "core/logger.hpp"

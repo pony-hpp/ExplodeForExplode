@@ -1,5 +1,5 @@
-#ifndef _EFE_OPENGL_HPP_
-#define _EFE_OPENGL_HPP_
+#ifndef EFE_OPENGL_HPP
+#define EFE_OPENGL_HPP
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>

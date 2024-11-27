@@ -1,5 +1,5 @@
-#ifndef _EFE_RAND_HPP_
-#define _EFE_RAND_HPP_
+#ifndef EFE_RAND_HPP
+#define EFE_RAND_HPP
 
 #include "core/logger.hpp"
 

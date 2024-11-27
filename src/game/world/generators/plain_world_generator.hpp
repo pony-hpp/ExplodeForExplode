@@ -1,5 +1,5 @@
-#ifndef _EFE_PLAIN_WORLD_GENERATOR_HPP_
-#define _EFE_PLAIN_WORLD_GENERATOR_HPP_
+#ifndef EFE_PLAIN_WORLD_GENERATOR_HPP
+#define EFE_PLAIN_WORLD_GENERATOR_HPP
 
 #include "core/logger.hpp"
 #include "core/types.hpp"

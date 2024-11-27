@@ -1,5 +1,5 @@
-#ifndef _EFE_LOGGER_HPP_
-#define _EFE_LOGGER_HPP_
+#ifndef EFE_LOGGER_HPP
+#define EFE_LOGGER_HPP
 
 #include "core/types.hpp"
 

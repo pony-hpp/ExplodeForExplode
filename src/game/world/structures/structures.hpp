@@ -1,5 +1,5 @@
-#ifndef _EFE_STRUCTURES_HPP_
-#define _EFE_STRUCTURES_HPP_
+#ifndef EFE_STRUCTURES_HPP
+#define EFE_STRUCTURES_HPP
 
 #include "game/world/structures/structure.hpp"
 

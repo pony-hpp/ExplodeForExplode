@@ -1,5 +1,5 @@
-#ifndef _EFE_WORLD_HPP_
-#define _EFE_WORLD_HPP_
+#ifndef EFE_WORLD_HPP
+#define EFE_WORLD_HPP
 
 #include "core/decoders/png.hpp"
 #include "core/logger.hpp"

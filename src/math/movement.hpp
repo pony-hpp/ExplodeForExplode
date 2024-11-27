@@ -1,5 +1,5 @@
-#ifndef _EFE_MOVEMENT_HPP_
-#define _EFE_MOVEMENT_HPP_
+#ifndef EFE_MOVEMENT_HPP
+#define EFE_MOVEMENT_HPP
 
 namespace math
 {

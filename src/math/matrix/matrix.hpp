@@ -1,5 +1,5 @@
-#ifndef _EFE_MATRIX_HPP_
-#define _EFE_MATRIX_HPP_
+#ifndef EFE_MATRIX_HPP
+#define EFE_MATRIX_HPP
 
 #include "core/types.hpp"
 

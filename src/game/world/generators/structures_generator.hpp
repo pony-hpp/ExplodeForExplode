@@ -1,5 +1,5 @@
-#ifndef _EFE_STRUCTURE_GENERATOR_HPP_
-#define _EFE_STRUCTURE_GENERATOR_HPP_
+#ifndef EFE_STRUCTURES_GENERATOR_HPP
+#define EFE_STRUCTURES_GENERATOR_HPP
 
 #include "core/types.hpp"
 #include "game/world/structures/structure.hpp"

@@ -1,5 +1,5 @@
-#ifndef _EFE_SHADER_HPP_
-#define _EFE_SHADER_HPP_
+#ifndef EFE_SHADER_HPP
+#define EFE_SHADER_HPP
 
 #include "core/logger.hpp"
 #include "core/types.hpp"

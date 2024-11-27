@@ -1,5 +1,5 @@
-#ifndef _EFE_CTX_HPP_
-#define _EFE_CTX_HPP_
+#ifndef EFE_CTX_HPP
+#define EFE_CTX_HPP
 
 #include "opengl/opengl.hpp" // IWYU pragma: keep
 

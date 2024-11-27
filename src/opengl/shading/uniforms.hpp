@@ -1,5 +1,5 @@
-#ifndef _EFE_UNIFORMS_HPP_
-#define _EFE_UNIFORMS_HPP_
+#ifndef EFE_UNIFORMS_HPP
+#define EFE_UNIFORMS_HPP
 
 namespace gl
 {

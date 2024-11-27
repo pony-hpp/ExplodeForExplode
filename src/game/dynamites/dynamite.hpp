@@ -1,5 +1,5 @@
-#ifndef _EFE_DYNAMITE_HPP_
-#define _EFE_DYNAMITE_HPP_
+#ifndef EFE_DYNAMITE_HPP
+#define EFE_DYNAMITE_HPP
 
 #include "core/decoders/png.hpp"
 #include "core/types.hpp"

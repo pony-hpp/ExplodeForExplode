@@ -1,5 +1,5 @@
-#ifndef _EFE_TYPES_HPP_
-#define _EFE_TYPES_HPP_
+#ifndef EFE_TYPES_HPP
+#define EFE_TYPES_HPP
 
 using byte   = char;
 using ubyte  = unsigned char;

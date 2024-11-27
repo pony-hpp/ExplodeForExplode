@@ -1,5 +1,5 @@
-#ifndef _EFE_STRUCTURE_HPP_
-#define _EFE_STRUCTURE_HPP_
+#ifndef EFE_STRUCTURE_HPP
+#define EFE_STRUCTURE_HPP
 
 #include "core/types.hpp"
 #include "game/utils/data_2d.hpp"

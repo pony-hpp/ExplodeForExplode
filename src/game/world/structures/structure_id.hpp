@@ -1,5 +1,5 @@
-#ifndef _EFE_STRUCTURE_ID_HPP_
-#define _EFE_STRUCTURE_ID_HPP_
+#ifndef EFE_STRUCTURE_ID_HPP
+#define EFE_STRUCTURE_ID_HPP
 
 #include "core/types.hpp"
 

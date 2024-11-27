@@ -1,5 +1,5 @@
-#ifndef _EFE_DRAWABLE_HPP_
-#define _EFE_DRAWABLE_HPP_
+#ifndef EFE_DRAWABLE_HPP
+#define EFE_DRAWABLE_HPP
 
 #include "core/types.hpp"
 

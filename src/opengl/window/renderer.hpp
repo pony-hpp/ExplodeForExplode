@@ -1,5 +1,5 @@
-#ifndef _EFE_RENDERER_HPP_
-#define _EFE_RENDERER_HPP_
+#ifndef EFE_RENDERER_HPP
+#define EFE_RENDERER_HPP
 
 #include "core/logger.hpp"
 #include "core/types.hpp"

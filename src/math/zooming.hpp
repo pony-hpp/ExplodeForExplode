@@ -1,5 +1,5 @@
-#ifndef _EFE_ZOOMING_HPP_
-#define _EFE_ZOOMING_HPP_
+#ifndef EFE_ZOOMING_HPP
+#define EFE_ZOOMING_HPP
 
 namespace math
 {

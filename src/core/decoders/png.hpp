@@ -1,5 +1,5 @@
-#ifndef _EFE_PNG_HPP_
-#define _EFE_PNG_HPP_
+#ifndef EFE_PNG_HPP
+#define EFE_PNG_HPP
 
 #include "core/logger.hpp"
 #include "core/types.hpp"

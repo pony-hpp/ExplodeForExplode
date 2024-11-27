@@ -1,5 +1,5 @@
-#ifndef _EFE_MESH_HPP_
-#define _EFE_MESH_HPP_
+#ifndef EFE_MESH_HPP
+#define EFE_MESH_HPP
 
 #include "core/decoders/png.hpp"
 #include "core/types.hpp"

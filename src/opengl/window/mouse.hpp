@@ -1,5 +1,5 @@
-#ifndef _EFE_MOUSE_HPP_
-#define _EFE_MOUSE_HPP_
+#ifndef EFE_MOUSE_HPP
+#define EFE_MOUSE_HPP
 
 #include "opengl/opengl.hpp" // IWYU pragma: keep
 

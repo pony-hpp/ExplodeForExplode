@@ -1,5 +1,5 @@
-#ifndef _EFE_TEXTURE_HPP_
-#define _EFE_TEXTURE_HPP_
+#ifndef EFE_TEXTURE_HPP
+#define EFE_TEXTURE_HPP
 
 #include "core/types.hpp"
 
